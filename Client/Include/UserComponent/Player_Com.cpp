@@ -27,8 +27,6 @@ bool Player_Com::Init()
 	KeyInput::Get()->AddKey("S3", VK_F3);
 	KeyInput::Get()->AddKey("S4", VK_F4);
 
-	KeyInput::Get()->AddKey("ChangeAnimation", VK_SPACE);
-
 	Renderer_Com* RenderComponent = m_Object->AddComponent<Renderer_Com>("PlayerRender");
 	RenderComponent->SetMesh("TextureRect");
 	RenderComponent->SetRenderState(ALPHA_BLEND);
@@ -36,6 +34,7 @@ bool Player_Com::Init()
 
 	ColliderCircle_Com* Circle = m_Object->AddComponent<ColliderCircle_Com>("123");
 	Circle->SetInfo(50.0f);
+	Circle->SetCollsionCallback(CCT_FIRST, this, &Player_Com::EattingFunc);
 	SAFE_RELEASE(Circle);
 
 	m_Transform->SetWorldScale(100.0f, 100.0f, 1.0f);
@@ -94,4 +93,8 @@ void Player_Com::Render(float DeltaTime)
 Player_Com * Player_Com::Clone()
 {
 	return new Player_Com(*this);
+}
+
+void Player_Com::EattingFunc(Collider_Com * Src, Collider_Com * Dest, float DeltaTime)
+{
 }

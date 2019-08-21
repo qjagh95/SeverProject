@@ -34,6 +34,9 @@
     <ClCompile Include="BasicInfo.cpp">
       <Filter>BasicInfo</Filter>
     </ClCompile>
+    <ClCompile Include="Eatting.cpp">
+      <Filter>MainScene\Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClientHeader.h">
@@ -47,6 +50,9 @@
     </ClInclude>
     <ClInclude Include="BasicInfo.h">
       <Filter>BasicInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="Eatting.h">
+      <Filter>MainScene\Component</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

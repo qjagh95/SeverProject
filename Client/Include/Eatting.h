@@ -2,10 +2,7 @@
 #include "BasicInfo.h"
 #include "Component/Collider_Com.h"
 
-JEONG_USING
-
-class Collider;
-class Player_Com : public BasicInfo
+class Eatting : public BasicInfo
 {
 public:
 	bool Init() override;
@@ -15,16 +12,10 @@ public:
 	void Collision(float DeltaTime) override;
 	void CollisionLateUpdate(float DeltaTime) override;
 	void Render(float DeltaTime) override;
-	Player_Com* Clone() override;
-
-	void EattingFunc(Collider_Com* Src, Collider_Com* Dest, float DeltaTime);
-
-protected:
-	Player_Com();
-	Player_Com(const Player_Com& userCom);
-	~Player_Com();
+	Eatting* Clone() override;
 
 public:
-	friend class GameObject;
+	Eatting();
+	~Eatting();
 };
 
