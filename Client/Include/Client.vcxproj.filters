@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="WinMain">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="MainScene">
+      <UniqueIdentifier>{981a1623-d2b2-41ac-9a94-a2c1168dcda0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MainScene\Component">
+      <UniqueIdentifier>{19c2ecfe-8b36-43ca-9162-6834275c2d8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MainScene\SceneMain">
+      <UniqueIdentifier>{37e08126-db94-4993-b4d6-5ca798c17fbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BasicInfo">
+      <UniqueIdentifier>{51687e10-03d8-4381-9b3e-08be84b66297}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="WinMain.cpp">
+      <Filter>WinMain</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Player_Com.cpp">
+      <Filter>MainScene\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneMain\MainScene.cpp">
+      <Filter>MainScene\SceneMain</Filter>
+    </ClCompile>
+    <ClCompile Include="ClientHeader.cpp">
+      <Filter>WinMain</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicInfo.cpp">
+      <Filter>BasicInfo</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ClientHeader.h">
+      <Filter>WinMain</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Player_Com.h">
+      <Filter>MainScene\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneMain\MainScene.h">
+      <Filter>MainScene\SceneMain</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicInfo.h">
+      <Filter>BasicInfo</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
