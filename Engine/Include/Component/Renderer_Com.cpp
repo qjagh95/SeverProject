@@ -140,7 +140,7 @@ void Renderer_Com::Render(float DeltaTime)
 		for (size_t j = 0; j < m_Mesh->GetSubsetCount((int)i); j++)
 		{
 			m_Material->SetShader((int)i, (int)j);
- 			m_Mesh->Render((int)i, (int)j);
+			m_Mesh->Render((int)i, (int)j);
 		}
 	}
 

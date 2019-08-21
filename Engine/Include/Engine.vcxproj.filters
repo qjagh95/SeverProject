@@ -49,18 +49,6 @@
     <Filter Include="Core\11. Scene">
       <UniqueIdentifier>{36a4fa68-3853-462f-912a-44e10923d50d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\12. Thread">
-      <UniqueIdentifier>{73ca7a5c-6416-4e17-aeb8-a99555ec8519}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\12. Thread\Thread">
-      <UniqueIdentifier>{7a1e183d-6416-4c7a-aada-c6eb1fc35da0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\12. Thread\Manager">
-      <UniqueIdentifier>{8c080a22-124b-491e-8764-d48f4c2ddc79}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\12. Thread\Sync">
-      <UniqueIdentifier>{9a56c6ef-1220-483a-a0c8-e79e8b8d38f2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Core\08. Object\Component\BaseComponent\01. Base">
       <UniqueIdentifier>{0388481b-b7dd-4c0d-a8a2-8c7756ef52cf}</UniqueIdentifier>
     </Filter>
@@ -180,9 +168,6 @@
     </Filter>
     <Filter Include="Core\08. Object\Component\BaseComponent\10. Text\01. Com">
       <UniqueIdentifier>{33d9124c-306b-49ab-99d1-554247cc23a7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\13. Sound">
-      <UniqueIdentifier>{1595afb2-e9cd-40ef-8b3c-a9fdb4abcbee}</UniqueIdentifier>
     </Filter>
     <Filter Include="Core\05. PathManager">
       <UniqueIdentifier>{48f6e9a7-548c-4725-8616-1a4015796c91}</UniqueIdentifier>
@@ -336,9 +321,6 @@
     <ClInclude Include="Component\Bar_Com.h">
       <Filter>Core\08. Object\Component\BaseComponent\08. WorldUI\BarWorld</Filter>
     </ClInclude>
-    <ClInclude Include="SoundManager.h">
-      <Filter>Core\13. Sound</Filter>
-    </ClInclude>
     <ClInclude Include="Render\RenderTarget.h">
       <Filter>Core\09. Render\06. RenderTarget</Filter>
     </ClInclude>
@@ -486,9 +468,6 @@
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Core\03. Header</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundManager.cpp">
-      <Filter>Core\13. Sound</Filter>
     </ClCompile>
     <ClCompile Include="Render\RenderTarget.cpp">
       <Filter>Core\09. Render\06. RenderTarget</Filter>

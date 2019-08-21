@@ -31,7 +31,6 @@ Core::~Core()
 	TimeManager::Delete();
 	CollsionManager::Delete();
 	KeyInput::Delete();
-	SoundManager::Delete();
 	RenderManager::Delete();
 
 	CoUninitialize();
@@ -69,12 +68,6 @@ bool Core::Init(HINSTANCE hInst, HWND hWnd, unsigned int Width, unsigned int Hei
 	}
 
 	if (PathManager::Get()->Init() == false)
-	{
-		TrueAssert(true);
-		return false;
-	}
-
-	if (SoundManager::Get()->Init() == false)
 	{
 		TrueAssert(true);
 		return false;

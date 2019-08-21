@@ -32,8 +32,6 @@
 #include <dwrite.h>
 #include <dxgidebug.h>
 
-#include <Audio.h>
-
 #pragma comment(lib, "dxguid")
 #pragma comment(lib, "d3d11")
 #pragma comment(lib, "d3dcompiler")
@@ -64,7 +62,6 @@
 #include "CollsionManager.h"
 #include "KeyInput.h"
 #include "GameObject.h"
-#include "SoundManager.h"
 #include "BineryWriter.h"
 #include "BineryReader.h"
 

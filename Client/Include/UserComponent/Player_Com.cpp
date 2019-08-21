@@ -6,9 +6,6 @@
 #include "Component/ColliderRect_Com.h"
 #include "Component/ColliderCircle_Com.h"
 #include "Component/ColliderOBB2D_Com.h"
-#include "Component/Transform_Com.h"
-#include "Component/Renderer_Com.h"
-#include "Component/Material_Com.h"
 
 Player_Com::Player_Com()
 {
@@ -33,11 +30,12 @@ bool Player_Com::Init()
 	KeyInput::Get()->AddKey("ChangeAnimation", VK_SPACE);
 
 	Renderer_Com* RenderComponent = m_Object->AddComponent<Renderer_Com>("PlayerRender");
-	RenderComponent->SetMesh("ColorRect");
+	RenderComponent->SetMesh("TextureRect");
+	RenderComponent->SetRenderState(ALPHA_BLEND);
 	SAFE_RELEASE(RenderComponent);
 
-	ColliderRect_Com* Circle = m_Object->AddComponent<ColliderRect_Com>("123");
-	Circle->SetInfo(0, 100);
+	ColliderCircle_Com* Circle = m_Object->AddComponent<ColliderCircle_Com>("123");
+	Circle->SetInfo(50.0f);
 	SAFE_RELEASE(Circle);
 
 	m_Transform->SetWorldScale(100.0f, 100.0f, 1.0f);
@@ -49,6 +47,7 @@ bool Player_Com::Init()
 
 	Material_Com* MaterialComponent = m_Object->FindComponentFromType<Material_Com>(CT_MATERIAL);
 	MaterialComponent->SetMaterial(Vector4(R / 255.0f, G / 255.0f, B / 255.0f, 1.0f));
+	MaterialComponent->SetDiffuseTexture(0, "Circle", TEXT("Circle.png"));
 	SAFE_RELEASE(MaterialComponent);
 
 	return true;
@@ -57,14 +56,14 @@ bool Player_Com::Init()
 int Player_Com::Input(float DeltaTime)
 {
 	if (KeyInput::Get()->KeyPress("MoveUp"))
-		m_Transform->Move(AXIS_Y, 1000.0f, DeltaTime);
+		m_Transform->Move(AXIS_Y, 500.0f, DeltaTime);
 	else if (KeyInput::Get()->KeyPress("MoveDown"))
-		m_Transform->Move(AXIS_Y, -1000.0f, DeltaTime);
+		m_Transform->Move(AXIS_Y, -500.0f, DeltaTime);
 
 	if (KeyInput::Get()->KeyPress("MoveLeft"))
-		m_Transform->Move(AXIS_X, -1000.0f, DeltaTime);
+		m_Transform->Move(AXIS_X, -500.0f, DeltaTime);
 	else if (KeyInput::Get()->KeyPress("MoveRight"))
-		m_Transform->Move(AXIS_X, 1000.0f, DeltaTime);
+		m_Transform->Move(AXIS_X, 500.0f, DeltaTime);
 
 	return 0;
 }
