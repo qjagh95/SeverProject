@@ -199,6 +199,9 @@
     <Filter Include="Core\03. Header">
       <UniqueIdentifier>{642d290c-399b-4462-9eda-78d5c20537d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\16. Stream">
+      <UniqueIdentifier>{64ffae3a-1b28-43aa-93d4-9baae355ed5b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -351,6 +354,12 @@
     <ClInclude Include="BineryWriter.h">
       <Filter>Core\15. BineryIO</Filter>
     </ClInclude>
+    <ClInclude Include="WriteMemoryStream.h">
+      <Filter>Core\16. Stream</Filter>
+    </ClInclude>
+    <ClInclude Include="ReadMemoryStream.h">
+      <Filter>Core\16. Stream</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Copy.bat">
@@ -495,6 +504,12 @@
     </ClCompile>
     <ClCompile Include="BineryWriter.cpp">
       <Filter>Core\15. BineryIO</Filter>
+    </ClCompile>
+    <ClCompile Include="WriteMemoryStream.cpp">
+      <Filter>Core\16. Stream</Filter>
+    </ClCompile>
+    <ClCompile Include="ReadMemoryStream.cpp">
+      <Filter>Core\16. Stream</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

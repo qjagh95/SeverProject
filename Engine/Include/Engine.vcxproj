@@ -211,6 +211,7 @@
     <ClInclude Include="KeyInput.h" />
     <ClInclude Include="Macro.h" />
     <ClInclude Include="PathManager.h" />
+    <ClInclude Include="ReadMemoryStream.h" />
     <ClInclude Include="RefCount.h" />
     <ClInclude Include="Render\BlendState.h" />
     <ClInclude Include="Render\DepthStancilState.h" />
@@ -235,6 +236,7 @@
     <ClInclude Include="Type.h" />
     <ClInclude Include="Flag.h" />
     <ClInclude Include="UserComponent\UserComponent_Base.h" />
+    <ClInclude Include="WriteMemoryStream.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BineryReader.cpp" />
@@ -262,6 +264,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="KeyInput.cpp" />
     <ClCompile Include="PathManager.cpp" />
+    <ClCompile Include="ReadMemoryStream.cpp" />
     <ClCompile Include="RefCount.cpp" />
     <ClCompile Include="Render\BlendState.cpp" />
     <ClCompile Include="Render\DepthStancilState.cpp" />
@@ -288,6 +291,7 @@
     <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="UserComponent\UserComponent_Base.cpp" />
+    <ClCompile Include="WriteMemoryStream.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Copy.bat" />
