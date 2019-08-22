@@ -19,7 +19,6 @@ private:
 	unordered_map<__int64, GameObject*> m_AllEattingMap; //매모리를 희생해서 찾는속도를 빠르게하겠다.
 	list<GameObject*> m_UpdateEatting;
 	static __int64 m_Count;
-	Player_Com* m_MainPlayer;
 	Vector2 m_WinSize;
 
 public:

@@ -22,6 +22,8 @@ BasicInfo::~BasicInfo()
 
 bool BasicInfo::Init()
 {
+	m_Material = m_Object->FindComponentFromType<Material_Com>(CT_MATERIAL);
+
 	return true;
 }
 
@@ -75,16 +77,16 @@ void BasicInfo::RecvScale()
 
 void BasicInfo::SetRGB(float R, float G, float B)
 {
-	m_RGB = Vector3(R, G, B);
+	m_RGB = Vector3(R / 255.0f, G / 255.0f, B / 255.0f);
 	
 	if (m_Material == NULLPTR)
 	{
 		m_Material = m_Object->FindComponentFromType<Material_Com>(CT_MATERIAL);
-		m_Material->SetMaterial(Vector4(R / 255.0f, G / 255.0f, B / 255.0f, 1.0f));
+		m_Material->SetMaterial(Vector4(m_RGB.x, m_RGB.y, m_RGB.z, 1.0f));
 		return;
 	}
 
-	m_Material->SetMaterial(Vector4(R / 255.0f, G / 255.0f, B / 255.0f, 1.0f));
+	m_Material->SetMaterial(Vector4(m_RGB.x, m_RGB.y, m_RGB.z, 1.0f));
 }
 
 void BasicInfo::SetScale(float Scale)
@@ -93,5 +95,12 @@ void BasicInfo::SetScale(float Scale)
 	m_CollScale = Scale * 0.5f;
 
 	m_Transform->SetWorldScale(m_Scale);
+	m_CirCleColl->AddInfo(m_CollScale);
+}
+
+void BasicInfo::SetCollScale(float Scale)
+{
+	m_Scale = Scale;
+	m_CollScale = Scale * 0.5f;
 	m_CirCleColl->SetInfo(m_CollScale);
 }

@@ -22,6 +22,7 @@ public:
 
 	void SetRGB(float R, float G, float B);
 	void SetScale(float Scale);
+	void SetCollScale(float Scale);
 
 protected:
 	float m_Scale;

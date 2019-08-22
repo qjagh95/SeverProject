@@ -9,7 +9,7 @@ __int64 Stage_Com::m_Count = 0;
 
 Stage_Com::Stage_Com()
 {
-	m_MainPlayer = NULLPTR;
+
 }
 
 Stage_Com::Stage_Com(const Stage_Com & CopyData)
@@ -32,24 +32,21 @@ int Stage_Com::Input(float DeltaTime)
 {
 	m_UpdateEatting.clear();
 
-	if (m_MainPlayer == NULLPTR)
-		return 0;
-
-	Vector3 PlayerPos = m_MainPlayer->GetTransform()->GetWorldPos();
+	Vector3 CameraPos = m_Scene->GetMainCameraTransform()->GetWorldPos();
+	Vector3 PlusPos;
+	PlusPos.x = CameraPos.x + m_WinSize.x;
+	PlusPos.y = CameraPos.y + m_WinSize.y;
 
 	//가시판단
 	for (auto CurObject : m_vecAllEatting)
 	{
 		Vector3 getPos = CurObject->GetTransform()->GetWorldPos();
 
-		if (true)
-		{
+		if (CameraPos.x <= PlusPos.x && CameraPos.y <= PlusPos.y)
 			m_UpdateEatting.push_back(CurObject);
 
-		}
 		else
 			continue;
-
 	}
 
 	for (auto CurObject : m_UpdateEatting)
@@ -76,12 +73,13 @@ int Stage_Com::LateUpdate(float DeltaTime)
 
 void Stage_Com::Collision(float DeltaTime)
 {
-	for (auto CurObject : m_UpdateEatting)
-		CurObject->Collision(DeltaTime);
 }
 
 void Stage_Com::Render(float DeltaTime)
 {
+	for (auto CurObject : m_UpdateEatting)
+		CurObject->Collision(DeltaTime);
+
 	for (auto CurObject : m_UpdateEatting)
 		CurObject->Render(DeltaTime);
 }
@@ -99,15 +97,16 @@ void Stage_Com::CreateEatting(const Vector3& Pos, const Vector3& RGB, float Scal
 	string Convert = Buffer;                  
 
 	GameObject* newObject = GameObject::CreateObject(Convert, NULLPTR);
+	newObject->SetScene(m_Scene);
+	newObject->SetLayer(m_Layer);
+
 	Eatting* newEatting = newObject->AddComponent<Eatting>("Eatting" + Convert);
 	newEatting->GetTransform()->SetWorldPos(Pos);
 	newEatting->SetRGB(RGB.x, RGB.y, RGB.z);
-	newEatting->SetScale(Scale);
+	newEatting->SetCollScale(Scale);
 
 	m_vecAllEatting.push_back(newObject);
 	m_AllEattingMap.insert(make_pair(m_Count, newObject));
-
-	SAFE_RELEASE(newEatting);
 
 	m_Count++;
 }

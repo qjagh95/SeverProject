@@ -23,24 +23,12 @@ bool Eatting::Init()
 	RenderComponent->SetRenderState(ALPHA_BLEND);
 	SAFE_RELEASE(RenderComponent);
 
+	BasicInfo::Init();
+
+	m_Material->SetDiffuseTexture(0, "Circle", TEXT("Circle.png"));
+
 	m_CirCleColl = m_Object->AddComponent<JEONG::ColliderCircle_Com>("EattingCircle");
 	m_CirCleColl->SetCollsionCallback(CCT_FIRST, this, &Eatting::PlayerColl);
-	m_CirCleColl->SetInfo(10);
-
-	m_Scale = RandomRange(1, 10);
-
-	float S = static_cast<float>(RandomRange(0, 10));
-	m_Transform->SetWorldScale(S, S, 1.0f);
-	m_Transform->SetWorldPos(100.f, 100.f, 1.0f);
-
-	float R = static_cast<float>(RandomRange(0, 255));
-	float G = static_cast<float>(RandomRange(0, 255));
-	float B = static_cast<float>(RandomRange(0, 255));
-
-	Material_Com* MaterialComponent = m_Object->FindComponentFromType<Material_Com>(CT_MATERIAL);
-	MaterialComponent->SetMaterial(Vector4(R / 255.0f, G / 255.0f, B / 255.0f, 1.0f));
-	MaterialComponent->SetDiffuseTexture(0, "Circle", TEXT("Circle.png"));
-	SAFE_RELEASE(MaterialComponent);
 
 	return true;
 }
@@ -61,7 +49,7 @@ int Eatting::LateUpdate(float DeltaTime)
 }
 
 void Eatting::Collision(float DeltaTime)
-{
+{                                            
 }
 
 void Eatting::Render(float DeltaTime)

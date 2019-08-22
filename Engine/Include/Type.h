@@ -70,6 +70,8 @@ struct JEONG_DLL CircleInfo
 {
 	float Radius;
 	Vector3 CenterPos;
+	CircleInfo() { Radius = 0.0f; }
+
 };
 
 struct JEONG_DLL OBB2DInfo
