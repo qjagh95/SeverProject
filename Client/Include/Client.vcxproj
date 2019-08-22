@@ -229,6 +229,7 @@
     </ClCompile>
     <ClCompile Include="Eatting.cpp" />
     <ClCompile Include="SceneMain\MainScene.cpp" />
+    <ClCompile Include="Stage_Com.cpp" />
     <ClCompile Include="WinMain.cpp" />
     <ClCompile Include="UserComponent\Player_Com.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
@@ -239,6 +240,7 @@
     <ClInclude Include="ClientHeader.h" />
     <ClInclude Include="Eatting.h" />
     <ClInclude Include="SceneMain\MainScene.h" />
+    <ClInclude Include="Stage_Com.h" />
     <ClInclude Include="UserComponent\Player_Com.h" />
   </ItemGroup>
   <ItemGroup>

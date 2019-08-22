@@ -8,6 +8,7 @@
 #include "Component/Component_Base.h"
 #include "Component/ColliderPixel_Com.h"
 #include "Component/BackColor_Com.h"
+#include "Eatting.h"
 
 #include "../UserComponent/Player_Com.h"
 
@@ -40,6 +41,10 @@ bool MainScene::Init()
 
 	GameObject* PlayerObject = GameObject::CreateObject("Player", Default);
 	Player_Com* player_Com = PlayerObject->AddComponent<Player_Com>("Player_Com");
+	SAFE_RELEASE(player_Com);
+
+	GameObject* Eatting123 = GameObject::CreateObject("Eatting123123", Default);
+	Eatting* Eatting123123 = Eatting123->AddComponent<Eatting>("Player_Com");
 	SAFE_RELEASE(player_Com);
 
 	mainCamera->SetTarget(PlayerObject);

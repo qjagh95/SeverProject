@@ -1,6 +1,9 @@
 #pragma once
 #include <UserComponent/UserComponent_Base.h>
 
+#include <Component/ColliderCircle_Com.h>
+#include <Component/ColliderRect_Com.h>
+
 class BasicInfo : public UserComponent_Base
 {
 public:
@@ -18,10 +21,17 @@ public:
 	void RecvRGB();
 	void RecvScale();
 
+	void SetRGB(float R, float G, float B);
+	void SetScale(float Scale);
+
 protected:
 	float m_Scale;
 	Vector3 m_RGB;
 
+	JEONG::ColliderCircle_Com* m_CirleColl;
+	JEONG::ColliderRect_Com* m_RectColl;
+
+	float m_CollVar;
 public:
 	BasicInfo();
 	~BasicInfo();

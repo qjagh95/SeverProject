@@ -3,9 +3,6 @@
 #include "GameObject.h"
 #include "KeyInput.h"
 
-#include "Component/ColliderRect_Com.h"
-#include "Component/ColliderCircle_Com.h"
-#include "Component/ColliderOBB2D_Com.h"
 
 Player_Com::Player_Com()
 {
@@ -32,12 +29,13 @@ bool Player_Com::Init()
 	RenderComponent->SetRenderState(ALPHA_BLEND);
 	SAFE_RELEASE(RenderComponent);
 
-	ColliderCircle_Com* Circle = m_Object->AddComponent<ColliderCircle_Com>("123");
+	ColliderCircle_Com* Circle = m_Object->AddComponent<ColliderCircle_Com>("1234");
 	Circle->SetInfo(50.0f);
 	Circle->SetCollsionCallback(CCT_FIRST, this, &Player_Com::EattingFunc);
+
 	SAFE_RELEASE(Circle);
 
-	m_Transform->SetWorldScale(100.0f, 100.0f, 1.0f);
+	m_Transform->SetWorldScale(30.0f, 30.0f, 1.0f);
 	m_Transform->SetWorldPos(500.0f, 500.0f, 1.0f);
 
 	float R = static_cast<float>(RandomRange(0, 255));
@@ -95,6 +93,6 @@ Player_Com * Player_Com::Clone()
 	return new Player_Com(*this);
 }
 
-void Player_Com::EattingFunc(Collider_Com * Src, Collider_Com * Dest, float DeltaTime)
+void Player_Com::EattingFunc(JEONG::Collider_Com * Src, JEONG::Collider_Com * Dest, float DeltaTime)
 {
 }

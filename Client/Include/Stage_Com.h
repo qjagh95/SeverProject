@@ -1,8 +1,6 @@
 #pragma once
-#include "BasicInfo.h"
-JEONG_USING
-
-class Eatting : public BasicInfo
+class Eatting;
+class Stage_Com : public UserComponent_Base
 {
 public:
 	bool Init() override;
@@ -12,17 +10,13 @@ public:
 	void Collision(float DeltaTime) override;
 	void CollisionLateUpdate(float DeltaTime) override;
 	void Render(float DeltaTime) override;
-	Eatting* Clone() override;
+	Stage_Com* Clone() override;
 
-	bool GetisUpdate() const { return m_isUpdate; }
-	void SetRGB(float R, float G, float B);
-	void SetScale(float Scale);
-
-private:
-	bool m_isUpdate;
+	vector<Eatting*> m_vecEatting;
 
 public:
-	Eatting();
-	~Eatting();
+	Stage_Com();
+	Stage_Com(const Stage_Com& CopyData);
+	~Stage_Com();
 };
 

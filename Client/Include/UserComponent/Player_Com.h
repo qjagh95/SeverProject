@@ -1,10 +1,9 @@
 #pragma once
 #include "BasicInfo.h"
-#include "Component/Collider_Com.h"
 
+#include <Component/ColliderCircle_Com.h>
 JEONG_USING
 
-class Collider;
 class Player_Com : public BasicInfo
 {
 public:

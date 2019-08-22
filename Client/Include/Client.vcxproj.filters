@@ -37,6 +37,9 @@
     <ClCompile Include="Eatting.cpp">
       <Filter>MainScene\Component</Filter>
     </ClCompile>
+    <ClCompile Include="Stage_Com.cpp">
+      <Filter>MainScene\Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClientHeader.h">
@@ -52,6 +55,9 @@
       <Filter>BasicInfo</Filter>
     </ClInclude>
     <ClInclude Include="Eatting.h">
+      <Filter>MainScene\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Stage_Com.h">
       <Filter>MainScene\Component</Filter>
     </ClInclude>
   </ItemGroup>

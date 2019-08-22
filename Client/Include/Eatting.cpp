@@ -4,8 +4,8 @@
 
 Eatting::Eatting()
 {
+	m_isUpdate = true;
 }
-
 
 Eatting::~Eatting()
 {
@@ -18,13 +18,13 @@ bool Eatting::Init()
 	RenderComponent->SetRenderState(ALPHA_BLEND);
 	SAFE_RELEASE(RenderComponent);
 
-	ColliderRect_Com* Rect = m_Object->AddComponent<ColliderRect_Com>("123");
-	Rect->SetInfo(0, 0);
+	JEONG::ColliderRect_Com* Rect = m_Object->AddComponent<JEONG::ColliderRect_Com>("123");
+	Rect->SetInfo(0, 10);
 	SAFE_RELEASE(Rect);
 
 	float S = static_cast<float>(RandomRange(0, 10));
 	m_Transform->SetWorldScale(S, S, 1.0f);
-	m_Transform->SetWorldPos(500.0f, 500.0f, 1.0f);
+	m_Transform->SetWorldPos(100.f, 100.f, 1.0f);
 
 	float R = static_cast<float>(RandomRange(0, 255));
 	float G = static_cast<float>(RandomRange(0, 255));
