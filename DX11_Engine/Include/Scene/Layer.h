@@ -12,7 +12,6 @@ public:
 	int Update(float DeltaTime);
 	int LateUpdate(float DeltaTime);
 	void Collision(float DeltaTime);
-	void CollisionLateUpdate(float DeltaTime);
 	void Render(float DeltaTime);
 	
 	int GetZOrder() const { return m_ZOrder; }
@@ -34,7 +33,6 @@ private:
 
 public: 
 	friend class Scene;
-	friend class TileImage_Com;
 };
 
 JEONG_END

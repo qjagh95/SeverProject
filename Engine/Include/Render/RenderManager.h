@@ -46,7 +46,6 @@ public:
 
 private:
 	void Render2D(float DeltaTime);
-	void Render3D(float DeltaTime);
 
 private:
 	GAME_MODE m_GameMode;

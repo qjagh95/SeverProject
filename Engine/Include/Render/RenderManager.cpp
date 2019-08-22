@@ -148,48 +148,34 @@ RenderTarget * RenderManager::FindRenderTarget(const string & KeyName)
 
 void RenderManager::AddRenderObject(GameObject * object)
 {
-	if (m_GameMode == GM_3D) 
+	RENDER_GROUP group = RG_NORMAL;
+
+	if (object->CheckComponentType(CT_STAGE2D))
+		group = RG_LANDSCAPE;
+
+	else if (object->CheckComponentType(CT_UI))
+		group = RG_UI;
+
+	if (m_RenderGroup[group].Size == m_RenderGroup[group].Capacity)
 	{
-	}
-	else
-	{
-		RENDER_GROUP group = RG_NORMAL;
+		m_RenderGroup[group].Capacity *= 2;
 
-		if (object->CheckComponentType(CT_STAGE2D))
-			group = RG_LANDSCAPE;
-
-		else if (object->CheckComponentType(CT_UI))
-			group = RG_UI;
-
-		if (m_RenderGroup[group].Size == m_RenderGroup[group].Capacity)
+		GameObject** newObject = new GameObject*[m_RenderGroup[group].Capacity];
 		{
-			m_RenderGroup[group].Capacity *= 2;
-
-			GameObject** newObject = new GameObject*[m_RenderGroup[group].Capacity];
-			{
-				memcpy(newObject, m_RenderGroup[group].ObjectList, sizeof(GameObject*) * m_RenderGroup[group].Size);
-			}
-			SAFE_DELETE_ARRARY(m_RenderGroup[group].ObjectList);
-
-			m_RenderGroup[group].ObjectList = newObject;
+			memcpy(newObject, m_RenderGroup[group].ObjectList, sizeof(GameObject*) * m_RenderGroup[group].Size);
 		}
+		SAFE_DELETE_ARRARY(m_RenderGroup[group].ObjectList);
 
-		m_RenderGroup[group].ObjectList[m_RenderGroup[group].Size] = object;
-		m_RenderGroup[group].Size++;
+		m_RenderGroup[group].ObjectList = newObject;
 	}
+
+	m_RenderGroup[group].ObjectList[m_RenderGroup[group].Size] = object;
+	m_RenderGroup[group].Size++;
 }
 
 void RenderManager::Render(float DeltaTime)
 {
-	switch (m_GameMode)
-	{
-		case GM_2D:
-			Render2D(DeltaTime);
-			break;
-		case GM_3D:
-			Render3D(DeltaTime);
-			break;
-	}
+	Render2D(DeltaTime);
 }
 
 void RenderManager::Render2D(float DeltaTime)
@@ -238,8 +224,4 @@ void RenderManager::Render2D(float DeltaTime)
 	}
 	alphaState->ResetState();
 	SAFE_RELEASE(alphaState);
-}
-
-void RenderManager::Render3D(float DeltaTime)
-{
 }

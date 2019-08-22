@@ -58,10 +58,6 @@ void BackColor_Com::Collision(float DeltaTime)
 {
 }
 
-void BackColor_Com::CollisionLateUpdate(float DeltaTime)
-{
-}
-
 void BackColor_Com::Render(float DeltaTime)
 {
 }

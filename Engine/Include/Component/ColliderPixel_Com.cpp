@@ -74,10 +74,6 @@ void ColliderPixel_Com::Collision(float DeltaTime)
 {
 }
 
-void ColliderPixel_Com::CollisionLateUpdate(float DeltaTime)
-{
-}
-
 void ColliderPixel_Com::Render(float DeltaTime)
 {
 #ifdef _DEBUG

@@ -136,10 +136,6 @@ void Transform_Com::Collision(float DeltaTime)
 {
 }
 
-void Transform_Com::CollisionLateUpdate(float DeltaTime)
-{
-}
-
 void Transform_Com::Render(float DeltaTime)
 {
 	m_DeltaMove = Vector3::Zero;

@@ -39,10 +39,6 @@ void BasicInfo::Collision(float DeltaTime)
 {
 }
 
-void BasicInfo::CollisionLateUpdate(float DeltaTime)
-{
-}
-
 void BasicInfo::Render(float DeltaTime)
 {
 }

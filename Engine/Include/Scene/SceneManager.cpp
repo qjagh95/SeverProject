@@ -54,12 +54,6 @@ int SceneManager::Collision(float DeltaTime)
 	return ChangeScene();
 }
 
-int SceneManager::CollsionLateUpdate(float DeltaTime)
-{
-	m_CurScene->CollisionLateUpdate(DeltaTime);
-	return ChangeScene();
-}
-
 void SceneManager::Render(float DeltaTime)
 {
 	m_CurScene->Render(DeltaTime);

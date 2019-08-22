@@ -12,7 +12,6 @@ public:
 	int Update(float DeltaTime);
 	int LateUpdate(float DeltaTime);
 	int Collision(float DeltaTime);
-	int CollsionLateUpdate(float DeltaTime);
 	void Render(float DeltaTime);
 
 	Scene* GetCurScene() const;

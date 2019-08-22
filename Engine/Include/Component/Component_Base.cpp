@@ -43,10 +43,6 @@ void Component_Base::Collision(float DeltaTime)
 {
 }
 
-void Component_Base::CollisionLateUpdate(float DeltaTime)
-{
-}
-
 void Component_Base::Render(float DeltaTime)
 {
 }

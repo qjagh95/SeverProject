@@ -20,7 +20,6 @@ private:
 	int Update(float DeltaTime);
 	int LateUpdate(float DeltaTime);
 	int Collsion(float DeltaTime);
-	int CollsionLateUpdate(float DeltaTime);
 	void Render(float DeltaTime);
 
 	void Register(const TCHAR* ClassName, int iIconID, int iSmallIconID);

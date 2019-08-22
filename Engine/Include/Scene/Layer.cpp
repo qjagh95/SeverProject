@@ -121,30 +121,6 @@ void Layer::Collision(float DeltaTime)
 	}
 }
 
-void Layer::CollisionLateUpdate(float DeltaTime)
-{
-	list<GameObject*>::iterator StartIter = m_ObjectList.begin();
-	list<GameObject*>::iterator EndIter = m_ObjectList.end();
-
-	for (; StartIter != EndIter; )
-	{
-		if ((*StartIter)->GetIsActive() == false)
-		{
-			SAFE_RELEASE((*StartIter));
-			StartIter = m_ObjectList.erase(StartIter);
-			continue;
-		}
-		else if ((*StartIter)->GetIsShow() == false)
-		{
-			StartIter++;
-			continue;
-		}
-
-		(*StartIter)->CollisionLateUpdate(DeltaTime);
-		StartIter++;
-	}
-}
-
 void Layer::Render(float DeltaTime)
 {
 	list<GameObject*>::iterator StartIter = m_ObjectList.begin();

@@ -70,10 +70,6 @@ void ColliderRect_Com::Collision(float DeltaTime)
 {
 }
 
-void ColliderRect_Com::CollisionLateUpdate(float DeltaTime)
-{
-}
-
 void ColliderRect_Com::Render(float DeltaTime)
 {
 #ifdef _DEBUG

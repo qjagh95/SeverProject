@@ -11,7 +11,7 @@ JEONG_USING
 
 int APIENTRY wWinMain(_In_ HINSTANCE hIstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
 {
-	srand(time(0));
+	srand(time(static_cast<unsigned int>(0)));
 	if (Core::Get()->Init(hIstance, 1280, 720, TEXT("JeongRealEngine"), TEXT("JeongRealEngine"), IDI_ICON1, IDI_ICON1) == false)
 	{
 		Core::Delete();

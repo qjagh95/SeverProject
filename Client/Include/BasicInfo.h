@@ -1,6 +1,5 @@
 #pragma once
 #include <UserComponent/UserComponent_Base.h>
-
 #include <Component/ColliderCircle_Com.h>
 #include <Component/ColliderRect_Com.h>
 
@@ -12,9 +11,9 @@ public:
 	virtual int Update(float DeltaTime) override;
 	virtual int LateUpdate(float DeltaTime) override;
 	virtual void Collision(float DeltaTime) override;
-	virtual void CollisionLateUpdate(float DeltaTime) override;
 	virtual void Render(float DeltaTime) override;
 	virtual BasicInfo* Clone() override;
+
 	void SendPos();
 	void SendScale();
 	void RecvPos();
@@ -28,8 +27,8 @@ protected:
 	float m_Scale;
 	Vector3 m_RGB;
 
-	JEONG::ColliderCircle_Com* m_CirleColl;
-	JEONG::ColliderRect_Com* m_RectColl;
+	ColliderCircle_Com* m_CirleColl;
+	ColliderRect_Com* m_RectColl;
 
 	float m_CollVar;
 public:

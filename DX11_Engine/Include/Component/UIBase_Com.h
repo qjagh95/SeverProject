@@ -11,7 +11,6 @@ public:
 	virtual int Update(float DeltaTime) override;
 	virtual int LateUpdate(float DeltaTime) override;
 	virtual void Collision(float DeltaTime) override;
-	virtual void CollisionLateUpdate(float DeltaTime) override;
 	virtual void Render(float DeltaTime) override;
 	virtual UIBase_Com* Clone() override;
 	virtual void AfterClone() override {};

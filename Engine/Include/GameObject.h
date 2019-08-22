@@ -14,7 +14,6 @@ public:
 	int Update(float DeltaTime);
 	int LateUpdate(float DeltaTime);
 	void Collision(float DeltaTime);
-	void CollisionLateUpdate(float DeltaTime);
 	void Render(float DeltaTime);
 	GameObject* Clone(); //클론은 디자인패턴의 프로토타입패턴.
 	void AfterClone();

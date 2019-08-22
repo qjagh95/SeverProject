@@ -15,7 +15,6 @@ public:
 	int Update(float DeltaTime);
 	int LateUpdate(float DeltaTime);
 	void Collision(float DeltaTime);
-	void CollisionLateUpdate(float DeltaTime);
 	void Render(float DeltaTime);
 
 	void AddLayer(const string& TagName, int ZOrder);

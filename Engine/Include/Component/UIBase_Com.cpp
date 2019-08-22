@@ -43,10 +43,6 @@ void UIBase_Com::Collision(float DeltaTime)
 {
 }
 
-void UIBase_Com::CollisionLateUpdate(float DeltaTime)
-{
-}
-
 void UIBase_Com::Render(float DeltaTime)
 {
 }

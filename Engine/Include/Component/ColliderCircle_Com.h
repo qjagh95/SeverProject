@@ -11,10 +11,8 @@ public:
 	int LateUpdate(float DeltaTime) override;
 	void Collision(float DeltaTime) override;
 	bool Collsion(Collider_Com* Dest, float DeltaTime) override;
-	void CollisionLateUpdate(float DeltaTime) override;
 	void Render(float DeltaTime) override;
 	ColliderCircle_Com* Clone() override;
-
 	CircleInfo GetInfo() const { return m_WorldInfo; }
 	void SetInfo(const float& Radius) { m_VirtualInfo.Radius = Radius; }
 

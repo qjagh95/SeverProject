@@ -14,7 +14,6 @@ public:
 	int Update(float DeltaTime) override;
 	int LateUpdate(float DeltaTime) override;
 	void Collision(float DeltaTime) override;
-	void CollisionLateUpdate(float DeltaTime) override;
 	void Render(float DeltaTime) override;
 	Transform_Com* Clone() override;
 

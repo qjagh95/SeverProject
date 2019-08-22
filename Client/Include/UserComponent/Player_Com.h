@@ -1,7 +1,6 @@
 #pragma once
 #include "BasicInfo.h"
 
-#include <Component/ColliderCircle_Com.h>
 JEONG_USING
 
 class Player_Com : public BasicInfo
@@ -12,7 +11,6 @@ public:
 	int Update(float DeltaTime) override;
 	int LateUpdate(float DeltaTime) override;
 	void Collision(float DeltaTime) override;
-	void CollisionLateUpdate(float DeltaTime) override;
 	void Render(float DeltaTime) override;
 	Player_Com* Clone() override;
 

@@ -90,10 +90,6 @@ void ColliderOBB2D_Com::Collision(float DeltaTime)
 {
 }
 
-void ColliderOBB2D_Com::CollisionLateUpdate(float DeltaTime)
-{
-}
-
 void ColliderOBB2D_Com::Render(float DeltaTime)
 {
 #ifdef _DEBUG

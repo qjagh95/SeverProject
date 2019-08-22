@@ -79,10 +79,6 @@ void Camera_Com::Collision(float DeltaTime)
 {
 }
 
-void Camera_Com::CollisionLateUpdate(float DeltaTime)
-{
-}
-
 void Camera_Com::Render(float DeltaTime)
 {
 }

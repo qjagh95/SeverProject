@@ -3,7 +3,6 @@
 #include "GameObject.h"
 #include "KeyInput.h"
 
-
 Player_Com::Player_Com()
 {
 }
@@ -77,10 +76,6 @@ int Player_Com::LateUpdate(float DeltaTime)
 }
 
 void Player_Com::Collision(float DeltaTime)
-{
-}
-
-void Player_Com::CollisionLateUpdate(float DeltaTime)
 {
 }
 

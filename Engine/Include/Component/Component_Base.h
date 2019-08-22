@@ -16,7 +16,6 @@ public:
 	virtual int Update(float DeltaTime);
 	virtual int LateUpdate(float DeltaTime);
 	virtual void Collision(float DeltaTime);
-	virtual void CollisionLateUpdate(float DeltaTime);
 	virtual void Render(float DeltaTime);
 	virtual Component_Base* Clone() = 0;
 	virtual void AfterClone() {}

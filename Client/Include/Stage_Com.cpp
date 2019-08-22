@@ -39,10 +39,6 @@ void Stage_Com::Collision(float DeltaTime)
 {
 }
 
-void Stage_Com::CollisionLateUpdate(float DeltaTime)
-{
-}
-
 void Stage_Com::Render(float DeltaTime)
 {
 }
@@ -50,4 +46,8 @@ void Stage_Com::Render(float DeltaTime)
 Stage_Com * Stage_Com::Clone()
 {
 	return nullptr;
+}
+
+void Stage_Com::CreateEatting(const Vector3 & Pos)
+{
 }

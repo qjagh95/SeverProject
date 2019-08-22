@@ -243,50 +243,6 @@ void Scene::Collision(float DeltaTime)
 	CollsionManager::Get()->Collsion(DeltaTime);
 }
 
-void Scene::CollisionLateUpdate(float DeltaTime)
-{
-	list<SceneComponent*>::iterator StartIter = m_SceneComponentList.begin();
-	list<SceneComponent*>::iterator EndIter = m_SceneComponentList.end();
-
-	for (; StartIter != EndIter; )
-	{
-		if ((*StartIter)->GetIsActive() == false)
-		{
-			SAFE_RELEASE((*StartIter));
-			StartIter = m_SceneComponentList.erase(StartIter);
-			continue;
-		}
-		else if ((*StartIter)->GetIsShow() == false)
-		{
-			StartIter++;
-			continue;
-		}
-		(*StartIter)->CollisionLateUpdate(DeltaTime);
-		StartIter++;
-	}
-
-	list<Layer*>::iterator StartIter1 = m_LayerList.begin();
-	list<Layer*>::iterator EndIter1 = m_LayerList.end();
-
-	for (; StartIter1 != EndIter1; )
-	{
-		if ((*StartIter1)->GetIsActive() == false)
-		{
-			SAFE_RELEASE((*StartIter1));
-			StartIter1 = m_LayerList.erase(StartIter1);
-			continue;
-		}
-		else if ((*StartIter1)->GetIsShow() == false)
-		{
-			StartIter1++;
-			continue;
-		}
-
-		(*StartIter1)->CollisionLateUpdate(DeltaTime);
-		StartIter1++;
-	}
-}
-
 void Scene::Render(float DeltaTime)
 {
 	list<SceneComponent*>::iterator StartIter = m_SceneComponentList.begin();

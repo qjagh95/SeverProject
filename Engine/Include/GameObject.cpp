@@ -224,37 +224,6 @@ void GameObject::Collision(float DeltaTime)
 	CollsionManager::Get()->AddCollsion(this);
 }
 
-void GameObject::CollisionLateUpdate(float DeltaTime)
-{
-	list<Component_Base*>::iterator StartIter = m_ComponentList.begin();
-	list<Component_Base*>::iterator EndIter = m_ComponentList.end();
-
-	for (; StartIter != EndIter;)
-	{
-		Renderer_Com* pRenderer = FindComponentFromType<Renderer_Com>(CT_RENDER);
-		if (pRenderer != NULLPTR)
-		{
-			pRenderer->DeleteComponentCBuffer(*StartIter);
-			SAFE_RELEASE(pRenderer);
-		}
-
-		if ((*StartIter)->GetIsActive() == false)
-		{
-			SAFE_RELEASE((*StartIter));
-			StartIter = m_ComponentList.erase(StartIter);
-			continue;
-		}
-		else if ((*StartIter)->GetIsShow() == false)
-		{
-			StartIter++;
-			continue;
-		}
-		(*StartIter)->CollisionLateUpdate(DeltaTime);
-		StartIter++;
-	}
-
-}
-
 void GameObject::Render(float DeltaTime)
 {
 	m_Transform->Render(DeltaTime);

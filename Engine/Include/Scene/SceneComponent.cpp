@@ -31,10 +31,6 @@ void SceneComponent::Collision(float DeltaTime)
 {
 }
 
-void SceneComponent::CollisionLateUpdate(float DeltaTime)
-{
-}
-
 void SceneComponent::Render(float DeltaTime)
 {
 }

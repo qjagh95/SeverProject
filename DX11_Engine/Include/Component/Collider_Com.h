@@ -14,7 +14,6 @@ public:
 	virtual int Update(float DeltaTime) override;
 	virtual int LateUpdate(float DeltaTime) override;
 	virtual void Collision(float DeltaTime) override;
-	virtual void CollisionLateUpdate(float DeltaTime) override;
 	virtual void Render(float DeltaTime) override;
 	virtual bool Collsion(Collider_Com* Dest, float DeltaTime) = 0;
 	virtual Collider_Com* Clone() override = 0;

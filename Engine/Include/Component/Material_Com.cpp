@@ -96,10 +96,6 @@ void Material_Com::Collision(float DeltaTime)
 {
 }
 
-void Material_Com::CollisionLateUpdate(float DeltaTime)
-{
-}
-
 void Material_Com::Render(float DeltaTime)
 {
 }

@@ -100,18 +100,6 @@
     <Filter Include="Core\08. Object\Component\BaseComponent\07. UI\Button">
       <UniqueIdentifier>{583f8dae-d1cc-4114-89e3-e238e23b51b9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\08. Object\Component\BaseComponent\07. UI\UIcon">
-      <UniqueIdentifier>{c40b2fa9-6dc1-4f78-9f08-eee22c82a8eb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\08. Object\Component\BaseComponent\08. WorldUI">
-      <UniqueIdentifier>{66062327-e265-42f0-96ad-d8ca5ae16dcb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\08. Object\Component\BaseComponent\08. WorldUI\TitleBar">
-      <UniqueIdentifier>{0bf88714-69c7-4e70-81dd-820f6ec46000}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\08. Object\Component\BaseComponent\08. WorldUI\BarWorld">
-      <UniqueIdentifier>{3bcf4f7a-e15f-4c3e-8ab1-454722289dd2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Core\09. Render\01. Shader">
       <UniqueIdentifier>{00f20cd5-16d9-46f1-adf4-c2e712b1379f}</UniqueIdentifier>
     </Filter>
@@ -159,15 +147,6 @@
     </Filter>
     <Filter Include="Core\11. Scene\04. Manager">
       <UniqueIdentifier>{0c56c732-d20e-4202-8dc8-15bca95a6ebb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\08. Object\Component\BaseComponent\10. Text">
-      <UniqueIdentifier>{a63125f8-2269-4817-bdea-fe31721ce274}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\08. Object\Component\BaseComponent\10. Text\02. Manager">
-      <UniqueIdentifier>{53c245e5-3f56-4e69-b92b-dbc83104891d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\08. Object\Component\BaseComponent\10. Text\01. Com">
-      <UniqueIdentifier>{33d9124c-306b-49ab-99d1-554247cc23a7}</UniqueIdentifier>
     </Filter>
     <Filter Include="Core\05. PathManager">
       <UniqueIdentifier>{48f6e9a7-548c-4725-8616-1a4015796c91}</UniqueIdentifier>
@@ -315,12 +294,6 @@
     <ClInclude Include="Component\Button_Com.h">
       <Filter>Core\08. Object\Component\BaseComponent\07. UI\Button</Filter>
     </ClInclude>
-    <ClInclude Include="Component\TitleBar_Com.h">
-      <Filter>Core\08. Object\Component\BaseComponent\08. WorldUI\TitleBar</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\Bar_Com.h">
-      <Filter>Core\08. Object\Component\BaseComponent\08. WorldUI\BarWorld</Filter>
-    </ClInclude>
     <ClInclude Include="Render\RenderTarget.h">
       <Filter>Core\09. Render\06. RenderTarget</Filter>
     </ClInclude>
@@ -459,12 +432,6 @@
     </ClCompile>
     <ClCompile Include="Component\Button_Com.cpp">
       <Filter>Core\08. Object\Component\BaseComponent\07. UI\Button</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\TitleBar_Com.cpp">
-      <Filter>Core\08. Object\Component\BaseComponent\08. WorldUI\TitleBar</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Bar_Com.cpp">
-      <Filter>Core\08. Object\Component\BaseComponent\08. WorldUI\BarWorld</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Core\03. Header</Filter>

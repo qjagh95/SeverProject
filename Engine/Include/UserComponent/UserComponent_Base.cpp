@@ -40,10 +40,6 @@ void UserComponent_Base::Collision(float DeltaTime)
 {
 }
 
-void UserComponent_Base::CollisionLateUpdate(float DeltaTime)
-{
-}
-
 void UserComponent_Base::Render(float DeltaTime)
 {
 }

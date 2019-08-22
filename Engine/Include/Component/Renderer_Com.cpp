@@ -109,10 +109,6 @@ void Renderer_Com::Collision(float DeltaTime)
 {
 }
 
-void Renderer_Com::CollisionLateUpdate(float DeltaTime)
-{
-}
-
 void Renderer_Com::Render(float DeltaTime)
 {
 	if (m_Material == NULLPTR)

@@ -76,10 +76,6 @@ void MainScene::Collision(float DeltaTime)
 {
 }
 
-void MainScene::CollisionLateUpdate(float DeltaTime)
-{
-}
-
 void MainScene::Render(float DeltaTime)
 {
 }

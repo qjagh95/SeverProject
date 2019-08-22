@@ -73,10 +73,6 @@ void ColliderCircle_Com::Collision(float DeltaTime)
 {
 }
 
-void ColliderCircle_Com::CollisionLateUpdate(float DeltaTime)
-{
-}
-
 void ColliderCircle_Com::Render(float DeltaTime)
 {
 #ifdef _DEBUG
@@ -131,9 +127,6 @@ bool ColliderCircle_Com::Collsion(Collider_Com * Dest, float DeltaTime)
 			break;
 		case CT_OBB2D:
 			return  CollsionOBB2DToCircle(((ColliderOBB2D_Com*)Dest)->GetInfo(), m_WorldInfo);
-			break;
-		case CT_PIXEL:
-			return false;
 			break;
 	}
 	return false;

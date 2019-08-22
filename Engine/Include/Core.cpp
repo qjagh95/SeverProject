@@ -147,7 +147,6 @@ void Core::Logic()
 	Update(Time);
 	LateUpdate(Time);
 	Collsion(Time);
-	CollsionLateUpdate(Time);
 	Render(Time);
 }
 
@@ -237,12 +236,6 @@ int Core::Collsion(float DeltaTime)
 {
 	SceneManager::Get()->Collision(DeltaTime);
 	
-	return 0;
-}
-
-int Core::CollsionLateUpdate(float DeltaTime)
-{
-	SceneManager::Get()->CollsionLateUpdate(DeltaTime);
 	return 0;
 }
 

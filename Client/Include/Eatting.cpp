@@ -57,10 +57,6 @@ void Eatting::Collision(float DeltaTime)
 {
 }
 
-void Eatting::CollisionLateUpdate(float DeltaTime)
-{
-}
-
 void Eatting::Render(float DeltaTime)
 {
 }
