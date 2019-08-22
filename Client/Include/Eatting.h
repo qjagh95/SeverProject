@@ -2,6 +2,7 @@
 #include "BasicInfo.h"
 JEONG_USING
 
+class Stage_Com;
 class Eatting : public BasicInfo
 {
 public:
@@ -13,12 +14,18 @@ public:
 	void Render(float DeltaTime) override;
 	Eatting* Clone() override;
 
+	void PlayerColl(Collider_Com* Src, Collider_Com* Dest, float DeltaTime);
+
 	bool GetisUpdate() const { return m_isUpdate; }
-	void SetRGB(float R, float G, float B);
-	void SetScale(float Scale);
+	void SetIsUpdate(bool isUpdate) { m_isUpdate = isUpdate; }
+	void SetStage(Stage_Com* Stage) { m_IncludeStage = Stage; }
+	void SetIndex(int Index) { m_Index = Index; }
+	__int64 GetIndex() const { return m_Index; }
 
 private:
 	bool m_isUpdate;
+	Stage_Com* m_IncludeStage;
+	__int64 m_Index;
 
 public:
 	Eatting();

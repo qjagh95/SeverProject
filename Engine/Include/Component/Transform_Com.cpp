@@ -275,6 +275,15 @@ void Transform_Com::SetWorldScale(float x, float y, float z)
 
 	m_isUpdate = true;
 }
+void Transform_Com::AddScale(float Scale)
+{	
+	//크기값을 받는다
+	m_WorldScale += Vector3(Scale, Scale, 1.0f);
+	//행렬에 크기값을 곱한다
+	m_MatWorldScale.Scaling(m_WorldScale);
+
+	m_isUpdate = true;
+}
 
 void Transform_Com::SetWorldRotX(float x)
 {

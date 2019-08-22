@@ -7,13 +7,13 @@ WriteMemoryStream::WriteMemoryStream()
 	m_Size = 0;
 
 	m_isInit = false;
-	m_MemoryData = nullptr;
+	m_WriteBuffer = nullptr;
 }
 
 WriteMemoryStream::~WriteMemoryStream()
 {
-	delete[] m_MemoryData;
-	m_MemoryData = nullptr;
+	delete[] m_WriteBuffer;
+	m_WriteBuffer = nullptr;
 }
 
 void WriteMemoryStream::Write(const void * Data, size_t Length)
@@ -28,7 +28,7 @@ void WriteMemoryStream::Write(const void * Data, size_t Length)
 
 	for (size_t i = 0; i < Length; i++)
 	{
-		m_MemoryData[m_Size] = TempData[i];
+		m_WriteBuffer[m_Size] = TempData[i];
 		m_Size++;
 
 		Resize();
@@ -45,8 +45,8 @@ void WriteMemoryStream::Resize()
 	m_Capacity *= 2;
 
 	char* TempData = new char[m_Capacity];
-	memcpy(TempData, m_MemoryData, m_Size);
-	delete m_MemoryData;
+	memcpy(TempData, m_WriteBuffer, m_Size);
+	delete m_WriteBuffer;
 
-	m_MemoryData = TempData;
+	m_WriteBuffer = TempData;
 }

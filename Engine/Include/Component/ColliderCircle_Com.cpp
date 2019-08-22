@@ -24,6 +24,7 @@ ColliderCircle_Com::ColliderCircle_Com()
 	m_DepthDisable = RenderManager::Get()->FindRenderState(DEPTH_DISABLE);
 	m_Mesh = ResourceManager::Get()->FindMesh("ColliderCircle");
 #endif
+	m_Plused = 0.0f;
 }
 
 ColliderCircle_Com::ColliderCircle_Com(const ColliderCircle_Com& CopyData)
@@ -51,6 +52,7 @@ int ColliderCircle_Com::Update(float DeltaTime)
 	Vector3 objectPos = m_Transform->GetWorldPos() + m_Pivot * m_VirtualInfo.Radius;
 
 	m_WorldInfo.Radius = m_VirtualInfo.Radius;
+	cout << m_VirtualInfo.Radius << endl;
 
 	m_WorldInfo.CenterPos.x = objectPos.x;
 	m_WorldInfo.CenterPos.y = objectPos.y + m_WorldInfo.Radius;

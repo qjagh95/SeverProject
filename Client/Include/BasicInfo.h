@@ -25,14 +25,16 @@ public:
 
 protected:
 	float m_Scale;
+	float m_CollScale;
 	Vector3 m_RGB;
 
-	ColliderCircle_Com* m_CirleColl;
+	ColliderCircle_Com* m_CirCleColl;
 	ColliderRect_Com* m_RectColl;
+	Material_Com* m_Material;
 
 	float m_CollVar;
 public:
 	BasicInfo();
-	~BasicInfo();
+	virtual ~BasicInfo();
 };
 

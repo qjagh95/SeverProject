@@ -1,5 +1,6 @@
 #pragma once
 class Eatting;
+class Player_Com;
 class Stage_Com : public UserComponent_Base
 {
 public:
@@ -11,14 +12,18 @@ public:
 	void Render(float DeltaTime) override;
 	Stage_Com* Clone() override;
 
-	void CreateEatting(const Vector3& Pos);
+	void CreateEatting(const Vector3& Pos, const Vector3& RGB, float Scale);
 
 private:
-	list<Eatting*> m_vecEatting;
+	vector<GameObject*> m_vecAllEatting;
+	unordered_map<__int64, GameObject*> m_AllEattingMap; //매모리를 희생해서 찾는속도를 빠르게하겠다.
+	list<GameObject*> m_UpdateEatting;
+	static __int64 m_Count;
+	Player_Com* m_MainPlayer;
+	Vector2 m_WinSize;
 
 public:
 	Stage_Com();
 	Stage_Com(const Stage_Com& CopyData);
 	~Stage_Com();
 };
-

@@ -19,7 +19,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hIstance, _In_opt_ HINSTANCE hPrevInstance,
 	}
 
 	////소켓연결준비
-	//SOCKET ConnetSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULLPTR, 0, WSA_FLAG_OVERLAPPED);
+	//SOCKET ConnetSocket = WSASocket(AF_INET, SOCK_DGRAM, 0, NULLPTR, 0, WSA_FLAG_OVERLAPPED);
 
 	//WSADATA Temp;
 	//WSAStartup(MAKEWORD(2, 2), &Temp);

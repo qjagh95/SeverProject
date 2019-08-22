@@ -14,6 +14,7 @@ public:
 
 	HWND GetHwnd() const { return m_hWnd; }
 	HINSTANCE GetHinstance() const { return m_hIstance; }
+	WinSize GetWinSize() const { return m_WinSize; }
 
 private:
 	int Input(float DeltaTime);

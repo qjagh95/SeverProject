@@ -43,6 +43,7 @@ public:
 	Matrix GetWorldPosMatrix() const { return m_MatWorldPos; }
 	Matrix GetWorldRotMatrix() const { return m_MatWorldRotation; }
 	Matrix GetWorldScaleMatrix() const { return m_MatWorldScale; }
+	void AddScale(float Scale);
 
 	//안움직이는 놈인가용?
 	void SetIsStatic(bool isStatic) { m_isStatic = isStatic; }

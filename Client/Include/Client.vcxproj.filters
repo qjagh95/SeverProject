@@ -40,6 +40,9 @@
     <ClCompile Include="Stage_Com.cpp">
       <Filter>MainScene\Component</Filter>
     </ClCompile>
+    <ClCompile Include="OtharPlayer_Com.cpp">
+      <Filter>MainScene\Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClientHeader.h">
@@ -58,6 +61,9 @@
       <Filter>MainScene\Component</Filter>
     </ClInclude>
     <ClInclude Include="Stage_Com.h">
+      <Filter>MainScene\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="OtharPlayer_Com.h">
       <Filter>MainScene\Component</Filter>
     </ClInclude>
   </ItemGroup>

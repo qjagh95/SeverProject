@@ -5,6 +5,7 @@
 
 Player_Com::Player_Com()
 {
+	m_ComType = static_cast<COMPONENT_TYPE>(UT_PLAYER);
 }
 
 Player_Com::Player_Com(const Player_Com & userCom)
@@ -28,13 +29,10 @@ bool Player_Com::Init()
 	RenderComponent->SetRenderState(ALPHA_BLEND);
 	SAFE_RELEASE(RenderComponent);
 
-	ColliderCircle_Com* Circle = m_Object->AddComponent<ColliderCircle_Com>("1234");
-	Circle->SetInfo(50.0f);
-	Circle->SetCollsionCallback(CCT_FIRST, this, &Player_Com::EattingFunc);
+	m_CirCleColl= m_Object->AddComponent<ColliderCircle_Com>("PlayerCircle");
+	m_CirCleColl->SetInfo(7.0f);
 
-	SAFE_RELEASE(Circle);
-
-	m_Transform->SetWorldScale(30.0f, 30.0f, 1.0f);
+	m_Transform->SetWorldScale(15.0f, 15.0, 1.0f);
 	m_Transform->SetWorldPos(500.0f, 500.0f, 1.0f);
 
 	float R = static_cast<float>(RandomRange(0, 255));
@@ -51,21 +49,12 @@ bool Player_Com::Init()
 
 int Player_Com::Input(float DeltaTime)
 {
-	if (KeyInput::Get()->KeyPress("MoveUp"))
-		m_Transform->Move(AXIS_Y, 500.0f, DeltaTime);
-	else if (KeyInput::Get()->KeyPress("MoveDown"))
-		m_Transform->Move(AXIS_Y, -500.0f, DeltaTime);
-
-	if (KeyInput::Get()->KeyPress("MoveLeft"))
-		m_Transform->Move(AXIS_X, -500.0f, DeltaTime);
-	else if (KeyInput::Get()->KeyPress("MoveRight"))
-		m_Transform->Move(AXIS_X, 500.0f, DeltaTime);
-
 	return 0;
 }
 
 int Player_Com::Update(float DeltaTime)
 {
+	Move(DeltaTime);
 
 	return 0;
 }
@@ -88,6 +77,45 @@ Player_Com * Player_Com::Clone()
 	return new Player_Com(*this);
 }
 
-void Player_Com::EattingFunc(JEONG::Collider_Com * Src, JEONG::Collider_Com * Dest, float DeltaTime)
+void Player_Com::ScalePlus(float Scale)
 {
+	m_Transform->AddScale(Scale);
+	m_CirCleColl->AddInfo(Scale * 0.5f);
+}
+
+void Player_Com::Move(float DeltaTime)
+{
+	if (KeyInput::Get()->KeyPress("MoveUp"))
+	{
+		if (m_Transform->GetWorldPos().y < 50000.0f)
+			m_Transform->Move(AXIS_Y, 100.0f, DeltaTime);
+		
+		if(m_Transform->GetWorldPos().y >= 50000.0f)
+			m_Transform->SetWorldPos(0.0f, 50000.0f, 1.0f);
+	}
+	else if (KeyInput::Get()->KeyPress("MoveDown"))
+	{
+		if (m_Transform->GetWorldPos().y > 0.0f)
+			m_Transform->Move(AXIS_Y, -100.0f, DeltaTime);
+
+		if (m_Transform->GetWorldPos().y < 0.0f)
+			m_Transform->SetWorldPos(m_Transform->GetWorldPos().x, 0.0f, 1.0f);
+	}
+
+	if (KeyInput::Get()->KeyPress("MoveLeft"))
+	{
+		if (m_Transform->GetWorldPos().x > 0.0f)
+			m_Transform->Move(AXIS_X, -100.0f, DeltaTime);
+
+		if (m_Transform->GetWorldPos().x < 0.0f)
+			m_Transform->SetWorldPos(0.0f, m_Transform->GetWorldPos().y, 1.0f);
+	}
+	else if (KeyInput::Get()->KeyPress("MoveRight"))
+	{
+		if (m_Transform->GetWorldPos().x < 50000.0f)
+			m_Transform->Move(AXIS_X, 100.0f, DeltaTime);
+
+		if (m_Transform->GetWorldPos().x > 50000.0f)
+			m_Transform->SetWorldPos(50000.0f, m_Transform->GetWorldPos().y, 1.0f);
+	}
 }

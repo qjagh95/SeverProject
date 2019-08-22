@@ -4,15 +4,20 @@
 BasicInfo::BasicInfo()
 {
 	m_Scale = 0.0f;
+	m_CollScale = 0.0f;
 	m_RGB = Vector3::Zero;
 
-	m_CirleColl = nullptr;
-	m_RectColl = nullptr;
+	m_CirCleColl = NULLPTR;
+	m_RectColl = NULLPTR;
+	m_Material = NULLPTR;
 	m_CollVar = 0.0f;
 }
 
 BasicInfo::~BasicInfo()
 {
+	SAFE_RELEASE(m_CirCleColl);
+	SAFE_RELEASE(m_RectColl);
+	SAFE_RELEASE(m_Material);
 }
 
 bool BasicInfo::Init()
@@ -68,16 +73,25 @@ void BasicInfo::RecvScale()
 {
 }
 
-
 void BasicInfo::SetRGB(float R, float G, float B)
 {
-	Material_Com* MaterialComponent = m_Object->FindComponentFromType<Material_Com>(CT_MATERIAL);
-	MaterialComponent->SetMaterial(Vector4(R / 255.0f, G / 255.0f, B / 255.0f, 1.0f));
-	SAFE_RELEASE(MaterialComponent);
+	m_RGB = Vector3(R, G, B);
+	
+	if (m_Material == NULLPTR)
+	{
+		m_Material = m_Object->FindComponentFromType<Material_Com>(CT_MATERIAL);
+		m_Material->SetMaterial(Vector4(R / 255.0f, G / 255.0f, B / 255.0f, 1.0f));
+		return;
+	}
+
+	m_Material->SetMaterial(Vector4(R / 255.0f, G / 255.0f, B / 255.0f, 1.0f));
 }
 
 void BasicInfo::SetScale(float Scale)
 {
 	m_Scale = Scale;
-	m_Transform->SetWorldScale(m_Transform->GetWorldScale() + m_Scale);
+	m_CollScale = Scale * 0.5f;
+
+	m_Transform->SetWorldScale(m_Scale);
+	m_CirCleColl->SetInfo(m_CollScale);
 }
