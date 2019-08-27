@@ -28,5 +28,27 @@
 
 using namespace std;
 #define PORT 15000
+#define BUFFERSIZE 2048
+
+enum class WRITE_READ_MODE
+{
+	WR_READ,
+	WR_WRITE,
+	WR_NONE,
+};
+
+struct SocketInfo
+{
+	SOCKET m_Socket;
+	SOCKADDR_IN m_ClientInfo;
+};
+
+struct IO_Data
+{
+	OVERLAPPED m_Overlapped;
+	char m_Buffer[BUFFERSIZE] = {};
+	WSABUF m_WsaBuf;
+	WRITE_READ_MODE m_RWMode = WRITE_READ_MODE::WR_NONE;
+};
 
 #endif //PCH_H

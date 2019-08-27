@@ -13,6 +13,11 @@ OtharPlayer_Com::~OtharPlayer_Com()
 
 bool OtharPlayer_Com::Init()
 {
+	Renderer_Com* RenderComponent = m_Object->AddComponent<Renderer_Com>("OtherRenderer");
+	RenderComponent->SetMesh("TextureRect");
+	RenderComponent->SetRenderState(ALPHA_BLEND);
+	SAFE_RELEASE(RenderComponent);
+
 	return true;
 }
 
