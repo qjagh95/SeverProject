@@ -12,16 +12,28 @@ public:
 };
 
 //밑으로는 보내거나 받는 사이즈를 명확하게 하기위해 메세지 클래스화
-class JEONG_DLL PlayerCreateMessage
+class JEONG_DLL NewClientMessage
 {
 public:
-	Header m_Header;
-	Vector2 PosPadding;
-	float ScalePadding;
+	Header Header;
 
-	PlayerCreateMessage()
+	NewClientMessage()
 	{
-		m_Header.m_Type = SST_CREATE_PLAYER;
+		Header.m_Type = SST_NEW_CLIENT;
+	}
+};
+
+class JEONG_DLL MainPlayerCreateMessage
+{
+public:
+	Header Header;
+	Vector2 Pos;
+	Vector4 Color;
+	float Scale;
+
+	MainPlayerCreateMessage()
+	{
+		Header.m_Type = SST_CREATE_PLAYER;
 
 	}
 };
@@ -29,44 +41,50 @@ public:
 class JEONG_DLL CreateOtherPlayerMessage
 {
 public:
-	Header m_Header;
+	Header Header;
+	Vector2 Pos;
+	Vector4 Color;
+	float Scale;
 
 	CreateOtherPlayerMessage()
 	{
-		m_Header.m_Type = SST_CREATE_OTHER_PLAYER;
+		Header.m_Type = SST_CREATE_OTHER_PLAYER;
 	}
 };
 
 class JEONG_DLL CreateEatObjectMessage
 {
 public:
-	Header m_Header;
+	Header Header;
 
 	CreateEatObjectMessage()
 	{
-		m_Header.m_Type = SST_CREATE_EAT_OBJECT;
+		Header.m_Type = SST_CREATE_EAT_OBJECT;
 	}
 };
 
 class JEONG_DLL SendPlayerData
 {
 public:
-	Header m_Header;
+	Header Header;
+	Vector3 Pos;
+	float Scale;
 
 	SendPlayerData()
 	{
-		m_Header.m_Type = SST_PLAYER_DATA;
+		Header.m_Type = SST_PLAYER_DATA;
 	}
 };
 
 class JEONG_DLL DeleteEatObject
 {
 public:
-	Header m_Header;
+	Header Header;
+	size_t Index;
 
 	DeleteEatObject()
 	{
-		m_Header.m_Type = SST_DELETE_EAT_OBJECT;
+		Header.m_Type = SST_DELETE_EAT_OBJECT;
 	}
 };
 

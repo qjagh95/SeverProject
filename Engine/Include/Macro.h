@@ -47,11 +47,14 @@
 #define ALPHA_BLEND "AlphaBlend"
 #define DEPTH_DISABLE "DepthDisable"
 
+#define BUFFERSIZE 2048
+#define PORT 15000
+
 template<typename T>
 void Safe_Delete_VecList(T& p)
 {
-	T::iterator StartIter = p.begin();
-	T::iterator EndIter = p.end();
+	typename T::iterator StartIter = p.begin();
+	typename T::iterator EndIter = p.end();
 
 	for (; StartIter != EndIter ; StartIter++)
 	{
@@ -63,8 +66,8 @@ void Safe_Delete_VecList(T& p)
 template<typename T>
 void Safe_Release_VecList(T& p)
 {
-	T::iterator StartIter = p.begin();
-	T::iterator EndIter = p.end();
+	typename T::iterator StartIter = p.begin();
+	typename T::iterator EndIter = p.end();
 
 	for (; StartIter != EndIter; StartIter++)
 	{
@@ -75,8 +78,8 @@ void Safe_Release_VecList(T& p)
 template<typename T>
 void Safe_Release_Map(T& p)
 {
-	T::iterator StartIter = p.begin();
-	T::iterator EndIter = p.end();
+	typename T::iterator StartIter = p.begin();
+	typename T::iterator EndIter = p.end();
 
 	for (; StartIter != EndIter; StartIter++)
 	{
@@ -87,8 +90,8 @@ void Safe_Release_Map(T& p)
 template<typename T>
 void Safe_Delete_Map(T& p)
 {
-	T::iterator StartIter = p.begin();
-	T::iterator EndIter = p.end();
+	typename T::iterator StartIter = p.begin();
+	typename T::iterator EndIter = p.end();
 
 	for (; StartIter != EndIter; StartIter++)
 	{

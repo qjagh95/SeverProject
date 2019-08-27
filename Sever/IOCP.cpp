@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "IOCP.h"
+#include "PlayerInfo.h"
+
 
 IOCP::IOCP()
 {
@@ -35,6 +37,8 @@ IOCP::~IOCP()
 		}
 	}
 
+	for (auto CurInfo : m_vecPlayerInfo)
+		delete CurInfo;
 }
 
 bool IOCP::Init()
@@ -141,7 +145,6 @@ void IOCP::Run()
 		memset(&(IoData->m_Overlapped), 0, sizeof(OVERLAPPED));
 		IoData->m_WsaBuf.len = BUFFERSIZE;
 		IoData->m_WsaBuf.buf = IoData->m_Buffer;
-		IoData->m_RWMode = WRITE_READ_MODE::WR_READ;
 		Flags = 0;
 
 		ClientCount++;
@@ -153,12 +156,10 @@ void IOCP::Run()
 
 void IOCP::ThreadFunc()
 {
-	HANDLE CompletionPort = reinterpret_cast<HANDLE>(m_CompletionPort); 
-	SOCKET ClientSock; 
+	HANDLE CompletionPort = reinterpret_cast<HANDLE>(m_CompletionPort); \
 	DWORD ByteTransferred;
 	SocketInfo* SocketData;
 	IO_Data* IoData;
-	DWORD Flag;
 
 	while (true)
 	{

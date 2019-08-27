@@ -3,7 +3,6 @@
 #include "ColliderRect_Com.h"
 #include "ColliderCircle_Com.h"
 #include "ColliderOBB2D_Com.h"
-#include "ColliderPixel_Com.h"
 #include "Camera_Com.h"
 #include "Transform_Com.h"
 

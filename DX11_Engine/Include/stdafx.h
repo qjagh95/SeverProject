@@ -1,4 +1,9 @@
 #pragma once
+#include <WinSock2.h>
+#include <mswsock.h>
+#include <Ws2tcpip.h>
+#pragma comment(lib, "Ws2_32.lib")
+#pragma comment(lib, "mswsock.lib")
 
 #include <Windows.h>
 #include <list>
@@ -31,8 +36,6 @@
 #include <d2d1.h>
 #include <dwrite.h>
 #include <dxgidebug.h>
-
-#include <Audio.h>
 
 #pragma comment(lib, "dxguid")
 #pragma comment(lib, "d3d11")

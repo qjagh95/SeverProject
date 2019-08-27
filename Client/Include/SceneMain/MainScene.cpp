@@ -6,7 +6,6 @@
 #include "scene/Layer.h"
 
 #include "Component/Component_Base.h"
-#include "Component/ColliderPixel_Com.h"
 #include "Component/BackColor_Com.h"
 #include "Eatting.h"
 #include "Stage_Com.h"

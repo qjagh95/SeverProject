@@ -190,11 +190,9 @@
     <ClInclude Include="CollsionManager.h" />
     <ClInclude Include="Component\BackColor_Com.h" />
     <ClInclude Include="Component\FreeCamera_Com.h" />
-    <ClInclude Include="Component\Button_Com.h" />
     <ClInclude Include="Component\Camera_Com.h" />
     <ClInclude Include="Component\ColliderCircle_Com.h" />
     <ClInclude Include="Component\ColliderOBB2D_Com.h" />
-    <ClInclude Include="Component\ColliderPixel_Com.h" />
     <ClInclude Include="Component\ColliderPoint_Com.h" />
     <ClInclude Include="Component\ColliderRect_Com.h" />
     <ClInclude Include="Component\Collider_Com.h" />
@@ -209,6 +207,7 @@
     <ClInclude Include="Header.h" />
     <ClInclude Include="KeyInput.h" />
     <ClInclude Include="Macro.h" />
+    <ClInclude Include="MessageManager.h" />
     <ClInclude Include="PathManager.h" />
     <ClInclude Include="ReadMemoryStream.h" />
     <ClInclude Include="RefCount.h" />
@@ -242,11 +241,9 @@
     <ClCompile Include="CollsionManager.cpp" />
     <ClCompile Include="Component\BackColor_Com.cpp" />
     <ClCompile Include="Component\FreeCamera_Com.cpp" />
-    <ClCompile Include="Component\Button_Com.cpp" />
     <ClCompile Include="Component\Camera_Com.cpp" />
     <ClCompile Include="Component\ColliderCircle_Com.cpp" />
     <ClCompile Include="Component\ColliderOBB2D_Com.cpp" />
-    <ClCompile Include="Component\ColliderPixel_Com.cpp" />
     <ClCompile Include="Component\ColliderPoint_Com.cpp" />
     <ClCompile Include="Component\ColliderRect_Com.cpp" />
     <ClCompile Include="Component\Collider_Com.cpp" />
@@ -260,6 +257,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Header.cpp" />
     <ClCompile Include="KeyInput.cpp" />
+    <ClCompile Include="MessageManager.cpp" />
     <ClCompile Include="PathManager.cpp" />
     <ClCompile Include="ReadMemoryStream.cpp" />
     <ClCompile Include="RefCount.cpp" />

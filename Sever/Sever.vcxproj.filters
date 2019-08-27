@@ -19,12 +19,18 @@
     <ClCompile Include="IOCP.cpp">
       <Filter>소스 파일\IOCP</Filter>
     </ClCompile>
+    <ClCompile Include="PlayerInfo.cpp">
+      <Filter>소스 파일\IOCP</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
       <Filter>소스 파일</Filter>
     </ClInclude>
     <ClInclude Include="IOCP.h">
+      <Filter>소스 파일\IOCP</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerInfo.h">
       <Filter>소스 파일\IOCP</Filter>
     </ClInclude>
   </ItemGroup>

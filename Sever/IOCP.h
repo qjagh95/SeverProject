@@ -1,4 +1,8 @@
 #pragma once
+
+JEONG_USING
+
+class PlayerInfo;
 class IOCP
 {
 public:
@@ -18,6 +22,7 @@ private:
 	SocketInfo m_SeverSocket;
 	vector<thread*> m_vecThread;
 	list<SocketInfo*> m_ClientList;
+	vector<PlayerInfo*> m_vecPlayerInfo;
 
 public:
 	IOCP();

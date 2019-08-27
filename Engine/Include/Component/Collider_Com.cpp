@@ -455,32 +455,3 @@ bool Collider_Com::CollsionOBB2DToOBB2D(const OBB2DInfo & Src, const OBB2DInfo &
 
 	return true;
 }
-
-bool Collider_Com::CollsionRectToPixel(BoxInfo Src, const PixelInfo& Dest)
-{
-	if (CollsionRectToRect(Dest.ImageRect, Src) == false)
-		return false;
-
-	//Box를 픽셀공간으로 변환한다.
-	Src.Min -= Dest.ImageRect.Min;
-	Src.Max -= Dest.ImageRect.Min;
-
-	Src.Min.x = Src.Min.x <= 0.0f ? 0.0f : Src.Min.x;
-	Src.Min.y = Src.Min.y <= 0.0f ? 0.0f : Src.Min.y;
-
-	Src.Max.x = Src.Max.x >= Dest.Width ? Dest.Width : Src.Max.x;
-	Src.Max.y = Src.Max.y >= Dest.Height ? Dest.Height : Src.Max.y;
-
-	for (int y = (int)Src.Min.y; y < (int)Src.Max.y; y++)
-	{
-		for (int x = (int)Src.Min.x; x < (int)Src.Max.x; x++)
-		{
-			int Index = y * Dest.Width + x;
-			Pixel24& TempPixel = Dest.Color[Index];
-
-			if(TempPixel.r != 0 || TempPixel.g != 0 || TempPixel.b != 0)
-				return true;
-		}
-	}
-	return false;
-}

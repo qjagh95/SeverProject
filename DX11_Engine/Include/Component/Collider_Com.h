@@ -53,7 +53,6 @@ public:
 	bool CollsionOBB2DToPoint(const OBB2DInfo& Src, const Vector3& Dest);
 	bool CollsionOBB2DToCircle(const OBB2DInfo& Src, const CircleInfo& Dest);
 	bool CollsionOBB2DToOBB2D(const OBB2DInfo& Src, const OBB2DInfo& Dest);
-	bool CollsionRectToPixel(BoxInfo Src, const PixelInfo& Dest);
 
 	void SetCallback(function<void(Collider_Com*, Collider_Com*, float)> const& _function, COLLSION_CALLBACK_TYPE _type);
 	void SetCollsionCallback(COLLSION_CALLBACK_TYPE eType, void(*pFunc)(Collider_Com*, Collider_Com*, float));

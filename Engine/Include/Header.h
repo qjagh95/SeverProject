@@ -12,12 +12,12 @@ public:
 };
 
 //밑으로는 보내거나 받는 사이즈를 명확하게 하기위해 메세지 클래스화
-class JEONG_DLL MainPlayerCreateMessage
+class JEONG_DLL NewClientMessage
 {
 public:
 	Header Header;
 
-	MainPlayerCreateMessage()
+	NewClientMessage()
 	{
 		Header.m_Type = SST_NEW_CLIENT;
 	}
@@ -69,7 +69,6 @@ public:
 	Header Header;
 	Vector3 Pos;
 	float Scale;
-
 
 	SendPlayerData()
 	{

@@ -3,7 +3,6 @@
 #include "ColliderPoint_Com.h"
 #include "ColliderCircle_Com.h"
 #include "ColliderOBB2D_Com.h"
-#include "ColliderPixel_Com.h"
 #include "Transform_Com.h"
 #include "Camera_Com.h"
 
@@ -125,9 +124,6 @@ bool ColliderRect_Com::Collsion(Collider_Com * Dest, float DeltaTime)
 			break;
 		case CT_OBB2D:
 			return CollsionOBB2DToRect(((ColliderOBB2D_Com*)Dest)->GetInfo(), m_WorldInfo);
-			break;
-		case CT_PIXEL:
-			return CollsionRectToPixel(m_WorldInfo, ((ColliderPixel_Com*)Dest)->GetInfo());
 			break;
 	}
 	return false;

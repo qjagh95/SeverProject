@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 
 #define JEONG_BEGIN namespace JEONG {
 #define JEONG_END }
@@ -177,6 +176,7 @@ enum TILE2D_OPTION
 
 enum SEVER_DATA_TYPE
 {
+	SST_NEW_CLIENT,
 	SST_CREATE_EAT_OBJECT,
 	SST_CREATE_PLAYER,
 	SST_CREATE_OTHER_PLAYER,

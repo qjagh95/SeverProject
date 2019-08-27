@@ -43,6 +43,9 @@
     <ClCompile Include="OtharPlayer_Com.cpp">
       <Filter>MainScene\Component</Filter>
     </ClCompile>
+    <ClCompile Include="ConnectSever.cpp">
+      <Filter>WinMain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClientHeader.h">
@@ -65,6 +68,9 @@
     </ClInclude>
     <ClInclude Include="OtharPlayer_Com.h">
       <Filter>MainScene\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="ConnectSever.h">
+      <Filter>WinMain</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

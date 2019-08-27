@@ -88,17 +88,11 @@
     <Filter Include="Core\08. Object\Component\BaseComponent\06. Collsion\Collider\ColliderOBB2D">
       <UniqueIdentifier>{cb3bf990-d124-4f8c-8a97-67d2c8af8b3e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\08. Object\Component\BaseComponent\06. Collsion\Collider\ColliderPixel">
-      <UniqueIdentifier>{aee2f1d9-1953-425c-963e-f4ba07c22fa6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Core\08. Object\Component\BaseComponent\07. UI">
       <UniqueIdentifier>{b303c252-a492-48e7-bd92-e36e5ab455d3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Core\08. Object\Component\BaseComponent\07. UI\Base">
       <UniqueIdentifier>{d60fd686-cfc0-4ba2-ab24-63d1be0788ce}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\08. Object\Component\BaseComponent\07. UI\Button">
-      <UniqueIdentifier>{583f8dae-d1cc-4114-89e3-e238e23b51b9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Core\09. Render\01. Shader">
       <UniqueIdentifier>{00f20cd5-16d9-46f1-adf4-c2e712b1379f}</UniqueIdentifier>
@@ -165,6 +159,9 @@
     </Filter>
     <Filter Include="Core\16. Stream">
       <UniqueIdentifier>{64ffae3a-1b28-43aa-93d4-9baae355ed5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\17. MessageManager">
+      <UniqueIdentifier>{b670aec8-d28c-49bf-adc9-1871858b4d59}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -285,14 +282,8 @@
     <ClInclude Include="Component\ColliderCircle_Com.h">
       <Filter>Core\08. Object\Component\BaseComponent\06. Collsion\Collider\ColliderCircle</Filter>
     </ClInclude>
-    <ClInclude Include="Component\ColliderPixel_Com.h">
-      <Filter>Core\08. Object\Component\BaseComponent\06. Collsion\Collider\ColliderPixel</Filter>
-    </ClInclude>
     <ClInclude Include="Component\UIBase_Com.h">
       <Filter>Core\08. Object\Component\BaseComponent\07. UI\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\Button_Com.h">
-      <Filter>Core\08. Object\Component\BaseComponent\07. UI\Button</Filter>
     </ClInclude>
     <ClInclude Include="Render\RenderTarget.h">
       <Filter>Core\09. Render\06. RenderTarget</Filter>
@@ -317,6 +308,9 @@
     </ClInclude>
     <ClInclude Include="Header.h">
       <Filter>Core\03. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageManager.h">
+      <Filter>Core\17. MessageManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -427,14 +421,8 @@
     <ClCompile Include="Component\ColliderCircle_Com.cpp">
       <Filter>Core\08. Object\Component\BaseComponent\06. Collsion\Collider\ColliderCircle</Filter>
     </ClCompile>
-    <ClCompile Include="Component\ColliderPixel_Com.cpp">
-      <Filter>Core\08. Object\Component\BaseComponent\06. Collsion\Collider\ColliderPixel</Filter>
-    </ClCompile>
     <ClCompile Include="Component\UIBase_Com.cpp">
       <Filter>Core\08. Object\Component\BaseComponent\07. UI\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Button_Com.cpp">
-      <Filter>Core\08. Object\Component\BaseComponent\07. UI\Button</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Core\03. Header</Filter>
@@ -462,6 +450,9 @@
     </ClCompile>
     <ClCompile Include="Header.cpp">
       <Filter>Core\03. Header</Filter>
+    </ClCompile>
+    <ClCompile Include="MessageManager.cpp">
+      <Filter>Core\17. MessageManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -71,7 +71,6 @@ struct JEONG_DLL CircleInfo
 	float Radius;
 	Vector3 CenterPos;
 	CircleInfo() { Radius = 0.0f; }
-
 };
 
 struct JEONG_DLL OBB2DInfo
@@ -79,59 +78,6 @@ struct JEONG_DLL OBB2DInfo
 	Vector3 CenterPos;
 	Vector3 Axis[2];
 	float Lenth[2];
-};
-
-struct JEONG_DLL Pixel24
-{
-	unsigned char r;
-	unsigned char g;
-	unsigned char b;
-};
-
-struct JEONG_DLL Pixel32
-{
-	unsigned char r;
-	unsigned char g;
-	unsigned char b;
-	unsigned char a;
-};
-
-struct JEONG_DLL PixelInfo
-{
-	BoxInfo ImageRect;
-	Pixel24 *Color;
-	Pixel24 OutColor;
-	int Width;
-	int Height;
-};
-
-struct JEONG_DLL Clip2DFrame
-{
-	Vector2	LeftTop;
-	Vector2	RightBottom;
-};
-
-struct JEONG_DLL AnimationClip2D
-{
-	ANIMATION2D_TYPE AnimationType;		///이미지종류(아틀라스, 프레임)
-	ANIMATION_OPTION AnimationOption;	///루프여부
-	string AnimationName;				///현재 내 애니메이션 이름
-	class Texture* CurTexture;			///나를 돌리고있는 텍스쳐
-	float TextureWidth;					///이미지크기
-	float TextureHeight;				
-	vector<Clip2DFrame>	vecFrame;		///이미지위치(프레임위치)
-	int Frame;							///현재프레임
-	float PlayTime;						///애니메이션 진행 시간
-	float PlayLimitTime;				///모든 애니메이션 완료 시간.
-};
-
-//쉐이더에서 이미지를 쪼개서 뿌려줄것이기때문에 쉐이더로 넘겨줄 상수버퍼 선언
-struct JEONG_DLL Animation2DCBuffer
-{
-	Vector2 LeftTopUV;
-	Vector2 RightBottomUV; 
-	int Frame;
-	Vector3 Empty;
 };
 
 //이걸 또 선언해주는 이유는 위에선언된 2DCBuffer를 void*로 넘겨주기위함이다.
@@ -165,21 +111,19 @@ struct JEONG_DLL ComponentCBuffer
 	Vector3 Empty;
 };
 
-struct JEONG_DLL ButtonCBuffer
+struct SocketInfo
 {
-	Vector4 DiffuseColor;
+	SOCKET m_Socket;
+	SOCKADDR_IN m_ClientInfo;
+	size_t m_CliendID = 0;
 };
 
-struct JEONG_DLL CheckBoxCBuffer
+struct IO_Data
 {
-	int isCheck;
-	Vector3 Empty;
-	Vector4 CheckBoxColor;
+	OVERLAPPED m_Overlapped;
+	char m_Buffer[BUFFERSIZE] = {};
+	WSABUF m_WsaBuf;
 };
 
-struct JEONG_DLL BarCBuffer
-{
-	Vector4 Light;
-};
 
 JEONG_END
