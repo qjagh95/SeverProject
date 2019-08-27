@@ -55,26 +55,6 @@ BasicInfo * BasicInfo::Clone()
 	return nullptr;
 }
 
-void BasicInfo::SendPos()
-{
-}
-
-void BasicInfo::SendScale()
-{
-}
-
-void BasicInfo::RecvPos()
-{
-}
-
-void BasicInfo::RecvRGB()
-{
-}
-
-void BasicInfo::RecvScale()
-{
-}
-
 void BasicInfo::SetRGB(float R, float G, float B)
 {
 	m_RGB = Vector3(R / 255.0f, G / 255.0f, B / 255.0f);

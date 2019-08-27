@@ -206,6 +206,7 @@
     <ClInclude Include="Core.h" />
     <ClInclude Include="Device.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Header.h" />
     <ClInclude Include="KeyInput.h" />
     <ClInclude Include="Macro.h" />
     <ClInclude Include="PathManager.h" />
@@ -257,6 +258,7 @@
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="Device.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Header.cpp" />
     <ClCompile Include="KeyInput.cpp" />
     <ClCompile Include="PathManager.cpp" />
     <ClCompile Include="ReadMemoryStream.cpp" />

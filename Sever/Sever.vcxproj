@@ -74,6 +74,8 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>../DX11_Engine/Include;$(IncludePath)</IncludePath>
     <LibraryPath>../DX11_Engine/Bin;$(LibraryPath)</LibraryPath>
+    <OutDir>./Bin\</OutDir>
+    <IntDir>./BinObj\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -85,6 +87,8 @@
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>../DX11_Engine/Include;$(IncludePath)</IncludePath>
     <LibraryPath>../DX11_Engine/Bin;$(LibraryPath)</LibraryPath>
+    <OutDir>./Bin\</OutDir>
+    <IntDir>./BinObj\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>

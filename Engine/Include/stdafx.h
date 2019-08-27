@@ -42,12 +42,10 @@
 #pragma comment(lib, "dwrite")
 #pragma warning(disable:4099)
 
-///Excel
-#pragma comment(lib, "libxl")
-
 #include "Macro.h"
 #include "Flag.h"
 #include "Type.h"
+#include "Header.h"
 
 #define JEONG_BEGIN namespace JEONG {
 #define JEONG_END }

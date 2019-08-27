@@ -26,9 +26,13 @@
 #include <atlstr.h>
 #include <process.h>
 
+#include <MathHeader.h>
+
 using namespace std;
 #define PORT 15000
 #define BUFFERSIZE 2048
+
+static size_t ClientCount = 0;
 
 enum class WRITE_READ_MODE
 {
@@ -41,6 +45,7 @@ struct SocketInfo
 {
 	SOCKET m_Socket;
 	SOCKADDR_IN m_ClientInfo;
+	size_t m_CliendID = 0;
 };
 
 struct IO_Data

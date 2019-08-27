@@ -131,7 +131,9 @@ union MATH_DLL Vector4
 	static Vector4 Axis[4];
 	static Vector4 Zero;
 	static Vector4 One;
+	static Vector4 AllColor[140];
 
+	//140°³
 	static Vector4 AliceBlue;
 	static Vector4 AntiqueWhite;
 	static Vector4 Aqua;

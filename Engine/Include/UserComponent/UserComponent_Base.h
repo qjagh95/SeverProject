@@ -16,6 +16,9 @@ public:
 	 virtual void AfterClone() override {}
 
 protected:
+	Header m_MessageType;
+
+protected:
 	UserComponent_Base();
 	UserComponent_Base(const UserComponent_Base& userCom);
 	virtual ~UserComponent_Base();

@@ -315,6 +315,9 @@
     <ClInclude Include="ReadMemoryStream.h">
       <Filter>Core\16. Stream</Filter>
     </ClInclude>
+    <ClInclude Include="Header.h">
+      <Filter>Core\03. Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Copy.bat">
@@ -456,6 +459,9 @@
     </ClCompile>
     <ClCompile Include="ReadMemoryStream.cpp">
       <Filter>Core\16. Stream</Filter>
+    </ClCompile>
+    <ClCompile Include="Header.cpp">
+      <Filter>Core\03. Header</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

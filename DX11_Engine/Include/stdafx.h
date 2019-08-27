@@ -32,6 +32,8 @@
 #include <dwrite.h>
 #include <dxgidebug.h>
 
+#include <Audio.h>
+
 #pragma comment(lib, "dxguid")
 #pragma comment(lib, "d3d11")
 #pragma comment(lib, "d3dcompiler")
@@ -40,12 +42,10 @@
 #pragma comment(lib, "dwrite")
 #pragma warning(disable:4099)
 
-///Excel
-#pragma comment(lib, "libxl")
-
 #include "Macro.h"
 #include "Flag.h"
 #include "Type.h"
+#include "Header.h"
 
 #define JEONG_BEGIN namespace JEONG {
 #define JEONG_END }
@@ -73,6 +73,7 @@
 #include "Component/Renderer_Com.h"
 #include "Component/Transform_Com.h"
 #include "Component/Camera_Com.h"
+#include "Component/Collider_Com.h"
 
 #include "UserComponent/UserComponent_Base.h"
 

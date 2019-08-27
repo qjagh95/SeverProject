@@ -10,7 +10,8 @@ public:
 private:
 	void DeleteSocket(SocketInfo* Socket);
 	void SetSocket();
-	void MessageProcess();
+	void SendAllClient(SocketInfo* Socket, char* Data);
+	void MessageProcess(SocketInfo* Socket, IO_Data* Data);
 
 private:
 	HANDLE m_CompletionPort;

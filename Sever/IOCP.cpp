@@ -1,11 +1,12 @@
 #include "pch.h"
 #include "IOCP.h"
 
-
 IOCP::IOCP()
 {
 	closesocket(m_SeverSocket.m_Socket);
 	WSACleanup();
+	m_SeverSocket.m_CliendID = ClientCount;
+	ClientCount++;
 }
 
 IOCP::~IOCP()
@@ -50,7 +51,7 @@ bool IOCP::Init()
 
 	//CPU갯수 * 2만큼 스레드 생성
 	for (size_t i = 0; i < Info.dwNumberOfProcessors; i++)
-		m_vecThread.push_back(new thread(&IOCP::ThreadFunc));
+		m_vecThread.push_back(new thread(&IOCP::ThreadFunc, this));
 
 	SetSocket();
 
@@ -72,7 +73,6 @@ void IOCP::DeleteSocket(SocketInfo * Socket)
 		else 
 			StartIter++;
 	}
-
 }
 
 void IOCP::SetSocket()
@@ -98,6 +98,16 @@ void IOCP::SetSocket()
 
 }
 
+void IOCP::SendAllClient(SocketInfo * Socket, char * Data)
+{
+	for (auto CurSocket : m_ClientList)
+	{
+		if (CurSocket->m_Socket == Socket->m_Socket)
+			continue;
+
+	}
+}
+
 void IOCP::Run()
 {
 	SocketInfo* newInfo; 
@@ -108,11 +118,11 @@ void IOCP::Run()
 
 	while (true)
 	{
-		SOCKET ClientSock; 
+		SOCKET ClientSock;
 		SOCKADDR_IN ClientAddr; 
 		int AddrLen = sizeof(ClientAddr);
 
-		ClientSock = ::accept(ClientSock, reinterpret_cast<sockaddr*>(&ClientAddr), &AddrLen);
+		ClientSock = ::accept(m_SeverSocket.m_Socket, reinterpret_cast<sockaddr*>(&ClientAddr), &AddrLen);
 
 		if (ClientSock == INVALID_SOCKET)
 			assert(false);
@@ -120,6 +130,7 @@ void IOCP::Run()
 		newInfo = new SocketInfo();
 		newInfo->m_Socket = ClientSock;
 		newInfo->m_ClientInfo = ClientAddr;
+		newInfo->m_CliendID = ClientCount;
 		m_ClientList.push_back(newInfo);
 
 		//Overlapped 소켓과 Completion Port 의 연결
@@ -133,8 +144,10 @@ void IOCP::Run()
 		IoData->m_RWMode = WRITE_READ_MODE::WR_READ;
 		Flags = 0;
 
+		ClientCount++;
 		//중첩된 데이터입력
-		WSARecv(newInfo->m_Socket, &(IoData->m_WsaBuf),	1, reinterpret_cast<LPDWORD>(&RecvByte), reinterpret_cast<LPDWORD>(&Flags),	&(IoData->m_Overlapped), NULL);
+		//WSARecv(newInfo->m_Socket, &(IoData->m_WsaBuf), 1, reinterpret_cast<LPDWORD>(&RecvByte), 
+		//reinterpret_cast<LPDWORD>(&Flags), &(IoData->m_Overlapped), NULL);
 	}
 }
 
@@ -157,16 +170,17 @@ void IOCP::ThreadFunc()
 		if (ByteTransferred == 0) 
 		{ 
 			closesocket(SocketData->m_Socket);
+			DeleteSocket(SocketData);
 			delete IoData;
 
 			continue;
 		}
 
-		MessageProcess();
-
+		MessageProcess(SocketData, IoData);
 	}
 }
 
-void IOCP::MessageProcess()
+void IOCP::MessageProcess(SocketInfo* Socket, IO_Data* Data)
 {
+
 }
