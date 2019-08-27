@@ -1,14 +1,14 @@
 #include "pch.h"
 #include "IOCP.h"
 #include "PlayerInfo.h"
-
+#include "DataManager.h"
 
 IOCP::IOCP()
 {
 	closesocket(m_SeverSocket.m_Socket);
 	WSACleanup();
-	m_SeverSocket.m_CliendID = ClientCount;
-	ClientCount++;
+	m_SeverSocket.m_CliendID = DataManager::m_ClientCount;
+	DataManager::m_ClientCount++;
 }
 
 IOCP::~IOCP()
@@ -24,21 +24,6 @@ IOCP::~IOCP()
 			m_vecThread[i] = nullptr;
 		}
 	}
-
-	auto StartIter = m_ClientList.begin();
-	auto EndIter = m_ClientList.end();
-
-	for (; StartIter != EndIter; StartIter++)
-	{
-		if (*StartIter != nullptr)
-		{
-			delete *StartIter;
-			*StartIter = nullptr;
-		}
-	}
-
-	for (auto CurInfo : m_vecPlayerInfo)
-		delete CurInfo;
 }
 
 bool IOCP::Init()
@@ -62,26 +47,9 @@ bool IOCP::Init()
 	return true;
 }
 
-void IOCP::DeleteSocket(SocketInfo * Socket)
-{
-	auto StartIter = m_ClientList.begin();
-	auto EndIter = m_ClientList.begin();
-
-	for (; StartIter != EndIter;)
-	{
-		if ((*StartIter)->m_Socket == Socket->m_Socket)
-		{
-			StartIter = m_ClientList.erase(StartIter);
-			delete *StartIter;
-		}
-		else 
-			StartIter++;
-	}
-}
-
 void IOCP::SetSocket()
 {
-	string Address = "192.168.0.2";
+	string Address = "192.168.1.172";
 
 	m_SeverSocket.m_Socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 
@@ -91,7 +59,7 @@ void IOCP::SetSocket()
 	// 바인딩할 소켓 주소정보
 	m_SeverSocket.m_ClientInfo.sin_family = AF_INET;
 	m_SeverSocket.m_ClientInfo.sin_port = htons((uint16_t)PORT);
-	inet_pton(AF_INET, Address.c_str(), &m_SeverSocket.m_ClientInfo.sin_port);
+	inet_pton(AF_INET, Address.c_str(), &m_SeverSocket.m_ClientInfo.sin_addr);
 
 	//바인딩
 	if (::bind(m_SeverSocket.m_Socket, reinterpret_cast<sockaddr*>(&m_SeverSocket.m_ClientInfo), sizeof(m_SeverSocket.m_ClientInfo)) == SOCKET_ERROR)
@@ -99,17 +67,6 @@ void IOCP::SetSocket()
 
 	if (::listen(m_SeverSocket.m_Socket, 10) == SOCKET_ERROR)
 		assert(false);
-
-}
-
-void IOCP::SendAllClient(SocketInfo * Socket, char * Data)
-{
-	for (auto CurSocket : m_ClientList)
-	{
-		if (CurSocket->m_Socket == Socket->m_Socket)
-			continue;
-
-	}
 }
 
 void IOCP::Run()
@@ -134,8 +91,8 @@ void IOCP::Run()
 		newInfo = new SocketInfo();
 		newInfo->m_Socket = ClientSock;
 		newInfo->m_ClientInfo = ClientAddr;
-		newInfo->m_CliendID = ClientCount;
-		m_ClientList.push_back(newInfo);
+		newInfo->m_CliendID = DataManager::m_ClientCount;
+		DataManager::Get()->PushClient(newInfo);
 
 		//Overlapped 소켓과 Completion Port 의 연결
 		CreateIoCompletionPort(reinterpret_cast<HANDLE>(newInfo->m_Socket), m_CompletionPort, reinterpret_cast<DWORD>(newInfo), 0);
@@ -147,7 +104,9 @@ void IOCP::Run()
 		IoData->m_WsaBuf.buf = IoData->m_Buffer;
 		Flags = 0;
 
-		ClientCount++;
+		DataManager::m_ClientCount++;
+
+		//Client접속처리 후 플레이어 생성메세지를 던진다.
 		//중첩된 데이터입력
 		//WSARecv(newInfo->m_Socket, &(IoData->m_WsaBuf), 1, reinterpret_cast<LPDWORD>(&RecvByte), 
 		//reinterpret_cast<LPDWORD>(&Flags), &(IoData->m_Overlapped), NULL);
@@ -171,17 +130,12 @@ void IOCP::ThreadFunc()
 		if (ByteTransferred == 0) 
 		{ 
 			closesocket(SocketData->m_Socket);
-			DeleteSocket(SocketData);
+			DataManager::Get()->DeleteSocket(SocketData);
 			delete IoData;
 
 			continue;
 		}
 
-		MessageProcess(SocketData, IoData);
+		DataManager::Get()->MessageProcess(SocketData, IoData); 
 	}
-}
-
-void IOCP::MessageProcess(SocketInfo* Socket, IO_Data* Data)
-{
-
 }

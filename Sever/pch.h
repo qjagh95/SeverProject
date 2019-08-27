@@ -22,6 +22,5 @@
 #include <Vector3.h>
 
 using namespace std;
-static size_t ClientCount = 0;
 
 #endif //PCH_H
