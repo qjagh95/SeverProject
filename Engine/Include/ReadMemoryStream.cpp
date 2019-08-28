@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "ReadMemoryStream.h"
 
+JEONG_USING
+
 ReadMemoryStream::ReadMemoryStream(char* InputBuffer)
 {
 	m_ReadBuffer = InputBuffer;

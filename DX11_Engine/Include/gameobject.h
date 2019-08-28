@@ -116,6 +116,9 @@ public:
 	void Save(BineryWrite& Writer);
 	void Load(BineryRead& Reader);
 
+	bool GetIsDelete() const { return m_isDelete; }
+	void SetIsDelete(bool Value) { m_isDelete = Value; }
+
 private:
 	list<Component_Base*> m_ComponentList;
 	Transform_Com* m_Transform;
@@ -124,7 +127,8 @@ private:
 	Layer* m_Layer;
 	string m_LayerName;
 	int m_LayerZOrder;
-	
+	bool m_isDelete;
+
 	list<Component_Base*> m_FindComList;
 	static unordered_map<Scene*, unordered_map<string, GameObject*>> m_ProtoTypeMap;
 	GameObject* m_Parent;

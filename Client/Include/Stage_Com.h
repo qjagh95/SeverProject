@@ -13,11 +13,13 @@ public:
 	Stage_Com* Clone() override;
 
 	void CreateEatting(const Vector3& Pos, const Vector3& RGB, float Scale);
+	GameObject* FindEatting(__int64 Key);
+	void DeleteEatting(__int64 Key);
 
 private:
 	vector<GameObject*> m_vecAllEatting;
 	unordered_map<__int64, GameObject*> m_AllEattingMap; //매모리를 희생해서 찾는속도를 빠르게하겠다.
-	list<GameObject*> m_UpdateEatting;
+	vector<GameObject*> m_UpdateEatting;
 	static __int64 m_Count;
 	Vector2 m_WinSize;
 

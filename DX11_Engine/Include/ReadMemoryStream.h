@@ -1,5 +1,8 @@
 #pragma once
-class ReadMemoryStream
+
+JEONG_BEGIN
+
+class JEONG_DLL ReadMemoryStream
 {
 public:
 	char* GetBuffer() const { return m_ReadBuffer; }
@@ -17,3 +20,4 @@ public:
 	~ReadMemoryStream();
 };
 
+JEONG_END

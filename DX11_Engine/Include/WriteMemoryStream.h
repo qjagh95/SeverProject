@@ -1,5 +1,8 @@
 #pragma once
-class WriteMemoryStream
+
+JEONG_BEGIN
+
+class JEONG_DLL WriteMemoryStream
 {
 public:
 	void Write(const void* Data, size_t Length);
@@ -21,3 +24,4 @@ public:
 	~WriteMemoryStream();
 };
 
+JEONG_END

@@ -228,7 +228,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="ConnectSever.cpp" />
-    <ClCompile Include="Eatting.cpp" />
+    <ClCompile Include="Eatting_Com.cpp" />
     <ClCompile Include="OtharPlayer_Com.cpp" />
     <ClCompile Include="SceneMain\MainScene.cpp" />
     <ClCompile Include="Stage_Com.cpp" />
@@ -241,7 +241,7 @@
     <ClInclude Include="BasicInfo.h" />
     <ClInclude Include="ClientHeader.h" />
     <ClInclude Include="ConnectSever.h" />
-    <ClInclude Include="Eatting.h" />
+    <ClInclude Include="Eatting_Com.h" />
     <ClInclude Include="OtharPlayer_Com.h" />
     <ClInclude Include="SceneMain\MainScene.h" />
     <ClInclude Include="Stage_Com.h" />

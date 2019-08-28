@@ -15,6 +15,7 @@ public:
 	Player_Com* Clone() override;
 	
 	void ScalePlus(float Scale);
+	void Colls(Collider_Com* Src, Collider_Com* Dest, float DeltaTime);
 
 private:
 	void Move(float DeltaTime);

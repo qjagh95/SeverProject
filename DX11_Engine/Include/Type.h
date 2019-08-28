@@ -123,6 +123,20 @@ struct IO_Data
 	OVERLAPPED m_Overlapped;
 	char m_Buffer[BUFFERSIZE] = {};
 	WSABUF m_WsaBuf;
+
+	IO_Data()
+	{
+		ZeroMemory(&m_Overlapped, sizeof(OVERLAPPED));
+	}
+
+	template<typename T>
+	void WriteBuffer(char* Buffer)
+	{
+		memcpy(m_Buffer, Buffer, sizeof(T));
+		m_WsaBuf.len = sizeof(T);
+		m_WsaBuf.buf = m_Buffer;
+	}
+
 };
 
 

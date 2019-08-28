@@ -8,7 +8,6 @@ PlayerInfo::PlayerInfo()
 	m_Scale = 0.0f;
 }
 
-
 PlayerInfo::~PlayerInfo()
 {
 }

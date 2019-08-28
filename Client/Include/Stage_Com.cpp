@@ -1,6 +1,6 @@
 #include "ClientHeader.h"
 #include "Stage_Com.h"
-#include "Eatting.h"
+#include "Eatting_Com.h"
 #include "UserComponent/Player_Com.h"
 
 #include <Core.h>
@@ -44,31 +44,55 @@ int Stage_Com::Input(float DeltaTime)
 	{
 		Vector3 getPos = CurObject->GetTransform()->GetWorldPos();
 
-		if (getPos.x >= CameraPos.x && getPos.x <= PlusPos.x && getPos.y >= CameraPos.y && getPos.y <= PlusPos.y)
+		if ((getPos.x >= CameraPos.x && getPos.x <= PlusPos.x) && (getPos.y >= CameraPos.y && getPos.y <= PlusPos.y))
 			m_UpdateEatting.push_back(CurObject);
 
 		else
 			continue;
 	}
 
-	for (auto CurObject : m_UpdateEatting)
-		CurObject->Input(DeltaTime);
+	for (size_t i = 0; i < m_UpdateEatting.size(); i++)
+	{
+		if (m_UpdateEatting[i]->GetIsDelete() == true)
+		{
+			SAFE_RELEASE(m_UpdateEatting[i]);
+			m_UpdateEatting.erase(m_UpdateEatting.begin() + i);
+		}
+		else
+			m_UpdateEatting[i]->Input(DeltaTime);
+	}
 
 	return 0;
 }
 
 int Stage_Com::Update(float DeltaTime)
 {
-	for (auto CurObject : m_UpdateEatting)
-		CurObject->Update(DeltaTime);
+	for (size_t i = 0; i < m_UpdateEatting.size(); i++)
+	{
+		if (m_UpdateEatting[i]->GetIsDelete() == true)
+		{
+			SAFE_RELEASE(m_UpdateEatting[i]);
+			m_UpdateEatting.erase(m_UpdateEatting.begin() + i);
+		}
+		else
+			m_UpdateEatting[i]->Update(DeltaTime);
+	}
 
 	return 0;
 }
 
 int Stage_Com::LateUpdate(float DeltaTime)
 {
-	for (auto CurObject : m_UpdateEatting)
-		CurObject->LateUpdate(DeltaTime);
+	for (size_t i = 0; i < m_UpdateEatting.size(); i++)
+	{
+		if (m_UpdateEatting[i]->GetIsDelete() == true)
+		{
+			SAFE_RELEASE(m_UpdateEatting[i]);
+			m_UpdateEatting.erase(m_UpdateEatting.begin() + i);
+		}
+		else
+			m_UpdateEatting[i]->LateUpdate(DeltaTime);
+	}
 
 	return 0;
 }
@@ -79,11 +103,27 @@ void Stage_Com::Collision(float DeltaTime)
 
 void Stage_Com::Render(float DeltaTime)
 {
-	for (auto CurObject : m_UpdateEatting)
-		CurObject->Collision(DeltaTime);
+	for (size_t i = 0; i < m_UpdateEatting.size(); i++)
+	{
+		if (m_UpdateEatting[i]->GetIsDelete() == true)
+		{
+			SAFE_RELEASE(m_UpdateEatting[i]);
+			m_UpdateEatting.erase(m_UpdateEatting.begin() + i);
+		}
+		else
+			m_UpdateEatting[i]->Collision(DeltaTime);
+	}
 
-	for (auto CurObject : m_UpdateEatting)
-		CurObject->Render(DeltaTime);
+	for (size_t i = 0; i < m_UpdateEatting.size(); i++)
+	{
+		if (m_UpdateEatting[i]->GetIsDelete() == true)
+		{
+			SAFE_RELEASE(m_UpdateEatting[i]);
+			m_UpdateEatting.erase(m_UpdateEatting.begin() + i);
+		}
+		else
+			m_UpdateEatting[i]->Render(DeltaTime);
+	}
 }
 
 Stage_Com * Stage_Com::Clone()
@@ -102,13 +142,37 @@ void Stage_Com::CreateEatting(const Vector3& Pos, const Vector3& RGB, float Scal
 	newObject->SetScene(m_Scene);
 	newObject->SetLayer(m_Layer);
 
-	Eatting* newEatting = newObject->AddComponent<Eatting>("Eatting" + Convert);
+	Eatting_Com* newEatting = newObject->AddComponent<Eatting_Com>("Eatting" + Convert);
 	newEatting->GetTransform()->SetWorldPos(Pos);
 	newEatting->SetRGB(RGB.x, RGB.y, RGB.z);
-	newEatting->SetCollScale(Scale / 2.0f);
+	newEatting->SetCollScale(Scale * 0.5f);
+	newEatting->SetStage(this);
 
 	m_vecAllEatting.push_back(newObject);
 	m_AllEattingMap.insert(make_pair(m_Count, newObject));
 
 	m_Count++;
+}
+
+GameObject * Stage_Com::FindEatting(__int64 Key)
+{
+	auto FindIter = m_AllEattingMap.find(Key);
+
+	if (FindIter == m_AllEattingMap.end())
+		return NULLPTR;
+
+	return FindIter->second;
+}
+
+void Stage_Com::DeleteEatting(__int64 Key)
+{
+	GameObject* getObject = FindEatting(Key);
+
+	if (getObject == NULLPTR)
+		return;
+
+	m_AllEattingMap.erase(Key);
+	m_vecAllEatting.erase(m_vecAllEatting.begin() + Key);
+	
+	getObject->SetIsDelete(true);
 }

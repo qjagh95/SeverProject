@@ -38,6 +38,8 @@ void DataManager::PushPlayer(PlayerInfo * Object)
 
 void DataManager::DeleteSocket(SocketInfo * Socket)
 {
+	size_t ClientID = -1;
+
 	auto StartIter = m_ClientList.begin();
 	auto EndIter = m_ClientList.begin();
 
@@ -45,8 +47,23 @@ void DataManager::DeleteSocket(SocketInfo * Socket)
 	{
 		if ((*StartIter)->m_Socket == Socket->m_Socket)
 		{
+			ClientID = (*StartIter)->m_CliendID;
 			StartIter = m_ClientList.erase(StartIter);
 			delete *StartIter;
+		}
+		else
+			StartIter++;
+	}
+
+	auto StartIter1 = m_vecPlayerInfo.begin();
+	auto EndIter1 = m_vecPlayerInfo.begin();
+
+	for (; StartIter1 != EndIter1;)
+	{
+		if ((*StartIter1)->m_ID == ClientID)
+		{
+			StartIter1 = m_vecPlayerInfo.erase(StartIter1);
+			delete *StartIter1;
 		}
 		else
 			StartIter++;
@@ -65,7 +82,6 @@ void DataManager::SendAllClient(SocketInfo * Socket, IO_Data* Data)
 
 void DataManager::MessageProcess(SocketInfo * Socket, IO_Data * Data)
 {
-
 }
 
 SocketInfo * DataManager::FindSocket(size_t ClientID)

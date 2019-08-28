@@ -17,6 +17,7 @@ GameObject::GameObject()
 	:m_Scene(NULLPTR), m_Layer(NULLPTR), m_Transform(NULLPTR), m_Parent(NULLPTR)
 {
 	SetTag("GameObject");
+	m_isDelete = false;
 }
 
 GameObject::GameObject(const GameObject& copyObject)

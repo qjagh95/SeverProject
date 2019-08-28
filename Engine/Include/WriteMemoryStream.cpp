@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "WriteMemoryStream.h"
 
+JEONG_USING
+
 WriteMemoryStream::WriteMemoryStream()
 {
 	m_Capacity = 0;

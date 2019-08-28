@@ -1,7 +1,13 @@
 #include "pch.h"
 #include "IOCP.h"
+
 #include "PlayerInfo.h"
 #include "DataManager.h"
+
+#include <WriteMemoryStream.h>
+
+
+JEONG_USING
 
 IOCP::IOCP()
 {
@@ -88,6 +94,8 @@ void IOCP::Run()
 		if (ClientSock == INVALID_SOCKET)
 			assert(false);
 
+		cout << "클라이언트 접속!" << endl;
+
 		newInfo = new SocketInfo();
 		newInfo->m_Socket = ClientSock;
 		newInfo->m_ClientInfo = ClientAddr;
@@ -97,19 +105,9 @@ void IOCP::Run()
 		//Overlapped 소켓과 Completion Port 의 연결
 		CreateIoCompletionPort(reinterpret_cast<HANDLE>(newInfo->m_Socket), m_CompletionPort, reinterpret_cast<DWORD>(newInfo), 0);
 
-		// 클라이언트를 위한 버퍼를 설정, OVERLAPPED 변수 초기화
-		IoData = new IO_Data();
-		memset(&(IoData->m_Overlapped), 0, sizeof(OVERLAPPED));
-		IoData->m_WsaBuf.len = BUFFERSIZE;
-		IoData->m_WsaBuf.buf = IoData->m_Buffer;
-		Flags = 0;
-
+		//클라생성메세지를 던진다.
+		MessageManager::Get()->SendNewPlayerMsg(newInfo);
 		DataManager::m_ClientCount++;
-
-		//Client접속처리 후 플레이어 생성메세지를 던진다.
-		//중첩된 데이터입력
-		//WSARecv(newInfo->m_Socket, &(IoData->m_WsaBuf), 1, reinterpret_cast<LPDWORD>(&RecvByte), 
-		//reinterpret_cast<LPDWORD>(&Flags), &(IoData->m_Overlapped), NULL);
 	}
 }
 

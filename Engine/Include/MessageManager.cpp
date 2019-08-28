@@ -15,14 +15,29 @@ MessageManager::~MessageManager()
 {
 }
 
-void MessageManager::SendNewPlayerMsg(SocketInfo * Socket, IO_Data * Data)
+void MessageManager::SendNewPlayerMsg(SocketInfo * Socket)
 {
 	WriteMemoryStream Writer;
+	NewClientMessage Temp;
+	Writer.Write(&Temp, sizeof(NewClientMessage));
+
+	IO_Data* IoData = new IO_Data();
+	IoData->WriteBuffer<NewClientMessage>(Writer.GetBuffer());
+
+	Send(Socket, IoData);
 }
 
-char*  MessageManager::RecvNewPlayerMsg(SocketInfo * Socket, IO_Data * Data)
+void  MessageManager::RecvNewPlayerMsg(SocketInfo * Socket, IO_Data * Data)
 {
 	char Buffer[BUFFERSIZE] = {};
+	ReadMemoryStream Reader(Buffer); 
+	DWORD Flags = 0;
 
-	return nullptr;
+	WSARecv(Socket->m_Socket, &Data->m_WsaBuf, 1, NULLPTR, &Flags, &Data->m_Overlapped, NULLPTR);
+}
+
+void MessageManager::Send(SocketInfo * Socket, IO_Data * Data)
+{
+	DWORD Flags = 0;
+	WSASend(Socket->m_Socket, &Data->m_WsaBuf, 1, nullptr, Flags, &Data->m_Overlapped, nullptr);
 }

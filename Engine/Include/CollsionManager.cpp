@@ -24,7 +24,7 @@ CollsionManager::~CollsionManager()
 
 bool CollsionManager::Init()
 {
-	CreateGroup("Default", Vector3(0.0f, 0.0f, 0.0f), Vector3(50000.f, 50000.f, 0.f), 20, 20, 1, CGT_2D);
+	CreateGroup("Default", Vector3(0.0f, 0.0f, 0.0f), Vector3(50000.f, 50000.f, 0.f), 5, 5, 1, CGT_2D);
 	CreateGroup("UI", Vector3(0.0f, 0.0f, 0.0f), Vector3((float)Device::Get()->GetWinSize().Width, (float)Device::Get()->GetWinSize().Width, 0.0f), 4, 4, 1, CGT_2D);
 
 	return true;
@@ -207,8 +207,6 @@ void CollsionManager::Collsion(float DeltaTime)
 
 		if (getSection->Size > 0)
 		{
-			//sort(pSection->pColliderArray, &pSection->pColliderArray[pSection->iSize - 1], CCollisionManager::SortZOrder);
-
 			for (int i = 0; i < getSection->Size; i++)
 			{
 				Collider_Com* CollSrc = getSection->ColliderList[i];
@@ -370,7 +368,6 @@ void CollsionManager::Collsion(float DeltaTime)
 				}//for(j)
 			}
 		}
-		//sort(iterG->second->pSection[i]->pColliderArray, &iterG->second->pSection[i]->pColliderArray[iterG->second->pSection[i]->iSize - 1],CCollisionManager::SortZ);
 		SAFE_RELEASE(MouseWorldPoint);
 	}
 
@@ -388,12 +385,6 @@ void CollsionManager::Collsion(float DeltaTime)
 			//충돌체수가 1개이하면 돌필요가없다.
 			if (getSection->Size < 2)
 			{
-				//공간이 틀어지면 빼줘야한다.
-				//4개의 객체와 충돌중인 플레이어가 이동 후 다른 공간인덱스로 옮겨갔는데
-				//4개의 객체는 충돌되서 사라지고 플레이어객체는 공간이 틀어졌으니 이전컬라이더를 검사해서
-				//있다면 충돌됬단뜻이니 End함수를 한번 호출해야한다.
-
-				//TODO
 				for (int j = 0; j < getSection->Size; j++)
 					getSection->ColliderList[j]->CheckPrevCollisionInSection(DeltaTime);
 

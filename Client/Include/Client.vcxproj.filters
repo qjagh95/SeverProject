@@ -34,9 +34,6 @@
     <ClCompile Include="BasicInfo.cpp">
       <Filter>BasicInfo</Filter>
     </ClCompile>
-    <ClCompile Include="Eatting.cpp">
-      <Filter>MainScene\Component</Filter>
-    </ClCompile>
     <ClCompile Include="Stage_Com.cpp">
       <Filter>MainScene\Component</Filter>
     </ClCompile>
@@ -45,6 +42,9 @@
     </ClCompile>
     <ClCompile Include="ConnectSever.cpp">
       <Filter>WinMain</Filter>
+    </ClCompile>
+    <ClCompile Include="Eatting_Com.cpp">
+      <Filter>MainScene\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -60,9 +60,6 @@
     <ClInclude Include="BasicInfo.h">
       <Filter>BasicInfo</Filter>
     </ClInclude>
-    <ClInclude Include="Eatting.h">
-      <Filter>MainScene\Component</Filter>
-    </ClInclude>
     <ClInclude Include="Stage_Com.h">
       <Filter>MainScene\Component</Filter>
     </ClInclude>
@@ -71,6 +68,9 @@
     </ClInclude>
     <ClInclude Include="ConnectSever.h">
       <Filter>WinMain</Filter>
+    </ClInclude>
+    <ClInclude Include="Eatting_Com.h">
+      <Filter>MainScene\Component</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
