@@ -82,6 +82,25 @@ void DataManager::SendAllClient(SocketInfo * Socket, IO_Data* Data)
 
 void DataManager::MessageProcess(SocketInfo * Socket, IO_Data * Data)
 {
+	m_State = MessageManager::Get()->RecvMsg(Socket, Data);
+
+	switch (m_State)
+	{
+	case SST_NEW_CLIENT:
+		break;
+	case SST_CREATE_EAT_OBJECT:
+		break;
+	case SST_CREATE_PLAYER:
+		break;
+	case SST_CREATE_OTHER_PLAYER:
+		break;
+	case SST_PLAYER_DATA:
+		break;
+	case SST_DELETE_EAT_OBJECT:
+		break;
+	case SST_NONE:
+		break;
+	}
 }
 
 SocketInfo * DataManager::FindSocket(size_t ClientID)

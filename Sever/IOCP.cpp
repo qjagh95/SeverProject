@@ -77,11 +77,7 @@ void IOCP::SetSocket()
 
 void IOCP::Run()
 {
-	SocketInfo* newInfo; 
-	IO_Data* IoData;
-
-	DWORD RecvByte;
-	DWORD Flags;
+	SocketInfo* newInfo = NULLPTR;
 
 	while (true)
 	{
@@ -107,6 +103,8 @@ void IOCP::Run()
 
 		//클라생성메세지를 던진다.
 		MessageManager::Get()->SendNewPlayerMsg(newInfo);
+		DataManager::Get()->PushClient(newInfo);
+
 		DataManager::m_ClientCount++;
 	}
 }
@@ -134,6 +132,6 @@ void IOCP::ThreadFunc()
 			continue;
 		}
 
-		DataManager::Get()->MessageProcess(SocketData, IoData); 
+		//DataManager::Get()->RecvMsg(SocketData, IoData);
 	}
 }

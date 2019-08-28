@@ -312,6 +312,9 @@
     <ClInclude Include="MessageManager.h">
       <Filter>Core\17. MessageManager</Filter>
     </ClInclude>
+    <ClInclude Include="ConnectSever.h">
+      <Filter>Core\01. Window</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Copy.bat">
@@ -453,6 +456,9 @@
     </ClCompile>
     <ClCompile Include="MessageManager.cpp">
       <Filter>Core\17. MessageManager</Filter>
+    </ClCompile>
+    <ClCompile Include="ConnectSever.cpp">
+      <Filter>Core\01. Window</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

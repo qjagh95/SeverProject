@@ -20,7 +20,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hIstance, _In_opt_ HINSTANCE hPrevInstance,
 	//ConnectSever::Get()->Init();
 
 	Core::Get()->SetGameMode(GM_2D);
-
 	SceneManager::Get()->AddSceneComponent<MainScene>("MainScene");
 
 	int Result = Core::Get()->Run();

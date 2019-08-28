@@ -201,6 +201,7 @@
     <ClInclude Include="Component\Renderer_Com.h" />
     <ClInclude Include="Component\Transform_Com.h" />
     <ClInclude Include="Component\UIBase_Com.h" />
+    <ClInclude Include="ConnectSever.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="Device.h" />
     <ClInclude Include="GameObject.h" />
@@ -252,6 +253,7 @@
     <ClCompile Include="Component\Renderer_Com.cpp" />
     <ClCompile Include="Component\Transform_Com.cpp" />
     <ClCompile Include="Component\UIBase_Com.cpp" />
+    <ClCompile Include="ConnectSever.cpp" />
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="Device.cpp" />
     <ClCompile Include="GameObject.cpp" />

@@ -40,9 +40,6 @@
     <ClCompile Include="OtharPlayer_Com.cpp">
       <Filter>MainScene\Component</Filter>
     </ClCompile>
-    <ClCompile Include="ConnectSever.cpp">
-      <Filter>WinMain</Filter>
-    </ClCompile>
     <ClCompile Include="Eatting_Com.cpp">
       <Filter>MainScene\Component</Filter>
     </ClCompile>
@@ -65,9 +62,6 @@
     </ClInclude>
     <ClInclude Include="OtharPlayer_Com.h">
       <Filter>MainScene\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="ConnectSever.h">
-      <Filter>WinMain</Filter>
     </ClInclude>
     <ClInclude Include="Eatting_Com.h">
       <Filter>MainScene\Component</Filter>

@@ -13,6 +13,7 @@ public:
 	void Collision(float DeltaTime) override;
 	void Render(float DeltaTime) override;
 
+private:
 	Stage_Com* m_MainStage;
 
 public:

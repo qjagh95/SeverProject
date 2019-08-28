@@ -21,6 +21,7 @@ private:
 	int Update(float DeltaTime);
 	int LateUpdate(float DeltaTime);
 	int Collsion(float DeltaTime);
+	void MessageUpdate(float DeltaTime);
 	void Render(float DeltaTime);
 
 	void Register(const TCHAR* ClassName, int iIconID, int iSmallIconID);
@@ -35,9 +36,11 @@ private:
 	float ClearColor[4];
 	GAME_MODE m_GameMode;
 	static WPARAM m_wParam;
+	IO_Data* m_CurData;
+	SocketInfo* m_ClientSocket;
 
 public:
-	CLASS_IN_SINGLE(Core);
+	CLASS_IN_SINGLE(Core)
 };
 
 JEONG_END

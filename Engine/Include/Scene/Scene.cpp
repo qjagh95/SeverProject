@@ -15,6 +15,7 @@ JEONG_USING
 
 Scene::Scene()
 {
+	m_State = SST_NONE;
 }
 
 Scene::~Scene()
@@ -242,6 +243,7 @@ void Scene::Collision(float DeltaTime)
 	KeyInput::Get()->UpdateMousePos();
 	CollsionManager::Get()->Collsion(DeltaTime);
 }
+
 
 void Scene::Render(float DeltaTime)
 {

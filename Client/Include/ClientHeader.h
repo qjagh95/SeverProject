@@ -1,6 +1,5 @@
 #pragma once
 #include <stdafx.h>
-#include "ConnectSever.h"
 
 #define PORT 15000
 

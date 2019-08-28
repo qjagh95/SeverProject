@@ -69,6 +69,7 @@ private:
 	Camera_Com* m_UICamera;
 	Transform_Com* m_UICameraTransform;
 	GameObject* m_UICameraObject;
+	SEVER_DATA_TYPE m_State;
 
 private:
 	Scene();

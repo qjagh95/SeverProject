@@ -2,6 +2,8 @@
 #include "Core.h"
 #include "Device.h"
 #include "Timer.h"
+#include "MessageManager.h"
+#include "ConnectSever.h"
 
 #include "Resource/Mesh.h"
 
@@ -19,6 +21,9 @@ Core::Core()
 	//_CrtSetBreakAlloc(390);  
 	ZeroMemory(ClearColor, sizeof(float) * 4);
 	PathManager::Get();
+
+	m_CurData = NULLPTR;
+	m_ClientSocket = NULLPTR;
 }
 
 Core::~Core()
@@ -110,6 +115,8 @@ bool Core::Init(HINSTANCE hInst, HWND hWnd, unsigned int Width, unsigned int Hei
 	}
 
 	SetClearColor(0, 150, 255, 0);
+	//TODO : 
+	m_ClientSocket = ConnectSever::Get()->GetSocketInfo();
 
 	return true;
 }
@@ -237,6 +244,11 @@ int Core::Collsion(float DeltaTime)
 	SceneManager::Get()->Collision(DeltaTime);
 	
 	return 0;
+}
+
+void Core::MessageUpdate(float DeltaTime)
+{
+	MessageManager::Get()->ClientMessageProcess(m_ClientSocket, m_CurData);
 }
 
 void Core::Render(float DeltaTime)

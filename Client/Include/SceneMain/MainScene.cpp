@@ -2,6 +2,8 @@
 #include "MainScene.h"
 #include "GameObject.h"
 
+#include <messagemanager.h>
+
 #include "Scene/Scene.h"
 #include "scene/Layer.h"
 
@@ -39,20 +41,21 @@ bool MainScene::Init()
 	SAFE_RELEASE(BackCom);
 	SAFE_RELEASE(BackObject);
 
-	GameObject* PlayerObject = GameObject::CreateObject("Player", Default);
-	Player_Com* player_Com = PlayerObject->AddComponent<Player_Com>("Player_Com");
-	SAFE_RELEASE(player_Com);
+	//GameObject* PlayerObject = GameObject::CreateObject("Player", Default);
+	//Player_Com* player_Com = PlayerObject->AddComponent<Player_Com>("Player_Com");
+	//SAFE_RELEASE(player_Com);
 	
 	GameObject* StageObj = GameObject::CreateObject("StageObj", Default);
-	Stage_Com* MainStage = StageObj->AddComponent<Stage_Com>("Player_Com");
-	MainStage->CreateEatting(Vector3(1000.0f, 500.0f ,1.0f), Vector3(255.0f, 255.0f, 255.0f), 10.0f);
+	Stage_Com* MainStage = StageObj->AddComponent<Stage_Com>("StageCom");
+	//MainStage->CreateEatting(Vector3(1000.0f, 500.0f ,1.0f), Vector3(255.0f, 255.0f, 255.0f), 10.0f);
 
-	mainCamera->SetTarget(PlayerObject);
+	//mainCamera->SetTarget(PlayerObject);
 	SAFE_RELEASE(mainCamera);
 	
 	SAFE_RELEASE(Default);
 	SAFE_RELEASE(UILayer);
 	SAFE_RELEASE(BackLayer);
+
 
 	return true;
 }
