@@ -18,7 +18,6 @@ ReadMemoryStream::~ReadMemoryStream()
 void ReadMemoryStream::Read(void* Buffer, size_t length)
 {
 	m_Size += length;
-
 	memcpy(Buffer, m_ReadBuffer + m_Size, length);
 }
 

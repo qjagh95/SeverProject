@@ -65,6 +65,7 @@ void DataManager::SendAllClient(SocketInfo * Socket, IO_Data* Data)
 
 void DataManager::MessageProcess(SocketInfo * Socket, IO_Data * Data)
 {
+
 }
 
 SocketInfo * DataManager::FindSocket(size_t ClientID)

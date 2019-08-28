@@ -82,5 +82,7 @@ void BasicInfo::SetCollScale(float Scale)
 {
 	m_Scale = Scale;
 	m_CollScale = Scale * 0.5f;
+
+	m_Transform->SetWorldScale(Scale);
 	m_CirCleColl->SetInfo(m_CollScale);
 }

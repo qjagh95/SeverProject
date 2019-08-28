@@ -43,7 +43,6 @@ bool MainScene::Init()
 	Player_Com* player_Com = PlayerObject->AddComponent<Player_Com>("Player_Com");
 	SAFE_RELEASE(player_Com);
 
-
 	//GameObject* Eatting123 = GameObject::CreateObject("Eatting123123", Default);
 	//Eatting* Eatting123123 = Eatting123->AddComponent<Eatting>("Player_Com");
 	//Eatting123123->GetTransform()->SetWorldPos(Vector3(1000.0f, 500.0f, 1.0f));

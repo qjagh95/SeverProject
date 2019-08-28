@@ -24,6 +24,8 @@ Stage_Com::~Stage_Com()
 
 bool Stage_Com::Init()
 {
+	m_WinSize.x = Core::Get()->GetWinSize().Width;
+	m_WinSize.y = Core::Get()->GetWinSize().Height;
 
 	return true;
 }
@@ -42,7 +44,7 @@ int Stage_Com::Input(float DeltaTime)
 	{
 		Vector3 getPos = CurObject->GetTransform()->GetWorldPos();
 
-		if (CameraPos.x <= PlusPos.x && CameraPos.y <= PlusPos.y)
+		if (getPos.x >= CameraPos.x && getPos.x <= PlusPos.x && getPos.y >= CameraPos.y && getPos.y <= PlusPos.y)
 			m_UpdateEatting.push_back(CurObject);
 
 		else
@@ -103,7 +105,7 @@ void Stage_Com::CreateEatting(const Vector3& Pos, const Vector3& RGB, float Scal
 	Eatting* newEatting = newObject->AddComponent<Eatting>("Eatting" + Convert);
 	newEatting->GetTransform()->SetWorldPos(Pos);
 	newEatting->SetRGB(RGB.x, RGB.y, RGB.z);
-	newEatting->SetCollScale(Scale);
+	newEatting->SetCollScale(Scale / 2.0f);
 
 	m_vecAllEatting.push_back(newObject);
 	m_AllEattingMap.insert(make_pair(m_Count, newObject));

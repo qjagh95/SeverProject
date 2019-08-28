@@ -5,8 +5,9 @@ JEONG_BEGIN
 class JEONG_DLL MessageManager
 {
 public:
-	//void SendMsg(SocketInfo* Socket, IO_Data* Data);
-	//char* RecvMsg(SocketInfo* Socket, IO_Data* Data);
+	void SendNewPlayerMsg(SocketInfo* Socket, IO_Data* Data);
+	char* RecvNewPlayerMsg(SocketInfo* Socket, IO_Data* Data);
+
 
 private:
 	CLASS_IN_SINGLE(MessageManager)
