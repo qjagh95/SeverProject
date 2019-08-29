@@ -1,11 +1,11 @@
-#include "ClientHeader.h"
+#include "stdafx.h"
 #include "Player_Com.h"
-#include "GameObject.h"
-#include "KeyInput.h"
+#include "Component/ColliderCircle_Com.h"
 
+JEONG_USING
 Player_Com::Player_Com()
 {
-	m_ComType = static_cast<COMPONENT_TYPE>(UT_PLAYER);
+	m_ComType = CT_PLAYER;
 }
 
 Player_Com::Player_Com(const Player_Com & userCom)

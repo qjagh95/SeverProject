@@ -1,7 +1,10 @@
 #pragma once
+
+JEONG_BEGIN
+
 class Eatting;
 class Player_Com;
-class Stage_Com : public UserComponent_Base
+class JEONG_DLL Stage_Com : public UserComponent_Base
 {
 public:
 	bool Init() override;
@@ -28,3 +31,5 @@ public:
 	Stage_Com(const Stage_Com& CopyData);
 	~Stage_Com();
 };
+
+JEONG_END

@@ -1,10 +1,11 @@
-#include "ClientHeader.h"
+#include "stdafx.h"
 #include "Eatting_Com.h"
 #include "Stage_Com.h"
-#include "UserComponent/Player_Com.h"
+#include "Player_Com.h"
 
-#include <Component/ColliderRect_Com.h>
+#include "Component/ColliderCircle_Com.h"
 
+JEONG_USING
 Eatting_Com::Eatting_Com()
 {
 	m_isUpdate = true;
@@ -27,7 +28,7 @@ bool Eatting_Com::Init()
 
 	m_Material->SetDiffuseTexture(0, "Circle", TEXT("Circle.png"));
 
-	m_CirCleColl = m_Object->AddComponent<JEONG::ColliderCircle_Com>("EattingCircle");
+	m_CirCleColl = m_Object->AddComponent<ColliderCircle_Com>("EattingCircle");
 	m_CirCleColl->SetCollsionCallback(CCT_FIRST, this, &Eatting_Com::PlayerColl);
 
 	return true;
@@ -66,7 +67,7 @@ void Eatting_Com::PlayerColl(Collider_Com * Src, Collider_Com * Dest, float Delt
 	if (Dest->GetTag() == "PlayerCircle")
 	{
 		//서버로 파괴될 오브젝트 정보로 나자신 넘기기(서버가 Delete명령, 명령에따른 Delete호출)
-		Player_Com* getPlayer = Dest->FindComponentFromType<Player_Com>(static_cast<COMPONENT_TYPE>(UT_PLAYER));
+		Player_Com* getPlayer = Dest->FindComponentFromType<Player_Com>(CT_PLAYER);
 		getPlayer->ScalePlus(m_Scale);
 
 		m_IncludeStage->DeleteEatting(m_Index);

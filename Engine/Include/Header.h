@@ -11,13 +11,13 @@ public:
 	~Header();
 };
 
-//밑으로는 보내거나 받는 사이즈를 명확하게 하기위해 메세지 클래스화
-class JEONG_DLL NewClientMessage : public Header
+//밑으로는 보내거나 받는 타입을 명확하게 하기위해 메세지 클래스화
+class JEONG_DLL CreateMainPlayerMessage : public Header
 {
 public:
-	NewClientMessage()
+	CreateMainPlayerMessage()
 	{
-		m_Type = SST_NEW_CLIENT;
+		m_Type = SST_CREATE_PLAYER;
 	}
 };
 

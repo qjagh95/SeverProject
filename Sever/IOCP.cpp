@@ -1,11 +1,8 @@
 #include "pch.h"
 #include "IOCP.h"
 
-#include "PlayerInfo.h"
-#include "DataManager.h"
-
+#include <DataManager.h>
 #include <WriteMemoryStream.h>
-
 
 JEONG_USING
 
@@ -103,15 +100,15 @@ void IOCP::Run()
 
 		//클라생성메세지를 던진다.
 		MessageManager::Get()->SendNewPlayerMsg(newInfo);
-		DataManager::Get()->PushClient(newInfo);
 
+		DataManager::Get()->PushClient(newInfo);
 		DataManager::m_ClientCount++;
 	}
 }
 
 void IOCP::ThreadFunc()
 {
-	HANDLE CompletionPort = reinterpret_cast<HANDLE>(m_CompletionPort); \
+	HANDLE CompletionPort = reinterpret_cast<HANDLE>(m_CompletionPort);
 	DWORD ByteTransferred;
 	SocketInfo* SocketData;
 	IO_Data* IoData;

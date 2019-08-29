@@ -163,6 +163,12 @@
     <Filter Include="Core\17. MessageManager">
       <UniqueIdentifier>{b670aec8-d28c-49bf-adc9-1871858b4d59}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\18 .DataManager">
+      <UniqueIdentifier>{116f91a2-f789-4e12-9734-e09c731d5532}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\08. Object\Component\UserComponent\BasicInfo">
+      <UniqueIdentifier>{60b63069-f19c-4611-97e7-1452e17c30e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -315,6 +321,24 @@
     <ClInclude Include="ConnectSever.h">
       <Filter>Core\01. Window</Filter>
     </ClInclude>
+    <ClInclude Include="DataManager.h">
+      <Filter>Core\18 .DataManager</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicInfo.h">
+      <Filter>Core\08. Object\Component\UserComponent\BasicInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="Eatting_Com.h">
+      <Filter>Core\08. Object\Component\UserComponent\BasicInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="OtharPlayer_Com.h">
+      <Filter>Core\08. Object\Component\UserComponent\BasicInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="Player_Com.h">
+      <Filter>Core\08. Object\Component\UserComponent\BasicInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="Stage_Com.h">
+      <Filter>Core\08. Object\Component\UserComponent\BasicInfo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Copy.bat">
@@ -459,6 +483,24 @@
     </ClCompile>
     <ClCompile Include="ConnectSever.cpp">
       <Filter>Core\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="DataManager.cpp">
+      <Filter>Core\18 .DataManager</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicInfo.cpp">
+      <Filter>Core\08. Object\Component\UserComponent\BasicInfo</Filter>
+    </ClCompile>
+    <ClCompile Include="Eatting_Com.cpp">
+      <Filter>Core\08. Object\Component\UserComponent\BasicInfo</Filter>
+    </ClCompile>
+    <ClCompile Include="OtharPlayer_Com.cpp">
+      <Filter>Core\08. Object\Component\UserComponent\BasicInfo</Filter>
+    </ClCompile>
+    <ClCompile Include="Player_Com.cpp">
+      <Filter>Core\08. Object\Component\UserComponent\BasicInfo</Filter>
+    </ClCompile>
+    <ClCompile Include="Stage_Com.cpp">
+      <Filter>Core\08. Object\Component\UserComponent\BasicInfo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

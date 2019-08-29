@@ -248,7 +248,7 @@ int Core::Collsion(float DeltaTime)
 
 void Core::MessageUpdate(float DeltaTime)
 {
-	MessageManager::Get()->ClientMessageProcess(m_ClientSocket, m_CurData);
+	//MessageManager::Get()->ClientMessageProcess(m_ClientSocket, m_CurData);
 }
 
 void Core::Render(float DeltaTime)

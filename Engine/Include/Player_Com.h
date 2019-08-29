@@ -1,9 +1,8 @@
 #pragma once
 #include "BasicInfo.h"
 
-JEONG_USING
-
-class Player_Com : public BasicInfo
+JEONG_BEGIN
+class JEONG_DLL Player_Com : public BasicInfo
 {
 public:
 	bool Init() override;
@@ -29,3 +28,4 @@ public:
 	friend class GameObject;
 };
 
+JEONG_END

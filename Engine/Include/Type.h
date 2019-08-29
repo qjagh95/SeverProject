@@ -127,17 +127,18 @@ struct IO_Data
 	IO_Data()
 	{
 		ZeroMemory(&m_Overlapped, sizeof(OVERLAPPED));
+		m_WsaBuf.len = 0;
 	}
 
 	template<typename T>
 	void WriteBuffer(char* Buffer)
 	{
+		ZeroMemory(m_Buffer, sizeof(m_WsaBuf.len));
+
 		memcpy(m_Buffer, Buffer, sizeof(T));
 		m_WsaBuf.len = sizeof(T);
 		m_WsaBuf.buf = m_Buffer;
 	}
-
 };
-
 
 JEONG_END

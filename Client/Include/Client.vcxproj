@@ -227,23 +227,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Eatting_Com.cpp" />
-    <ClCompile Include="OtharPlayer_Com.cpp" />
     <ClCompile Include="SceneMain\MainScene.cpp" />
-    <ClCompile Include="Stage_Com.cpp" />
     <ClCompile Include="WinMain.cpp" />
-    <ClCompile Include="UserComponent\Player_Com.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicInfo.h" />
     <ClInclude Include="ClientHeader.h" />
-    <ClInclude Include="Eatting_Com.h" />
-    <ClInclude Include="OtharPlayer_Com.h" />
     <ClInclude Include="SceneMain\MainScene.h" />
-    <ClInclude Include="Stage_Com.h" />
-    <ClInclude Include="UserComponent\Player_Com.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\DirectXTK\DirectXTK_Desktop_2017_Win10.vcxproj" />

@@ -17,6 +17,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hIstance, _In_opt_ HINSTANCE hPrevInstance,
 		return 0;
 	}
 
+	Core::Get()->m_ProjectType = MY_IS_CLIENT;
 	//ConnectSever::Get()->Init();
 
 	Core::Get()->SetGameMode(GM_2D);

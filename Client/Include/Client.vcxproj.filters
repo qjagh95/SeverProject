@@ -22,9 +22,6 @@
     <ClCompile Include="WinMain.cpp">
       <Filter>WinMain</Filter>
     </ClCompile>
-    <ClCompile Include="UserComponent\Player_Com.cpp">
-      <Filter>MainScene\Component</Filter>
-    </ClCompile>
     <ClCompile Include="SceneMain\MainScene.cpp">
       <Filter>MainScene\SceneMain</Filter>
     </ClCompile>
@@ -34,37 +31,16 @@
     <ClCompile Include="BasicInfo.cpp">
       <Filter>BasicInfo</Filter>
     </ClCompile>
-    <ClCompile Include="Stage_Com.cpp">
-      <Filter>MainScene\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="OtharPlayer_Com.cpp">
-      <Filter>MainScene\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="Eatting_Com.cpp">
-      <Filter>MainScene\Component</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClientHeader.h">
       <Filter>WinMain</Filter>
-    </ClInclude>
-    <ClInclude Include="UserComponent\Player_Com.h">
-      <Filter>MainScene\Component</Filter>
     </ClInclude>
     <ClInclude Include="SceneMain\MainScene.h">
       <Filter>MainScene\SceneMain</Filter>
     </ClInclude>
     <ClInclude Include="BasicInfo.h">
       <Filter>BasicInfo</Filter>
-    </ClInclude>
-    <ClInclude Include="Stage_Com.h">
-      <Filter>MainScene\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="OtharPlayer_Com.h">
-      <Filter>MainScene\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="Eatting_Com.h">
-      <Filter>MainScene\Component</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

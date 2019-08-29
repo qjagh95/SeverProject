@@ -15,6 +15,10 @@ public:
 	HWND GetHwnd() const { return m_hWnd; }
 	HINSTANCE GetHinstance() const { return m_hIstance; }
 	WinSize GetWinSize() const { return m_WinSize; }
+	IO_Data* GetIOData() { return m_CurData; }
+
+public:
+	PROJECT_TYPE m_ProjectType;
 
 private:
 	int Input(float DeltaTime);
