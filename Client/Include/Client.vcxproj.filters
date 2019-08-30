@@ -8,9 +8,6 @@
     <Filter Include="MainScene">
       <UniqueIdentifier>{981a1623-d2b2-41ac-9a94-a2c1168dcda0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="MainScene\Component">
-      <UniqueIdentifier>{19c2ecfe-8b36-43ca-9162-6834275c2d8d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="MainScene\SceneMain">
       <UniqueIdentifier>{37e08126-db94-4993-b4d6-5ca798c17fbd}</UniqueIdentifier>
     </Filter>
@@ -27,9 +24,6 @@
     </ClCompile>
     <ClCompile Include="ClientHeader.cpp">
       <Filter>WinMain</Filter>
-    </ClCompile>
-    <ClCompile Include="BasicInfo.cpp">
-      <Filter>BasicInfo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

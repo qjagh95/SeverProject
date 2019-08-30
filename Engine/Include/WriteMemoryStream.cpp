@@ -9,7 +9,6 @@ WriteMemoryStream::WriteMemoryStream()
 	m_Size = 0;
 
 	m_isInit = false;
-	m_WriteBuffer = nullptr;
 }
 
 WriteMemoryStream::~WriteMemoryStream()
@@ -24,6 +23,7 @@ void WriteMemoryStream::Write(const void * Data, size_t Length)
 
 	if (m_isInit == false)
 	{
+		m_WriteBuffer = new char[Length];
 		m_Capacity = Length;
 		Resize();
 	}
@@ -41,7 +41,7 @@ void WriteMemoryStream::Write(const void * Data, size_t Length)
 
 void WriteMemoryStream::Resize()
 {
-	if (m_Size < m_Capacity)
+	if (m_Size <= m_Capacity)
 		return;
 
 	m_Capacity *= 2;

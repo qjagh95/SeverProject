@@ -24,7 +24,7 @@ CollsionManager::~CollsionManager()
 
 bool CollsionManager::Init()
 {
-	CreateGroup("Default", Vector3(0.0f, 0.0f, 0.0f), Vector3(50000.f, 50000.f, 0.f), 5, 5, 1, CGT_2D);
+	CreateGroup("Default", Vector3(0.0f, 0.0f, 0.0f), Vector3(50000.f, 50000.f, 0.f), 15, 15, 1, CGT_2D);
 	CreateGroup("UI", Vector3(0.0f, 0.0f, 0.0f), Vector3((float)Device::Get()->GetWinSize().Width, (float)Device::Get()->GetWinSize().Width, 0.0f), 4, 4, 1, CGT_2D);
 
 	return true;

@@ -6,6 +6,8 @@
 #include "Scene/Scene.h"
 
 #include "SceneMain/MainScene.h"
+#include <ConnectSever.h>
+#include <messagemanager.h>
 
 JEONG_USING
 
@@ -18,10 +20,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hIstance, _In_opt_ HINSTANCE hPrevInstance,
 	}
 
 	Core::Get()->m_ProjectType = MY_IS_CLIENT;
-	//ConnectSever::Get()->Init();
+	ConnectSever::Get()->Init();
 
 	Core::Get()->SetGameMode(GM_2D);
 	SceneManager::Get()->AddSceneComponent<MainScene>("MainScene");
+	//MessageManager::Get()->ClientInit();
 
 	int Result = Core::Get()->Run();
 	Core::Delete();

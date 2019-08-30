@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "ConnectSever.h"
+#include "Core.h"
 
 JEONG_USING
 SINGLETON_VAR_INIT(ConnectSever)
@@ -10,22 +11,28 @@ ConnectSever::ConnectSever()
 
 ConnectSever::~ConnectSever()
 {
+	WSACloseEvent(m_EventHandle);
 }
 
-bool ConnectSever::Init(PROJECT_TYPE Type)
+bool ConnectSever::Init()
 {
-	if (Type == MY_IS_CLIENT)
+	if (Core::Get()->m_ProjectType == MY_IS_CLIENT)
 	{
-		m_Info.m_Socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULLPTR, 0, WSA_FLAG_OVERLAPPED);
-
 		WSADATA Temp;
 		WSAStartup(MAKEWORD(2, 2), &Temp);
 
-		string IPAddress = "192.168.0.2";
+		m_Info.m_Socket = socket(AF_INET, SOCK_STREAM, 0);
+
+		string IPAddress = "192.168.1.164";
 
 		m_Info.m_ClientInfo.sin_family = AF_INET;
-		m_Info.m_ClientInfo.sin_port = PORT;
+		m_Info.m_ClientInfo.sin_port = htons(static_cast<uint16_t>(PORT));
 		inet_pton(AF_INET, IPAddress.c_str(), &m_Info.m_ClientInfo.sin_addr);
+
+		m_EventHandle = WSACreateEvent();
+
+		if (WSAEventSelect(m_Info.m_Socket, m_EventHandle, FD_READ | FD_WRITE) != 0)
+			assert(false);
 
 		Connect();
 	}

@@ -8,6 +8,7 @@
 #include "Resource/Mesh.h"
 
 #include "Render\Shader.h"
+#include "DataManager.h"
 
 
 JEONG_USING
@@ -22,7 +23,7 @@ Core::Core()
 	ZeroMemory(ClearColor, sizeof(float) * 4);
 	PathManager::Get();
 
-	m_CurData = NULLPTR;
+	m_CurData = new IO_Data();
 	m_ClientSocket = NULLPTR;
 }
 
@@ -37,6 +38,11 @@ Core::~Core()
 	CollsionManager::Delete();
 	KeyInput::Delete();
 	RenderManager::Delete();
+	ConnectSever::Delete();
+	MessageManager::Delete();
+	DataManager::Delete();
+
+	SAFE_DELETE(m_CurData);
 
 	CoUninitialize();
 }
@@ -244,11 +250,6 @@ int Core::Collsion(float DeltaTime)
 	SceneManager::Get()->Collision(DeltaTime);
 	
 	return 0;
-}
-
-void Core::MessageUpdate(float DeltaTime)
-{
-	//MessageManager::Get()->ClientMessageProcess(m_ClientSocket, m_CurData);
 }
 
 void Core::Render(float DeltaTime)

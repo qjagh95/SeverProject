@@ -2,6 +2,8 @@
 #include "MainScene.h"
 #include "GameObject.h"
 
+
+
 #include <messagemanager.h>
 
 #include "Scene/Scene.h"
@@ -9,10 +11,6 @@
 
 #include "Component/Component_Base.h"
 #include "Component/BackColor_Com.h"
-#include "Eatting_Com.h"
-#include "Stage_Com.h"
-
-#include "../UserComponent/Player_Com.h"
 
 MainScene::MainScene()
 {

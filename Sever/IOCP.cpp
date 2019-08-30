@@ -38,14 +38,16 @@ bool IOCP::Init()
 		assert(false);
 
 	//CompleationPort 생성
-	m_CompletionPort = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 0);
+	m_CompletionPort = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULLPTR, 0, 0);
 	GetSystemInfo(&Info);
 
 	//CPU갯수 * 2만큼 스레드 생성
-	for (size_t i = 0; i < Info.dwNumberOfProcessors; i++)
+	for (size_t i = 0; i < Info.dwNumberOfProcessors * 2; i++)
 		m_vecThread.push_back(new thread(&IOCP::ThreadFunc, this));
 
 	SetSocket();
+
+	cout << "클라 접속 대기중..." << endl;
 
 	return true;
 }
@@ -110,8 +112,8 @@ void IOCP::ThreadFunc()
 {
 	HANDLE CompletionPort = reinterpret_cast<HANDLE>(m_CompletionPort);
 	DWORD ByteTransferred;
-	SocketInfo* SocketData;
-	IO_Data* IoData;
+	SocketInfo* SocketData = NULLPTR;
+	IO_Data* IoData = NULLPTR;
 
 	while (true)
 	{
@@ -123,12 +125,15 @@ void IOCP::ThreadFunc()
 		if (ByteTransferred == 0) 
 		{ 
 			closesocket(SocketData->m_Socket);
+			cout << SocketData->m_CliendID << "번 클라이언트 종료" << endl;
 			DataManager::Get()->DeleteSocket(SocketData);
+			DataManager::m_ClientCount--;
 			delete IoData;
 
 			continue;
 		}
 
-		//DataManager::Get()->RecvMsg(SocketData, IoData);
+		if(SocketData != NULLPTR && IoData != NULLPTR)
+			MessageManager::Get()->SeverMesageProcess(SocketData, IoData);
 	}
 }

@@ -30,17 +30,15 @@ bool Player_Com::Init()
 	SAFE_RELEASE(RenderComponent);
 
 	m_CirCleColl= m_Object->AddComponent<ColliderCircle_Com>("PlayerCircle");
-	m_CirCleColl->SetInfo(7.0f);
+	m_CirCleColl->SetInfo(3.0f);
 
 	m_Transform->SetWorldScale(15.0f, 15.0, 1.0f);
 	m_Transform->SetWorldPos(500.0f, 500.0f, 1.0f);
 
-	float R = static_cast<float>(RandomRange(0, 255));
-	float G = static_cast<float>(RandomRange(0, 255));
-	float B = static_cast<float>(RandomRange(0, 255));
+	Vector4 Color = Vector4::AllColor[RandomRange(0, 140)];
 
 	Material_Com* MaterialComponent = m_Object->FindComponentFromType<Material_Com>(CT_MATERIAL);
-	MaterialComponent->SetMaterial(Vector4(R / 255.0f, G / 255.0f, B / 255.0f, 1.0f));
+	MaterialComponent->SetMaterial(Color / 255.0f);
 	MaterialComponent->SetDiffuseTexture(0, "Circle", TEXT("Circle.png"));
 	SAFE_RELEASE(MaterialComponent);
 

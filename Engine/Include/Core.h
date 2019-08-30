@@ -15,7 +15,6 @@ public:
 	HWND GetHwnd() const { return m_hWnd; }
 	HINSTANCE GetHinstance() const { return m_hIstance; }
 	WinSize GetWinSize() const { return m_WinSize; }
-	IO_Data* GetIOData() { return m_CurData; }
 
 public:
 	PROJECT_TYPE m_ProjectType;
@@ -25,7 +24,6 @@ private:
 	int Update(float DeltaTime);
 	int LateUpdate(float DeltaTime);
 	int Collsion(float DeltaTime);
-	void MessageUpdate(float DeltaTime);
 	void Render(float DeltaTime);
 
 	void Register(const TCHAR* ClassName, int iIconID, int iSmallIconID);
@@ -40,7 +38,6 @@ private:
 	float ClearColor[4];
 	GAME_MODE m_GameMode;
 	static WPARAM m_wParam;
-	IO_Data* m_CurData;
 	SocketInfo* m_ClientSocket;
 
 public:
