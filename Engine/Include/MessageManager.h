@@ -5,10 +5,16 @@ JEONG_BEGIN
 class JEONG_DLL MessageManager
 {
 public:
-	bool SendNewPlayerMsg(SocketInfo* Socket);
-	bool SendOtharPlayerMsg(SocketInfo* Socket);
+	//서버가 클라로 보내는 함수
+	bool Sever_SendNewPlayerMsg(SocketInfo* Socket);
+	bool Sever_SendOtharPlayerMsg(SocketInfo* Socket);
 
 	bool SeverMesageProcess(SocketInfo * Socket, IO_Data * Data);
+
+	void Sever_DieClient(SocketInfo* Socket);
+
+	//클라가 서버로 보내는 함수
+	void Client_ClientDie();
 
 	//클라용함수
 	void SetScene(Scene* scene) { m_CurScene = scene; };
@@ -17,6 +23,7 @@ public:
 	Layer* GetLayer() { return m_CurLayer; }
 
 	void ClientInit();
+
 
 private:
 	SEVER_DATA_TYPE IOCPSeverRecvMsg(SocketInfo* Socket, IO_Data* Data);

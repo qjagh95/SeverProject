@@ -23,7 +23,6 @@ Core::Core()
 	ZeroMemory(ClearColor, sizeof(float) * 4);
 	PathManager::Get();
 
-	m_CurData = new IO_Data();
 	m_ClientSocket = NULLPTR;
 }
 
@@ -41,9 +40,6 @@ Core::~Core()
 	ConnectSever::Delete();
 	MessageManager::Delete();
 	DataManager::Delete();
-
-	SAFE_DELETE(m_CurData);
-
 	CoUninitialize();
 }
 

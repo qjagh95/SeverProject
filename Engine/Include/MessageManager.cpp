@@ -32,7 +32,16 @@ void MessageManager::ClientInit()
 	m_Thread = thread(&MessageManager::ClientMessageProcess, this);
 }
 
-bool MessageManager::SendNewPlayerMsg(SocketInfo * Socket)
+void MessageManager::Client_ClientDie()
+{
+	IO_Data Data;
+	ClientDieMessage Message;
+	Data.WriteHeader(Message);
+
+	ClientSend(&Data);
+}
+
+bool MessageManager::Sever_SendNewPlayerMsg(SocketInfo * Socket)
 {
 	WriteMemoryStream Writer;
 	CreateMainPlayerMessage Temp;
@@ -45,7 +54,7 @@ bool MessageManager::SendNewPlayerMsg(SocketInfo * Socket)
 	return IOCPServerSend(Socket, &IoData);
 }
 
-bool MessageManager::SendOtharPlayerMsg(SocketInfo * Socket)
+bool MessageManager::Sever_SendOtharPlayerMsg(SocketInfo * Socket)
 {
 	WriteMemoryStream Writer;
 	CreateOtherPlayerMessage Temp;
@@ -63,13 +72,16 @@ bool MessageManager::SeverMesageProcess(SocketInfo * Socket, IO_Data * Data)
 
 	switch (m_State)
 	{
+	case SST_CLIENT_DIE:
+		Sever_DieClient(Socket);
+		break;
 	case SST_CREATE_EAT_OBJECT:
 		break;
 	case SST_CREATE_PLAYER:
-		return SendNewPlayerMsg(Socket);
+		return Sever_SendNewPlayerMsg(Socket);
 		break;
 	case SST_CREATE_OTHER_PLAYER:
-		return SendOtharPlayerMsg(Socket);
+		return Sever_SendOtharPlayerMsg(Socket);
 		break;
 	case SST_PLAYER_DATA:
 		break;
@@ -78,6 +90,14 @@ bool MessageManager::SeverMesageProcess(SocketInfo * Socket, IO_Data * Data)
 	}
 
 	return false;
+}
+
+void MessageManager::Sever_DieClient(SocketInfo* Socket)
+{
+	DataManager::Get()->DeleteSocket(Socket);
+	DataManager::m_ClientCount--;
+
+	m_State = SST_NONE;
 }
 
 SEVER_DATA_TYPE MessageManager::IOCPSeverRecvMsg(SocketInfo * Socket, IO_Data * Data)
@@ -128,7 +148,7 @@ void MessageManager::ClientMessageProcess()
 		{
 			recv(getSocket, m_ReadBuffer->m_Buffer, BUFFERSIZE, 0);
 			m_State = ReadHeader(m_ReadBuffer->m_Buffer);
-			m_ReadBuffer->PullBuffer();
+			m_ReadBuffer->PullBuffer(sizeof(Header));
 
 			//데이터가 필요하면 그냥 버퍼꺼내쓰면됨.
 			switch (m_State)
@@ -188,7 +208,7 @@ bool MessageManager::CreateMainPlayer()
 {
 	GameObject* newPlayerObj = GameObject::CreateObject("Player", m_CurLayer);
 	Player_Com* newPlayer = newPlayerObj->AddComponent<Player_Com>("Player");
-
+	newPlayer->SetScale(10.0f);
 	m_CurScene->GetMainCamera()->SetTarget(newPlayerObj);
 
 	SAFE_RELEASE(newPlayerObj);

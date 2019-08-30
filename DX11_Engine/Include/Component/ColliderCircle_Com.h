@@ -20,6 +20,7 @@ public:
 private:
 	CircleInfo m_WorldInfo;
 	CircleInfo m_VirtualInfo;
+	float m_Plused;
 
 protected:
 	ColliderCircle_Com();

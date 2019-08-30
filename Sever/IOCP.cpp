@@ -54,7 +54,7 @@ bool IOCP::Init()
 
 void IOCP::SetSocket()
 {
-	string Address = "192.168.1.172";
+	string Address = "192.168.1.164";
 
 	m_SeverSocket.m_Socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 

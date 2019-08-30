@@ -10,7 +10,7 @@ BasicInfo::BasicInfo()
 {
 	m_Scale = 0.0f;
 	m_CollScale = 0.0f;
-	m_RGB = Vector3::Zero;
+	m_RGB = Vector4::Zero;
 
 	m_CirCleColl = NULLPTR;
 	m_RectColl = NULLPTR;
@@ -62,7 +62,7 @@ BasicInfo * BasicInfo::Clone()
 
 void BasicInfo::SetRGB(float R, float G, float B)
 {
-	m_RGB = Vector3(R / 255.0f, G / 255.0f, B / 255.0f);
+	m_RGB = Vector4(R, G, B, 1.0f);
 	
 	if (m_Material == NULLPTR)
 	{
@@ -71,7 +71,7 @@ void BasicInfo::SetRGB(float R, float G, float B)
 		return;
 	}
 
-	m_Material->SetMaterial(Vector4(m_RGB.x, m_RGB.y, m_RGB.z, 1.0f));
+	m_Material->SetMaterial(m_RGB);
 }
 
 void BasicInfo::SetScale(float Scale)

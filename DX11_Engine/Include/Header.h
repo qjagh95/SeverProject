@@ -57,4 +57,14 @@ public:
 	}
 };
 
+
+class JEONG_DLL ClientDieMessage : public Header
+{
+public:
+	ClientDieMessage()
+	{
+		m_Type = SST_CLIENT_DIE;
+	}
+};
+
 JEONG_END

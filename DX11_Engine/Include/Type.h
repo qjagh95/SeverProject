@@ -139,6 +139,44 @@ struct IO_Data
 		m_WsaBuf.len = sizeof(T);
 		m_WsaBuf.buf = m_Buffer;
 	}
+	void WriteBuffer(char* Buffer, int Size)
+	{
+		ZeroMemory(m_Buffer, sizeof(m_WsaBuf.len));
+
+		memcpy(m_Buffer, Buffer, Size);
+		m_WsaBuf.len = Size;
+		m_WsaBuf.buf = m_Buffer;
+	}
+
+	template<typename T>
+	void WriteHeader(T& Message)
+	{
+		ZeroMemory(m_Buffer, sizeof(m_WsaBuf.len));
+
+		memcpy(m_Buffer, &Message.m_Type, sizeof(T));
+		m_WsaBuf.len = sizeof(T);
+		m_WsaBuf.buf = m_Buffer;
+	}
+
+	//버퍼초기화
+	template<typename T>
+	void ClearBuffer()
+	{
+		ZeroMemory(&m_Buffer, sizeof(T));
+		m_WsaBuf.buf = m_Buffer;
+		m_WsaBuf.len = 0;
+	}
+
+	void PullBuffer(int Size)
+	{
+		memcpy(m_Buffer, m_Buffer + Size, Size);
+	}
+
+	template<typename T>
+	void PullBuffer()
+	{
+		memcpy(m_Buffer, m_Buffer + sizeof(T), sizeof(T));
+	}
 };
 
 JEONG_END

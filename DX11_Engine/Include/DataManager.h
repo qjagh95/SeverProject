@@ -11,6 +11,7 @@ public:
 public:
 	static size_t m_ClientCount;
 
+
 private:
 	list<SocketInfo*> m_ClientList;
 	vector<SocketInfo*> m_vecClient;

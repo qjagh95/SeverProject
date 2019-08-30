@@ -10,15 +10,16 @@ public:
 	SOCKET* GetSocket() { return &m_Info.m_Socket; }
 	sockaddr_in* GetAddressInfo() { return &m_Info.m_ClientInfo; }
 	SocketInfo* GetSocketInfo() { return &m_Info; }
-	HANDLE GetEventHandle() const { return m_EventHandle; }
+	WSAEVENT GetEventHandle() { return m_EventHandle; }
 
 private:
 	void Connect();
 
 private:
 	SocketInfo m_Info;
-	HANDLE m_EventHandle;
-
+	WSAEVENT m_EventHandle;
+	//WSAEVENT == HANDLE
+	
 public:
 	CLASS_IN_SINGLE(ConnectSever)
 };

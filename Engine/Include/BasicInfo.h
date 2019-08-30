@@ -19,17 +19,19 @@ public:
 	void SetRGB(float R, float G, float B);
 	void SetScale(float Scale);
 	void SetCollScale(float Scale);
+	Vector4 GetRGB() const { return m_RGB; }
 
 protected:
 	float m_Scale;
 	float m_CollScale;
-	Vector3 m_RGB;
+	Vector4 m_RGB;
 
 	ColliderCircle_Com* m_CirCleColl;
 	ColliderRect_Com* m_RectColl;
 	Material_Com* m_Material;
 
 	float m_CollVar;
+
 public:
 	BasicInfo();
 	virtual ~BasicInfo();

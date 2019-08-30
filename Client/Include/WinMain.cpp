@@ -24,9 +24,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hIstance, _In_opt_ HINSTANCE hPrevInstance,
 
 	Core::Get()->SetGameMode(GM_2D);
 	SceneManager::Get()->AddSceneComponent<MainScene>("MainScene");
-	//MessageManager::Get()->ClientInit();
+	MessageManager::Get()->ClientInit();
 
 	int Result = Core::Get()->Run();
+	MessageManager::Get()->Client_ClientDie();
 	Core::Delete();
 
 	return Result;
