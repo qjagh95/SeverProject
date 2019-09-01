@@ -20,6 +20,7 @@ public:
 	void SetScale(float Scale);
 	void SetCollScale(float Scale);
 	Vector4 GetRGB() const { return m_RGB; }
+	float* GetScale() { return &m_Scale; }
 
 protected:
 	float m_Scale;

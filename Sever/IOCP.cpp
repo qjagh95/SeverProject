@@ -8,10 +8,12 @@ JEONG_USING
 
 IOCP::IOCP()
 {
-	closesocket(m_SeverSocket.m_Socket);
-	WSACleanup();
 	m_SeverSocket.m_CliendID = DataManager::m_ClientCount;
 	DataManager::m_ClientCount++;
+
+	m_SocketInfo = new SocketInfo();
+	m_SocketInfo->m_Socket = 0;
+	m_SocketInfo->m_CliendID = -1;
 }
 
 IOCP::~IOCP()
@@ -27,6 +29,8 @@ IOCP::~IOCP()
 			m_vecThread[i] = nullptr;
 		}
 	}
+
+	SAFE_DELETE(m_SocketInfo);
 }
 
 bool IOCP::Init()
@@ -96,15 +100,16 @@ void IOCP::Run()
 		newInfo->m_ClientInfo = ClientAddr;
 		newInfo->m_CliendID = DataManager::m_ClientCount;
 		DataManager::Get()->PushClient(newInfo);
+		DataManager::m_ClientCount++;
 
 		//Overlapped 소켓과 Completion Port 의 연결
-		CreateIoCompletionPort(reinterpret_cast<HANDLE>(newInfo->m_Socket), m_CompletionPort, reinterpret_cast<DWORD>(newInfo), 0);
-
+		CreateIoCompletionPort((HANDLE)newInfo->m_Socket, m_CompletionPort, (ULONG_PTR)newInfo, 0);
+		//IO_Data* IoData = new IO_Data();
+		//IoData->WriteHeader<CreateMainPlayerMessage>();
+		//DWORD Flags = 0;
+		//WSASend(newInfo->m_Socket, &IoData->m_WsaBuf, 1, NULLPTR, Flags, (LPOVERLAPPED)IoData, NULLPTR);
 		//클라생성메세지를 던진다.
 		MessageManager::Get()->Sever_SendNewPlayerMsg(newInfo);
-
-		DataManager::Get()->PushClient(newInfo);
-		DataManager::m_ClientCount++;
 	}
 }
 
@@ -112,28 +117,26 @@ void IOCP::ThreadFunc()
 {
 	HANDLE CompletionPort = reinterpret_cast<HANDLE>(m_CompletionPort);
 	DWORD ByteTransferred;
-	SocketInfo* SocketData = NULLPTR;
-	IO_Data* IoData = NULLPTR;
 
 	while (true)
 	{
-		//입.출력이 완료된 소켓의 정보 얻음
-		GetQueuedCompletionStatus(CompletionPort, reinterpret_cast<LPDWORD>(&ByteTransferred), 
-		reinterpret_cast<PULONG_PTR>(&SocketData), reinterpret_cast<OVERLAPPED**>(&IoData), 0);
+		//입출력이 완료된 소켓의 정보 얻음
+		if (GetQueuedCompletionStatus(CompletionPort, (LPDWORD)&ByteTransferred, (PULONG_PTR)&m_SocketInfo, 
+			(LPOVERLAPPED*)&m_IOData, INFINITE) == FALSE)
+			continue;
 
 		// 전송된 바이트가 0일때 종료 (EOF 전송 시에도) 
-		if (ByteTransferred == 0) 
-		{ 
-			closesocket(SocketData->m_Socket);
-			cout << SocketData->m_CliendID << "번 클라이언트 종료" << endl;
-			DataManager::Get()->DeleteSocket(SocketData);
-			DataManager::m_ClientCount--;
-			delete IoData;
+		if (ByteTransferred == 0)
+		{
+			cout << m_SocketInfo->m_CliendID << "번 클라이언트 종료" << endl;
 
+			DataManager::Get()->DeleteSocket(m_SocketInfo);
+			DataManager::m_ClientCount--;
+			m_IOData->ClearBuffer();
 			continue;
 		}
 
-		if (SocketData != NULLPTR && IoData != NULLPTR)
-			MessageManager::Get()->SeverMesageProcess(SocketData, IoData);
+		if (m_SocketInfo->m_Socket != 0 && m_IOData->m_WsaBuf.len != 0)
+			MessageManager::Get()->SeverMesageProcess(m_SocketInfo, m_IOData);
 	}
 }

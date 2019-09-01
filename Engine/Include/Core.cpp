@@ -212,7 +212,6 @@ LRESULT Core::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			m_isLoop = false;
 			PostQuitMessage(0);
 			MessageManager::Get()->Client_ClientDie();
-
 			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);

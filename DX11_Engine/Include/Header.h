@@ -13,8 +13,8 @@ struct SocketInfo
 struct IO_Data
 {
 	OVERLAPPED m_Overlapped;
-	WriteMemoryStream m_Stream;
 	WSABUF m_WsaBuf;
+	WriteMemoryStream m_Stream;
 
 	IO_Data()
 	{
@@ -61,6 +61,13 @@ private:
 		m_WsaBuf.buf = m_Stream.GetBuffer();
 		m_WsaBuf.len = static_cast<ULONG>(size);
 	}
+};
+
+struct PlayerInfo
+{
+	Vector4* m_Color;
+	Vector3* m_Pos;
+	float* m_Scale;
 };
 
 class JEONG_DLL Header

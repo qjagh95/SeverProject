@@ -23,8 +23,11 @@ MessageManager::MessageManager()
 
 MessageManager::~MessageManager()
 {
-	SAFE_DELETE(m_ReadBuffer);
-	SAFE_DELETE(m_WriteBuffer);
+	if (m_ReadBuffer->m_Stream.GetSize() > 0)
+		SAFE_DELETE(m_ReadBuffer);
+
+	if(m_WriteBuffer->m_Stream.GetSize() > 0)
+		SAFE_DELETE(m_WriteBuffer);
 }
 
 void MessageManager::ClientInit()
@@ -65,26 +68,23 @@ bool MessageManager::Sever_SendOtharPlayerMsg(SocketInfo * Socket, bool isAllSen
 
 bool MessageManager::SeverMesageProcess(SocketInfo * Socket, IO_Data * Data)
 {
+	m_Mutex.lock();
+
 	m_State = IOCPSeverRecvMsg(Socket, Data);
+	cout << m_State << endl;
 
 	switch (m_State)
 	{
 	case SST_CLIENT_DIE:
 		Sever_DieClient(Socket);
 		break;
-	case SST_CREATE_EAT_OBJECT:
-		break;
-	case SST_CREATE_PLAYER:
-		return Sever_SendNewPlayerMsg(Socket);
-		break;
-	case SST_CREATE_OTHER_PLAYER:
-		return Sever_SendOtharPlayerMsg(Socket);
-		break;
 	case SST_PLAYER_DATA:
 		break;
 	case SST_DELETE_EAT_OBJECT:
 		break;
 	}
+
+	m_Mutex.unlock();
 
 	return false;
 }
@@ -175,17 +175,14 @@ void MessageManager::ClientSend(IO_Data * Data)
 {
 	SOCKET getSocket = *ConnectSever::Get()->GetSocket();
 
-	if (Data->m_Stream.GetBuffer() == NULLPTR)
-		Data->WriteBuffer(Data->m_WsaBuf.buf, Data->m_WsaBuf.len);
-
-	send(getSocket, Data->m_WsaBuf.buf, Data->m_WsaBuf.len, 0);
+	send(getSocket, Data->m_Stream.m_WriteBuffer, Data->m_Stream.GetSize(), 0);
 }
 
 bool MessageManager::IOCPServerSend(SocketInfo * Socket, IO_Data * Data)
 {
 	DWORD Flags = 0;
 
-	int getResult = WSASend(Socket->m_Socket, &Data->m_WsaBuf, 1, NULLPTR, Flags, &Data->m_Overlapped, NULLPTR);
+	int getResult = WSASend(Socket->m_Socket, &Data->m_WsaBuf, 1, NULLPTR, Flags, (LPOVERLAPPED)Data, NULLPTR);
 
 	if (getResult != 0)
 		return false;
@@ -221,6 +218,7 @@ bool MessageManager::CreateMainPlayer()
 	m_CurScene->GetMainCamera()->SetTarget(newPlayerObj);
 
 	DataManager::Get()->SetPlayerObject(newPlayerObj);
+	DataManager::Get()->PushInfo(newPlayer);
 
 	SAFE_RELEASE(newPlayerObj);
 	SAFE_RELEASE(newPlayer);

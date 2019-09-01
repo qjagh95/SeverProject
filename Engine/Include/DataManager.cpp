@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "DataManager.h"
+#include "Player_Com.h"
 
 JEONG_USING
 SINGLETON_VAR_INIT(DataManager)
@@ -11,22 +12,14 @@ DataManager::DataManager()
 
 DataManager::~DataManager()
 {
-	auto StartIter = m_ClientList.begin();
-	auto EndIter = m_ClientList.end();
+	SAFE_RELEASE(m_Player);
+	Safe_Delete_VecList(m_vecClient);
+	Safe_Delete_VecList(m_vecPlayerInfo);
 
-	for (; StartIter != EndIter; StartIter++)
-	{
-		if (*StartIter != nullptr)
-		{
-			delete *StartIter;
-			*StartIter = nullptr;
-		}
-	}
 }
 
 void DataManager::PushClient(SocketInfo * Socket)
 {
-	m_ClientList.push_back(Socket);
 	m_vecClient.push_back(Socket);
 }
 
@@ -36,19 +29,13 @@ void DataManager::DeleteSocket(SocketInfo * Socket)
 
 	closesocket(Socket->m_Socket);
 
-	auto StartIter = m_ClientList.begin();
-	auto EndIter = m_ClientList.begin();
-
-	for (; StartIter != EndIter;)
+	for (size_t i = 0; i < m_vecClient.size(); i++)
 	{
-		if ((*StartIter)->m_Socket == Socket->m_Socket)
+		if (m_vecClient[i]->m_Socket == Socket->m_Socket)
 		{
-			ClientID = (*StartIter)->m_CliendID;
-			StartIter = m_ClientList.erase(StartIter);
-			delete *StartIter;
+			m_vecClient.erase(m_vecClient.begin() + i);
+			ClientID = i;
 		}
-		else
-			StartIter++;
 	}
 
 }
@@ -56,4 +43,20 @@ void DataManager::DeleteSocket(SocketInfo * Socket)
 SocketInfo * DataManager::FindSocket(size_t ClientID)
 {
 	return m_vecClient[ClientID];
+}
+
+void DataManager::SetPlayerObject(GameObject * Player)
+{
+	m_PlayerObject = Player;
+	m_Player = m_PlayerObject->FindComponentFromType<Player_Com>(CT_PLAYER);
+}
+
+void DataManager::PushInfo(Player_Com * Player)
+{
+	PlayerInfo* newInfo = new PlayerInfo();
+	newInfo->m_Color = &Player->GetRGB();
+	newInfo->m_Pos = &Player->GetTransform()->GetWorldPos();
+	newInfo->m_Scale = Player->GetScale();
+
+	m_vecPlayerInfo.push_back(newInfo);
 }

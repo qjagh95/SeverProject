@@ -46,6 +46,9 @@ void WriteMemoryStream::HeaderErase()
 
 void WriteMemoryStream::BufferClear()
 {
+	if (m_Size == 0)
+		return;
+
 	delete[] m_WriteBuffer;
 	ZeroMemory(m_WriteBuffer, m_Size);
 }

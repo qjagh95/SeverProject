@@ -24,7 +24,6 @@ public:
 
 	void ClientInit();
 
-
 private:
 	SEVER_DATA_TYPE IOCPSeverRecvMsg(SocketInfo* Socket, IO_Data* Data);
 	bool IOCPServerSend(SocketInfo* Socket, IO_Data* Data);
