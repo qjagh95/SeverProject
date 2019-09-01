@@ -35,35 +35,32 @@ void MessageManager::ClientInit()
 void MessageManager::Client_ClientDie()
 {
 	IO_Data Data;
-	ClientDieMessage Message;
-	Data.WriteHeader(Message);
+	Data.WriteHeader<ClientDieMessage>();
 
 	ClientSend(&Data);
+	DataManager::Get()->m_ClientCount--;
 }
 
-bool MessageManager::Sever_SendNewPlayerMsg(SocketInfo * Socket)
+bool MessageManager::Sever_SendNewPlayerMsg(SocketInfo * Socket, bool isAllSend)
 {
-	WriteMemoryStream Writer;
-	CreateMainPlayerMessage Temp;
-	Writer.Write(&Temp, sizeof(CreateMainPlayerMessage));
-
 	IO_Data IoData;
-	IoData.WriteBuffer<CreateMainPlayerMessage>(Writer.GetBuffer());
+	IoData.WriteHeader<CreateMainPlayerMessage>();
 
 	cout << Socket->m_CliendID << "번 클라이언트에게 플레이어 생성메세지 전송" << endl;
-	return IOCPServerSend(Socket, &IoData);
+
+	if(isAllSend == false)
+		return IOCPServerSend(Socket, &IoData);
+	else {}
 }
 
-bool MessageManager::Sever_SendOtharPlayerMsg(SocketInfo * Socket)
+bool MessageManager::Sever_SendOtharPlayerMsg(SocketInfo * Socket, bool isAllSend)
 {
-	WriteMemoryStream Writer;
-	CreateOtherPlayerMessage Temp;
-	Writer.Write(&Temp, sizeof(CreateOtherPlayerMessage));
-
 	IO_Data IoData;
-	IoData.WriteBuffer<CreateOtherPlayerMessage>(Writer.GetBuffer());
+	IoData.WriteHeader<CreateOtherPlayerMessage>();
 
-	return IOCPServerSend(Socket, &IoData);
+	if (isAllSend == false)
+		return IOCPServerSend(Socket, &IoData);
+	else {}
 }
 
 bool MessageManager::SeverMesageProcess(SocketInfo * Socket, IO_Data * Data)
@@ -119,10 +116,7 @@ SEVER_DATA_TYPE MessageManager::IOCPSeverRecvMsg(SocketInfo * Socket, IO_Data * 
 		return m_State;
 	}
 
-	memcpy(Data->m_Buffer, Data->m_WsaBuf.buf, Data->m_WsaBuf.len);
-	memcpy(&HeaderType, Data->m_Buffer, sizeof(Header));
-	memcpy(Data->m_Buffer, Data->m_Buffer + sizeof(Header), Data->m_WsaBuf.len - sizeof(Header));
-
+	Data->HeaderErase();
 	return m_State;
 }
 
@@ -133,7 +127,7 @@ void MessageManager::ClientMessageProcess()
 	while (true)
 	{
 		if (m_CurScene == NULLPTR || m_CurLayer == NULLPTR)
-			return;
+			continue;
 
 		int Event = WSAWaitForMultipleEvents(1, &getEvent, TRUE, WSA_INFINITE, FALSE);
 
@@ -144,11 +138,14 @@ void MessageManager::ClientMessageProcess()
 		SOCKET getSocket = *ConnectSever::Get()->GetSocket();
 		WSAEnumNetworkEvents(getSocket, getEvent, &NetWorkEvent);
 
-		if (NetWorkEvent.lNetworkEvents == FD_READ)
+		if (NetWorkEvent.lNetworkEvents & FD_READ)
 		{
-			recv(getSocket, m_ReadBuffer->m_Buffer, BUFFERSIZE, 0);
-			m_State = ReadHeader(m_ReadBuffer->m_Buffer);
-			m_ReadBuffer->PullBuffer(sizeof(Header));
+			char Buffer[BUFFERSIZE] = { };
+			recv(getSocket, Buffer, BUFFERSIZE, 0);
+			m_ReadBuffer->WriteBuffer(Buffer, BUFFERSIZE);
+
+			m_State = ReadHeader(Buffer);
+			m_ReadBuffer->HeaderErase();
 
 			//데이터가 필요하면 그냥 버퍼꺼내쓰면됨.
 			switch (m_State)
@@ -157,7 +154,7 @@ void MessageManager::ClientMessageProcess()
 				break;
 			case SST_CREATE_PLAYER:
 				CreateMainPlayer();
-				m_ReadBuffer->ClearBuffer<Header>();
+				m_ReadBuffer->ClearBuffer();
 				break;
 			case SST_CREATE_OTHER_PLAYER:
 				break;
@@ -178,7 +175,7 @@ void MessageManager::ClientSend(IO_Data * Data)
 {
 	SOCKET getSocket = *ConnectSever::Get()->GetSocket();
 
-	if (Data->m_Buffer == NULLPTR)
+	if (Data->m_Stream.GetBuffer() == NULLPTR)
 		Data->WriteBuffer(Data->m_WsaBuf.buf, Data->m_WsaBuf.len);
 
 	send(getSocket, Data->m_WsaBuf.buf, Data->m_WsaBuf.len, 0);
@@ -196,6 +193,18 @@ bool MessageManager::IOCPServerSend(SocketInfo * Socket, IO_Data * Data)
 	return true;
 }
 
+bool MessageManager::IOCPSeverSendALL(SocketInfo * SameSocket, IO_Data * Data)
+{
+	for (auto CurClient : *DataManager::Get()->GetClientList())
+	{
+		if (CurClient->m_Socket == SameSocket->m_Socket)
+			continue;
+		
+		IOCPServerSend(CurClient, Data);
+	}
+	return true;
+}
+
 SEVER_DATA_TYPE MessageManager::ReadHeader(char * Buffer)
 {
 	SEVER_DATA_TYPE HeaderType = SST_NONE;
@@ -210,6 +219,8 @@ bool MessageManager::CreateMainPlayer()
 	Player_Com* newPlayer = newPlayerObj->AddComponent<Player_Com>("Player");
 	newPlayer->SetScale(10.0f);
 	m_CurScene->GetMainCamera()->SetTarget(newPlayerObj);
+
+	DataManager::Get()->SetPlayerObject(newPlayerObj);
 
 	SAFE_RELEASE(newPlayerObj);
 	SAFE_RELEASE(newPlayer);

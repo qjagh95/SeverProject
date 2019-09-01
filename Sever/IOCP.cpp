@@ -54,7 +54,7 @@ bool IOCP::Init()
 
 void IOCP::SetSocket()
 {
-	string Address = "192.168.1.164";
+	string Address = "192.168.1.172";
 
 	m_SeverSocket.m_Socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 
@@ -101,7 +101,7 @@ void IOCP::Run()
 		CreateIoCompletionPort(reinterpret_cast<HANDLE>(newInfo->m_Socket), m_CompletionPort, reinterpret_cast<DWORD>(newInfo), 0);
 
 		//클라생성메세지를 던진다.
-		MessageManager::Get()->SendNewPlayerMsg(newInfo);
+		MessageManager::Get()->Sever_SendNewPlayerMsg(newInfo);
 
 		DataManager::Get()->PushClient(newInfo);
 		DataManager::m_ClientCount++;
@@ -133,7 +133,7 @@ void IOCP::ThreadFunc()
 			continue;
 		}
 
-		if(SocketData != NULLPTR && IoData != NULLPTR)
+		if (SocketData != NULLPTR && IoData != NULLPTR)
 			MessageManager::Get()->SeverMesageProcess(SocketData, IoData);
 	}
 }

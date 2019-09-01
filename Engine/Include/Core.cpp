@@ -9,6 +9,7 @@
 
 #include "Render\Shader.h"
 #include "DataManager.h"
+#include "MessageManager.h"
 
 
 JEONG_USING
@@ -210,6 +211,8 @@ LRESULT Core::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_DESTROY:
 			m_isLoop = false;
 			PostQuitMessage(0);
+			MessageManager::Get()->Client_ClientDie();
+
 			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);

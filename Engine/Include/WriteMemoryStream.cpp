@@ -39,6 +39,17 @@ void WriteMemoryStream::Write(const void * Data, size_t Length)
 	m_isInit = true;
 }
 
+void WriteMemoryStream::HeaderErase()
+{
+	memcpy(m_WriteBuffer, m_WriteBuffer + 4, m_Size - 4);
+}
+
+void WriteMemoryStream::BufferClear()
+{
+	delete[] m_WriteBuffer;
+	ZeroMemory(m_WriteBuffer, m_Size);
+}
+
 void WriteMemoryStream::Resize()
 {
 	if (m_Size <= m_Capacity)

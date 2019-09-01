@@ -34,6 +34,8 @@ void DataManager::DeleteSocket(SocketInfo * Socket)
 {
 	size_t ClientID = -1;
 
+	closesocket(Socket->m_Socket);
+
 	auto StartIter = m_ClientList.begin();
 	auto EndIter = m_ClientList.begin();
 

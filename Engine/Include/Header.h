@@ -1,5 +1,67 @@
 #pragma once
+#include "WriteMemoryStream.h"
+
 JEONG_BEGIN
+
+struct SocketInfo
+{
+	SOCKET m_Socket;
+	SOCKADDR_IN m_ClientInfo;
+	size_t m_CliendID = 0;
+};
+
+struct IO_Data
+{
+	OVERLAPPED m_Overlapped;
+	WriteMemoryStream m_Stream;
+	WSABUF m_WsaBuf;
+
+	IO_Data()
+	{
+		ZeroMemory(&m_Overlapped, sizeof(OVERLAPPED));
+		m_WsaBuf.len = 0;
+	}
+
+	void WriteBuffer(const void* Buffer, size_t size)
+	{
+		m_Stream.Write(Buffer, size);
+		CopyBuffer(size);
+	}
+
+	template<typename T>
+	void WriteBuffer(const void* Buffer)
+	{
+		m_Stream.Write(Buffer, sizeof(T));
+		CopyBuffer(sizeof(T));
+	}
+
+	template<typename T>
+	void WriteHeader()
+	{
+		T Header;
+		m_Stream.Write(&Header.m_Type, sizeof(4));
+		CopyBuffer(4);
+	}
+
+	void HeaderErase()
+	{
+		m_Stream.HeaderErase();
+	}
+
+	void ClearBuffer()
+	{
+		m_Stream.BufferClear();
+		ZeroMemory(m_WsaBuf.buf, m_Stream.GetSize());
+		m_WsaBuf.len = 0;
+	}
+
+private:
+	void CopyBuffer(size_t size)
+	{
+		m_WsaBuf.buf = m_Stream.GetBuffer();
+		m_WsaBuf.len = static_cast<ULONG>(size);
+	}
+};
 
 class JEONG_DLL Header
 {
