@@ -9,8 +9,12 @@ public:
 	size_t GetSize() const { return m_Size; }
 	size_t GetCapacity() const { return m_Capacity; }
 	char* GetBuffer() { return m_WriteBuffer; }
+	void SetSize(int Size) { m_Size = Size; }
 	void HeaderErase();
 	void BufferClear();
+	void PullBuffer(size_t Size);
+
+	char* ReadBuffer(size_t Size);
 
 private:
 	void Resize();

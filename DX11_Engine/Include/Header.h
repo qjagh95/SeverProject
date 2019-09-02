@@ -55,6 +55,18 @@ struct IO_Data
 		m_WsaBuf.len = 0;
 	}
 
+	SEVER_DATA_TYPE ReadHeader()
+	{
+		SEVER_DATA_TYPE Temp = SST_NONE;
+
+		if (m_Stream.GetSize() == 0 || m_WsaBuf.len == 0)
+			return Temp;
+
+		memcpy(&Temp, m_WsaBuf.buf, 4);
+
+		return Temp;
+	}
+
 private:
 	void CopyBuffer(size_t size)
 	{

@@ -3,12 +3,10 @@
 
 JEONG_USING
 
-ReadMemoryStream::ReadMemoryStream(char* InputBuffer)
+ReadMemoryStream::ReadMemoryStream(char* InputBuffer, size_t BufferSize)
 {
 	m_ReadBuffer = InputBuffer;
-	m_Size = 0;
-	m_Capacity = 0;
-	m_isInit = false;
+	m_BufferSize = BufferSize;
 }
 
 ReadMemoryStream::~ReadMemoryStream()
@@ -16,10 +14,3 @@ ReadMemoryStream::~ReadMemoryStream()
 	delete[] m_ReadBuffer;
 	m_ReadBuffer = nullptr;
 }
-
-void ReadMemoryStream::Read(void* Buffer, size_t length)
-{
-	m_Size += length;
-	memcpy(Buffer, m_ReadBuffer + m_Size, length);
-}
-

@@ -6,8 +6,9 @@ class JEONG_DLL MessageManager
 {
 public:
 	//서버가 클라로 보내는 함수
-	bool Sever_SendNewPlayerMsg(SocketInfo* Socket, bool isAllSend = false);
-	bool Sever_SendOtharPlayerMsg(SocketInfo* Socket, bool isAllSend = false);
+	bool Sever_SendNewPlayerMsg(SocketInfo* Socket);
+	bool Sever_SendOtharPlayerMsg(SocketInfo* Socket);
+	bool Sever_SendConnectClientNewOtherPlayer(SocketInfo* NewSocket, PlayerInfo* Info);
 
 	bool SeverMesageProcess(SocketInfo * Socket, IO_Data * Data);
 

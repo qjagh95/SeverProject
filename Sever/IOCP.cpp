@@ -104,12 +104,15 @@ void IOCP::Run()
 
 		//Overlapped 소켓과 Completion Port 의 연결
 		CreateIoCompletionPort((HANDLE)newInfo->m_Socket, m_CompletionPort, (ULONG_PTR)newInfo, 0);
-		//IO_Data* IoData = new IO_Data();
-		//IoData->WriteHeader<CreateMainPlayerMessage>();
-		//DWORD Flags = 0;
-		//WSASend(newInfo->m_Socket, &IoData->m_WsaBuf, 1, NULLPTR, Flags, (LPOVERLAPPED)IoData, NULLPTR);
-		//클라생성메세지를 던진다.
+
+		//새로 접속한 클라에 메인플레이어 생성
 		MessageManager::Get()->Sever_SendNewPlayerMsg(newInfo);
+
+		//기존 접속한 클라에 OT생성
+		//MessageManager::Get()->Sever_SendConnectClientNewOtherPlayer();
+
+		//새롭게 접속한 클라에 현재 접속한 클라갯수만큼 OT생성명령
+		MessageManager::Get()->Sever_SendOtharPlayerMsg(newInfo);
 	}
 }
 

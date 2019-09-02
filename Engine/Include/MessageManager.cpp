@@ -6,6 +6,7 @@
 #include "Core.h"
 #include "Player_Com.h"
 #include "ConnectSever.h"
+#include "OtharPlayer_Com.h"
 
 JEONG_USING
 
@@ -44,26 +45,44 @@ void MessageManager::Client_ClientDie()
 	DataManager::Get()->m_ClientCount--;
 }
 
-bool MessageManager::Sever_SendNewPlayerMsg(SocketInfo * Socket, bool isAllSend)
+bool MessageManager::Sever_SendNewPlayerMsg(SocketInfo * Socket)
 {
 	IO_Data IoData;
 	IoData.WriteHeader<CreateMainPlayerMessage>();
 
 	cout << Socket->m_CliendID << "번 클라이언트에게 플레이어 생성메세지 전송" << endl;
 
-	if(isAllSend == false)
-		return IOCPServerSend(Socket, &IoData);
-	else {}
+	return IOCPServerSend(Socket, &IoData);
 }
 
-bool MessageManager::Sever_SendOtharPlayerMsg(SocketInfo * Socket, bool isAllSend)
+bool MessageManager::Sever_SendOtharPlayerMsg(SocketInfo * Socket)
 {
 	IO_Data IoData;
 	IoData.WriteHeader<CreateOtherPlayerMessage>();
 
-	if (isAllSend == false)
-		return IOCPServerSend(Socket, &IoData);
-	else {}
+	return IOCPServerSend(Socket, &IoData);
+}
+
+bool MessageManager::Sever_SendConnectClientNewOtherPlayer(SocketInfo * NewSocket, PlayerInfo * Info)
+{
+	IO_Data IoData;
+	IoData.WriteHeader<CreateOtherPlayerMessage>();
+
+	size_t ClientSize = DataManager::Get()->GetClientCount() - 1;
+	IoData.WriteBuffer<size_t>(&ClientSize);
+
+	for (auto Cur : *DataManager::Get()->GetClientList())
+	{
+		if (Cur->m_Socket == NewSocket->m_Socket)
+			continue;
+
+		IoData.WriteBuffer<Vector3>(Info->m_Color);
+		IoData.WriteBuffer<Vector3>(Info->m_Pos);
+		IoData.WriteBuffer<Vector3>(Info->m_Scale);
+
+		IOCPServerSend(Cur, &IoData);
+	}
+	return true;
 }
 
 bool MessageManager::SeverMesageProcess(SocketInfo * Socket, IO_Data * Data)
@@ -71,7 +90,6 @@ bool MessageManager::SeverMesageProcess(SocketInfo * Socket, IO_Data * Data)
 	m_Mutex.lock();
 
 	m_State = IOCPSeverRecvMsg(Socket, Data);
-	cout << m_State << endl;
 
 	switch (m_State)
 	{
@@ -102,13 +120,8 @@ SEVER_DATA_TYPE MessageManager::IOCPSeverRecvMsg(SocketInfo * Socket, IO_Data * 
 	DWORD Flags = 0;
 	SEVER_DATA_TYPE HeaderType = SST_NONE;
 
-	int getResult = WSARecv(Socket->m_Socket, &Data->m_WsaBuf, 1, NULLPTR, &Flags, &Data->m_Overlapped, NULLPTR);
-
-	if (getResult != 0)
-	{
-		m_State = HeaderType;
-		return m_State;
-	}
+	WSARecv(Socket->m_Socket, &Data->m_WsaBuf, 1, NULLPTR, &Flags, &Data->m_Overlapped, NULLPTR);
+	HeaderType = Data->ReadHeader();
 
 	if (Data->m_WsaBuf.len == 0)
 	{
@@ -116,8 +129,10 @@ SEVER_DATA_TYPE MessageManager::IOCPSeverRecvMsg(SocketInfo * Socket, IO_Data * 
 		return m_State;
 	}
 
+	m_State = HeaderType;
+
 	Data->HeaderErase();
-	return m_State;
+	return HeaderType;
 }
 
 void MessageManager::ClientMessageProcess()
@@ -157,6 +172,8 @@ void MessageManager::ClientMessageProcess()
 				m_ReadBuffer->ClearBuffer();
 				break;
 			case SST_CREATE_OTHER_PLAYER:
+				CreateOtherPlayer();
+				m_ReadBuffer->ClearBuffer();
 				break;
 			case SST_PLAYER_DATA:
 				break;
@@ -217,8 +234,7 @@ bool MessageManager::CreateMainPlayer()
 	newPlayer->SetScale(10.0f);
 	m_CurScene->GetMainCamera()->SetTarget(newPlayerObj);
 
-	DataManager::Get()->SetPlayerObject(newPlayerObj);
-	DataManager::Get()->PushInfo(newPlayer);
+	DataManager::Get()->PushMainPlayerInfo(newPlayer);
 
 	SAFE_RELEASE(newPlayerObj);
 	SAFE_RELEASE(newPlayer);
@@ -229,6 +245,25 @@ bool MessageManager::CreateMainPlayer()
 
 bool MessageManager::CreateOtherPlayer()
 {
+	ReadMemoryStream Reader(m_ReadBuffer->GetBuffer(), m_ReadBuffer->GetSize());
+	
+	size_t Count = Reader.Read<size_t>();
+
+	for (size_t i = 0; i < Count; i++)
+	{
+		Vector4 Color = Reader.Read<Vector4>();
+		Vector3 Pos = Reader.Read<Vector3>();
+		float Scale = Reader.Read<float>();
+
+		GameObject* newOtherPlayerObj = GameObject::CreateObject("OtherPlayer", m_CurLayer);
+		OtharPlayer_Com* newOther = newOtherPlayerObj->AddComponent<OtharPlayer_Com>("OtherPlayer");
+		newOther->SetScale(Scale);
+		newOtherPlayerObj->GetTransform()->SetWorldPos(Pos);
+		newOther->SetRGB(Color.x, Color.y, Color.z);
+
+		SAFE_RELEASE(newOtherPlayerObj);
+		SAFE_RELEASE(newOther);
+	}
 
 	m_State = SST_NONE;
 	return true;

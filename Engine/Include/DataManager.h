@@ -7,23 +7,25 @@ class JEONG_DLL DataManager
 public:
 	void PushClient(SocketInfo* Socket);
 	void DeleteSocket(SocketInfo* Socket);
-	SocketInfo* FindSocket(size_t ClientID);
+	SocketInfo* FindClientIndex(size_t ClientID);
+	SocketInfo* FindClientMap(size_t Key);
 	vector<SocketInfo*>* GetClientList() {	return &m_vecClient; }
-	void SetPlayerObject(GameObject* Player); 
-	Player_Com* GetPlayer() const { return m_Player; }
 	size_t GetClientCount() const { return m_vecClient.size(); }
 
-	void PushInfo(Player_Com* Player);
+	void PushMainPlayerInfo(Player_Com* Player);
+	void PushOtherPlayerInfo(Vector4* Color, Vector3* Pos, float* Scale);
 
 public:
 	static size_t m_ClientCount;
+	static size_t m_OtherPlayerCount;
 
 private:
 	vector<SocketInfo*> m_vecClient;
-	vector<PlayerInfo*> m_vecPlayerInfo;
+	unordered_map<size_t, SocketInfo*> m_ClientMap;
 
-	GameObject* m_PlayerObject;
-	Player_Com* m_Player;
+	vector<PlayerInfo*> m_vecMainPlayerInfo;
+
+	unordered_map<size_t, PlayerInfo*> m_OtherPlayerMap;
 
 public:
 	CLASS_IN_SINGLE(DataManager)

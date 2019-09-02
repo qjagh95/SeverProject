@@ -42,6 +42,7 @@ void WriteMemoryStream::Write(const void * Data, size_t Length)
 void WriteMemoryStream::HeaderErase()
 {
 	memcpy(m_WriteBuffer, m_WriteBuffer + 4, m_Size - 4);
+	m_Size -= 4;
 }
 
 void WriteMemoryStream::BufferClear()
@@ -49,8 +50,28 @@ void WriteMemoryStream::BufferClear()
 	if (m_Size == 0)
 		return;
 
-	delete[] m_WriteBuffer;
-	ZeroMemory(m_WriteBuffer, m_Size);
+	if(m_WriteBuffer != NULLPTR)
+		delete[] m_WriteBuffer;
+}
+
+void WriteMemoryStream::PullBuffer(size_t Size)
+{
+	if (m_Size - Size < 0)
+		return;
+
+	memcpy(m_WriteBuffer, m_WriteBuffer + Size, m_Size - Size);
+}
+
+char * WriteMemoryStream::ReadBuffer(size_t Size)
+{
+	if (Size == 0 || m_Size == 0)
+		return;
+
+	char* Buffer;
+
+	memcpy(Buffer, m_WriteBuffer, Size);
+
+	return Buffer;
 }
 
 void WriteMemoryStream::Resize()

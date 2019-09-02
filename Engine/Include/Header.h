@@ -28,6 +28,8 @@ struct IO_Data
 		CopyBuffer(size);
 	}
 
+	size_t GetSize() const { return m_Stream.GetSize(); }
+
 	template<typename T>
 	void WriteBuffer(const void* Buffer)
 	{
@@ -48,11 +50,45 @@ struct IO_Data
 		m_Stream.HeaderErase();
 	}
 
+	void PullBuffer(size_t Size)
+	{
+		if (m_Stream.GetSize() == 0)
+			return;
+
+		m_Stream.PullBuffer(Size);
+	}
+
+	template<typename T>
+	void PullBuffer()
+	{
+		if (m_Stream.GetSize() == 0)
+			return;
+
+		m_Stream.PullBuffer(sizeof(T));
+	}
+
 	void ClearBuffer()
 	{
 		m_Stream.BufferClear();
 		ZeroMemory(m_WsaBuf.buf, m_Stream.GetSize());
 		m_WsaBuf.len = 0;
+	}
+
+	char* GetBuffer()
+	{
+		return m_Stream.GetBuffer();
+	}
+
+	SEVER_DATA_TYPE ReadHeader()
+	{
+		SEVER_DATA_TYPE Temp = SST_NONE;
+
+		if (m_Stream.GetSize() == 0 || m_WsaBuf.len == 0)
+			return Temp;
+
+		memcpy(&Temp, m_WsaBuf.buf, 4);
+
+		return Temp;
 	}
 
 private:

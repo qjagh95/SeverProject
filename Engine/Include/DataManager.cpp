@@ -6,16 +6,16 @@ JEONG_USING
 SINGLETON_VAR_INIT(DataManager)
 
 size_t DataManager::m_ClientCount = 0;
+size_t DataManager::m_OtherPlayerCount = 0;
+
 DataManager::DataManager()
 {
 }
 
 DataManager::~DataManager()
 {
-	SAFE_RELEASE(m_Player);
 	Safe_Delete_VecList(m_vecClient);
-	Safe_Delete_VecList(m_vecPlayerInfo);
-
+	Safe_Delete_VecList(m_vecMainPlayerInfo);
 }
 
 void DataManager::PushClient(SocketInfo * Socket)
@@ -40,23 +40,38 @@ void DataManager::DeleteSocket(SocketInfo * Socket)
 
 }
 
-SocketInfo * DataManager::FindSocket(size_t ClientID)
+SocketInfo * DataManager::FindClientIndex(size_t ClientID)
 {
 	return m_vecClient[ClientID];
 }
 
-void DataManager::SetPlayerObject(GameObject * Player)
+SocketInfo * DataManager::FindClientMap(size_t Key)
 {
-	m_PlayerObject = Player;
-	m_Player = m_PlayerObject->FindComponentFromType<Player_Com>(CT_PLAYER);
+	auto FindIter = m_ClientMap.find(Key);
+
+	if (FindIter == m_ClientMap.find)
+		return NULLPTR;
+
+	return FindIter->second;
 }
 
-void DataManager::PushInfo(Player_Com * Player)
+void DataManager::PushMainPlayerInfo(Player_Com * Player)
 {
 	PlayerInfo* newInfo = new PlayerInfo();
 	newInfo->m_Color = &Player->GetRGB();
 	newInfo->m_Pos = &Player->GetTransform()->GetWorldPos();
 	newInfo->m_Scale = Player->GetScale();
 
-	m_vecPlayerInfo.push_back(newInfo);
+	m_vecMainPlayerInfo.push_back(newInfo);
+}
+
+void DataManager::PushOtherPlayerInfo(Vector4 * Color, Vector3 * Pos, float * Scale)
+{
+	PlayerInfo* newInfo = new PlayerInfo();
+	newInfo->m_Scale = Scale;
+	newInfo->m_Color = Color;
+	newInfo->m_Pos = Pos;
+	
+	m_OtherPlayerMap.insert(make_pair(m_OtherPlayerCount, newInfo));
+	m_OtherPlayerCount++;
 }
