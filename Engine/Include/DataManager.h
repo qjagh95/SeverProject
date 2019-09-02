@@ -12,8 +12,11 @@ public:
 	vector<SocketInfo*>* GetClientList() {	return &m_vecClient; }
 	size_t GetClientCount() const { return m_vecClient.size(); }
 
-	void PushMainPlayerInfo(Player_Com* Player);
+	void PushMainPlayerInfo(Player_Com* Player, size_t ClientID);
 	void PushOtherPlayerInfo(Vector4* Color, Vector3* Pos, float* Scale);
+
+	vector<PlayerInfo*>* GetMainPlayerVec() { return &m_vecMainPlayerInfo; }
+	size_t GetMainPlayerCount() const { return m_vecMainPlayerInfo.size(); }
 
 public:
 	static size_t m_ClientCount;

@@ -23,7 +23,7 @@ void WriteMemoryStream::Write(const void * Data, size_t Length)
 
 	if (m_isInit == false)
 	{
-		m_WriteBuffer = new char[Length];
+		m_WriteBuffer = new char[Length + 1];
 		m_Capacity = Length;
 		Resize();
 	}
@@ -50,8 +50,7 @@ void WriteMemoryStream::BufferClear()
 	if (m_Size == 0)
 		return;
 
-	if(m_WriteBuffer != NULLPTR)
-		delete[] m_WriteBuffer;
+	SAFE_DELETE_ARRARY(m_WriteBuffer);
 }
 
 void WriteMemoryStream::PullBuffer(size_t Size)
@@ -65,7 +64,7 @@ void WriteMemoryStream::PullBuffer(size_t Size)
 char * WriteMemoryStream::ReadBuffer(size_t Size)
 {
 	if (Size == 0 || m_Size == 0)
-		return;
+		return NULLPTR;
 
 	char* Buffer;
 
@@ -74,6 +73,7 @@ char * WriteMemoryStream::ReadBuffer(size_t Size)
 	return Buffer;
 }
 
+//©жемаЭ?
 void WriteMemoryStream::Resize()
 {
 	if (m_Size <= m_Capacity)
@@ -82,7 +82,8 @@ void WriteMemoryStream::Resize()
 	m_Capacity *= 2;
 
 	char* TempData = new char[m_Capacity];
-	memcpy(TempData, m_WriteBuffer, m_Size);
+
+	memcpy(TempData, m_WriteBuffer, m_Size - 1);
 	delete m_WriteBuffer;
 
 	m_WriteBuffer = TempData;

@@ -12,11 +12,11 @@ public:
 	T Read()
 	{
 		if (m_BufferSize == 0)
-			return;
+			return (T)0;
 
 		T Temp;
 
-		memcpy(Temp, m_ReadBuffer, sizeof(T));
+		memcpy(&Temp, m_ReadBuffer, sizeof(T));
 		memcpy(m_ReadBuffer, m_ReadBuffer + sizeof(T), m_BufferSize - sizeof(T));
 
 		return Temp;

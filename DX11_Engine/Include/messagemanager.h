@@ -5,12 +5,19 @@ JEONG_BEGIN
 class JEONG_DLL MessageManager
 {
 public:
-	//서버가 클라로 보내는 함수
-	bool Sever_SendNewPlayerMsg(SocketInfo* Socket, bool isAllSend = false);
-	bool Sever_SendOtharPlayerMsg(SocketInfo* Socket, bool isAllSend = false);
+	//서버가 클라로 메인플레이어 생성 메세지 
+	bool Sever_SendNewPlayerMsg(SocketInfo* Socket);
 
+	//새롭게 접속한 클라에 현재 접속한 클라갯수만큼 OT생성 메세지
+	bool Sever_NewClientCreateOtherPlayer(SocketInfo* Socket);
+
+	//현재 접속한 클라에 OT생셩메세지
+	bool Sever_SendConnectClientNewOtherPlayer(SocketInfo* NewSocket, PlayerInfo* Info);
+
+	//서버 메세지루프
 	bool SeverMesageProcess(SocketInfo * Socket, IO_Data * Data);
 
+	//클라이언트 Die처리
 	void Sever_DieClient(SocketInfo* Socket);
 
 	//클라가 서버로 보내는 함수
@@ -32,8 +39,8 @@ private:
 	void ClientSend(IO_Data* Data);
 
 	//클라이언트 실질적으로 메세지에따라 실행하는 함수.
-	bool CreateMainPlayer();
-	bool CreateOtherPlayer();
+	bool CreateMainPlayer(size_t ClientID);
+	bool CreateOtherPlayer(bool isOne = true);
 
 	SEVER_DATA_TYPE ReadHeader(char* Buffer);
 

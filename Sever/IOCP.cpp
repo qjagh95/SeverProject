@@ -112,7 +112,7 @@ void IOCP::Run()
 		//MessageManager::Get()->Sever_SendConnectClientNewOtherPlayer();
 
 		//새롭게 접속한 클라에 현재 접속한 클라갯수만큼 OT생성명령
-		MessageManager::Get()->Sever_SendOtharPlayerMsg(newInfo);
+		//MessageManager::Get()->Sever_SendOtharPlayerMsg(newInfo);
 	}
 }
 

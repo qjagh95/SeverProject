@@ -101,6 +101,7 @@ private:
 
 struct PlayerInfo
 {
+	size_t m_ClientID;
 	Vector4* m_Color;
 	Vector3* m_Pos;
 	float* m_Scale;
@@ -126,12 +127,21 @@ public:
 	}
 };
 
-class JEONG_DLL CreateOtherPlayerMessage : public Header
+class JEONG_DLL CreateConnectClientCreateOtherPlayer : public Header
 {
 public:
-	CreateOtherPlayerMessage()
+	CreateConnectClientCreateOtherPlayer()
 	{
-		m_Type = SST_CREATE_OTHER_PLAYER;
+		m_Type = SST_CONNECT_CLIENT_CREATE_OTHER_PLAYER;
+	}
+};
+
+class JEONG_DLL CreateNewClientOtherPlayer : public Header
+{
+public:
+	CreateNewClientOtherPlayer()
+	{
+		m_Type = SST_NEW_CLIENT_CREATE_OTHER_PLAYER;
 	}
 };
 

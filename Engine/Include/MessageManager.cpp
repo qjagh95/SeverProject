@@ -49,33 +49,39 @@ bool MessageManager::Sever_SendNewPlayerMsg(SocketInfo * Socket)
 {
 	IO_Data IoData;
 	IoData.WriteHeader<CreateMainPlayerMessage>();
+	IoData.WriteBuffer<size_t>(&Socket->m_CliendID);
 
 	cout << Socket->m_CliendID << "번 클라이언트에게 플레이어 생성메세지 전송" << endl;
 
 	return IOCPServerSend(Socket, &IoData);
 }
 
-bool MessageManager::Sever_SendOtharPlayerMsg(SocketInfo * Socket)
+//새롭게 접속한 클라에 현재 접속한 클라갯수만큼 OT생성 메세지
+bool MessageManager::Sever_NewClientCreateOtherPlayer(SocketInfo * Socket)
 {
 	IO_Data IoData;
-	IoData.WriteHeader<CreateOtherPlayerMessage>();
+	IoData.WriteHeader<CreateNewClientOtherPlayer>();
+
+	cout << Socket->m_CliendID << "번 클라이언트에게 OtherPlayer 생성메세지 전송" << endl;
 
 	return IOCPServerSend(Socket, &IoData);
 }
 
+//현재 접속한 클라에 OT생셩메세지
 bool MessageManager::Sever_SendConnectClientNewOtherPlayer(SocketInfo * NewSocket, PlayerInfo * Info)
 {
-	IO_Data IoData;
-	IoData.WriteHeader<CreateOtherPlayerMessage>();
-
 	size_t ClientSize = DataManager::Get()->GetClientCount() - 1;
-	IoData.WriteBuffer<size_t>(&ClientSize);
+
+	if (ClientSize == 1)
+		return true;
 
 	for (auto Cur : *DataManager::Get()->GetClientList())
 	{
 		if (Cur->m_Socket == NewSocket->m_Socket)
 			continue;
 
+		IO_Data IoData;
+		IoData.WriteHeader<CreateConnectClientCreateOtherPlayer>();
 		IoData.WriteBuffer<Vector3>(Info->m_Color);
 		IoData.WriteBuffer<Vector3>(Info->m_Pos);
 		IoData.WriteBuffer<Vector3>(Info->m_Scale);
@@ -157,10 +163,10 @@ void MessageManager::ClientMessageProcess()
 		{
 			char Buffer[BUFFERSIZE] = { };
 			recv(getSocket, Buffer, BUFFERSIZE, 0);
-			m_ReadBuffer->WriteBuffer(Buffer, BUFFERSIZE);
 
-			m_State = ReadHeader(Buffer);
-			m_ReadBuffer->HeaderErase();
+			ReadMemoryStream Reader(Buffer, BUFFERSIZE);
+			m_State = Reader.Read<SEVER_DATA_TYPE>();
+			size_t ClientID = Reader.Read<size_t>();
 
 			//데이터가 필요하면 그냥 버퍼꺼내쓰면됨.
 			switch (m_State)
@@ -168,11 +174,15 @@ void MessageManager::ClientMessageProcess()
 			case SST_CREATE_EAT_OBJECT:
 				break;
 			case SST_CREATE_PLAYER:
-				CreateMainPlayer();
+				CreateMainPlayer(ClientID);
 				m_ReadBuffer->ClearBuffer();
 				break;
-			case SST_CREATE_OTHER_PLAYER:
-				CreateOtherPlayer();
+			case SST_CONNECT_CLIENT_CREATE_OTHER_PLAYER:
+				CreateOtherPlayer(false);
+				m_ReadBuffer->ClearBuffer();
+				break;
+			case SST_NEW_CLIENT_CREATE_OTHER_PLAYER:
+				CreateOtherPlayer(true);
 				m_ReadBuffer->ClearBuffer();
 				break;
 			case SST_PLAYER_DATA:
@@ -227,14 +237,14 @@ SEVER_DATA_TYPE MessageManager::ReadHeader(char * Buffer)
 	return HeaderType;
 }
 
-bool MessageManager::CreateMainPlayer()
+bool MessageManager::CreateMainPlayer(size_t ClientID)
 {
 	GameObject* newPlayerObj = GameObject::CreateObject("Player", m_CurLayer);
 	Player_Com* newPlayer = newPlayerObj->AddComponent<Player_Com>("Player");
 	newPlayer->SetScale(10.0f);
 	m_CurScene->GetMainCamera()->SetTarget(newPlayerObj);
 
-	DataManager::Get()->PushMainPlayerInfo(newPlayer);
+	DataManager::Get()->PushMainPlayerInfo(newPlayer, ClientID);
 
 	SAFE_RELEASE(newPlayerObj);
 	SAFE_RELEASE(newPlayer);
@@ -243,13 +253,11 @@ bool MessageManager::CreateMainPlayer()
 	return true;
 }
 
-bool MessageManager::CreateOtherPlayer()
+bool MessageManager::CreateOtherPlayer(bool isOne)
 {
 	ReadMemoryStream Reader(m_ReadBuffer->GetBuffer(), m_ReadBuffer->GetSize());
 	
-	size_t Count = Reader.Read<size_t>();
-
-	for (size_t i = 0; i < Count; i++)
+	if (isOne == true)
 	{
 		Vector4 Color = Reader.Read<Vector4>();
 		Vector3 Pos = Reader.Read<Vector3>();
@@ -261,8 +269,32 @@ bool MessageManager::CreateOtherPlayer()
 		newOtherPlayerObj->GetTransform()->SetWorldPos(Pos);
 		newOther->SetRGB(Color.x, Color.y, Color.z);
 
+		DataManager::Get()->PushOtherPlayerInfo(&Color, &Pos, &Scale);
+
 		SAFE_RELEASE(newOtherPlayerObj);
 		SAFE_RELEASE(newOther);
+	}
+	else
+	{
+		size_t Count = Reader.Read<size_t>();
+
+		for (size_t i = 0; i < Count; i++)
+		{
+			Vector4 Color = Reader.Read<Vector4>();
+			Vector3 Pos = Reader.Read<Vector3>();
+			float Scale = Reader.Read<float>();
+
+			GameObject* newOtherPlayerObj = GameObject::CreateObject("OtherPlayer", m_CurLayer);
+			OtharPlayer_Com* newOther = newOtherPlayerObj->AddComponent<OtharPlayer_Com>("OtherPlayer");
+			newOther->SetScale(Scale);
+			newOtherPlayerObj->GetTransform()->SetWorldPos(Pos);
+			newOther->SetRGB(Color.x, Color.y, Color.z);
+
+			DataManager::Get()->PushOtherPlayerInfo(&Color, &Pos, &Scale);
+
+			SAFE_RELEASE(newOtherPlayerObj);
+			SAFE_RELEASE(newOther);
+		}
 	}
 
 	m_State = SST_NONE;

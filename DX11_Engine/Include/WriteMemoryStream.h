@@ -12,6 +12,9 @@ public:
 	void SetSize(int Size) { m_Size = Size; }
 	void HeaderErase();
 	void BufferClear();
+	void PullBuffer(size_t Size);
+
+	char* ReadBuffer(size_t Size);
 
 private:
 	void Resize();

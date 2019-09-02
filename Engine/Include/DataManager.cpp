@@ -37,7 +37,6 @@ void DataManager::DeleteSocket(SocketInfo * Socket)
 			ClientID = i;
 		}
 	}
-
 }
 
 SocketInfo * DataManager::FindClientIndex(size_t ClientID)
@@ -49,18 +48,19 @@ SocketInfo * DataManager::FindClientMap(size_t Key)
 {
 	auto FindIter = m_ClientMap.find(Key);
 
-	if (FindIter == m_ClientMap.find)
+	if (FindIter == m_ClientMap.end())
 		return NULLPTR;
 
 	return FindIter->second;
 }
 
-void DataManager::PushMainPlayerInfo(Player_Com * Player)
+void DataManager::PushMainPlayerInfo(Player_Com * Player, size_t ClientID)
 {
 	PlayerInfo* newInfo = new PlayerInfo();
 	newInfo->m_Color = &Player->GetRGB();
 	newInfo->m_Pos = &Player->GetTransform()->GetWorldPos();
 	newInfo->m_Scale = Player->GetScale();
+	newInfo->m_ClientID = ClientID;
 
 	m_vecMainPlayerInfo.push_back(newInfo);
 }
