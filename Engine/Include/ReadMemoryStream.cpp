@@ -11,6 +11,4 @@ ReadMemoryStream::ReadMemoryStream(char* InputBuffer, size_t BufferSize)
 
 ReadMemoryStream::~ReadMemoryStream()
 {
-	delete[] m_ReadBuffer;
-	m_ReadBuffer = nullptr;
 }

@@ -24,11 +24,10 @@ MessageManager::MessageManager()
 
 MessageManager::~MessageManager()
 {
-	if (m_ReadBuffer->m_Stream.GetSize() > 0)
-		SAFE_DELETE(m_ReadBuffer);
-
-	if(m_WriteBuffer->m_Stream.GetSize() > 0)
-		SAFE_DELETE(m_WriteBuffer);
+	m_Thread.detach();
+	
+	SAFE_DELETE(m_ReadBuffer);
+	SAFE_DELETE(m_WriteBuffer);
 }
 
 void MessageManager::ClientInit()
@@ -42,7 +41,6 @@ void MessageManager::Client_ClientDie()
 	Data.WriteHeader<ClientDieMessage>();
 
 	ClientSend(&Data);
-	DataManager::Get()->m_ClientCount--;
 }
 
 bool MessageManager::Sever_SendNewPlayerMsg(SocketInfo * Socket)
@@ -93,8 +91,6 @@ bool MessageManager::Sever_SendConnectClientNewOtherPlayer(SocketInfo * NewSocke
 
 bool MessageManager::SeverMesageProcess(SocketInfo * Socket, IO_Data * Data)
 {
-	m_Mutex.lock();
-
 	m_State = IOCPSeverRecvMsg(Socket, Data);
 
 	switch (m_State)
@@ -108,17 +104,21 @@ bool MessageManager::SeverMesageProcess(SocketInfo * Socket, IO_Data * Data)
 		break;
 	}
 
-	m_Mutex.unlock();
-
 	return false;
 }
 
 void MessageManager::Sever_DieClient(SocketInfo* Socket)
 {
+	m_Mutex.lock();
+
+	cout << Socket->m_CliendID << "번 클라이언트 종료" << endl;
+
 	DataManager::Get()->DeleteSocket(Socket);
 	DataManager::m_ClientCount--;
 
 	m_State = SST_NONE;
+
+	m_Mutex.unlock();
 }
 
 SEVER_DATA_TYPE MessageManager::IOCPSeverRecvMsg(SocketInfo * Socket, IO_Data * Data)
@@ -147,6 +147,9 @@ void MessageManager::ClientMessageProcess()
 
 	while (true)
 	{
+		if (Core::Get()->GetIsLoop() == false)
+			break;
+
 		if (m_CurScene == NULLPTR || m_CurLayer == NULLPTR)
 			continue;
 
@@ -164,7 +167,7 @@ void MessageManager::ClientMessageProcess()
 			char Buffer[BUFFERSIZE] = { };
 			recv(getSocket, Buffer, BUFFERSIZE, 0);
 
-			ReadMemoryStream Reader(Buffer, BUFFERSIZE);
+			ReadMemoryStream Reader = ReadMemoryStream(Buffer, BUFFERSIZE);
 			m_State = Reader.Read<SEVER_DATA_TYPE>();
 			size_t ClientID = Reader.Read<size_t>();
 
@@ -202,7 +205,7 @@ void MessageManager::ClientSend(IO_Data * Data)
 {
 	SOCKET getSocket = *ConnectSever::Get()->GetSocket();
 
-	send(getSocket, Data->m_Stream.m_WriteBuffer, Data->m_Stream.GetSize(), 0);
+	send(getSocket, Data->m_Stream.GetBuffer(), Data->m_Stream.GetSize(), 0);
 }
 
 bool MessageManager::IOCPServerSend(SocketInfo * Socket, IO_Data * Data)

@@ -25,7 +25,7 @@ struct IO_Data
 	void WriteBuffer(const void* Buffer, size_t size)
 	{
 		m_Stream.Write(Buffer, size);
-		CopyBuffer(size);
+		CopyBuffer();
 	}
 
 	size_t GetSize() const { return m_Stream.GetSize(); }
@@ -34,7 +34,7 @@ struct IO_Data
 	void WriteBuffer(const void* Buffer)
 	{
 		m_Stream.Write(Buffer, sizeof(T));
-		CopyBuffer(sizeof(T));
+		CopyBuffer();
 	}
 
 	template<typename T>
@@ -42,7 +42,7 @@ struct IO_Data
 	{
 		T Header;
 		m_Stream.Write(&Header.m_Type, sizeof(4));
-		CopyBuffer(4);
+		CopyBuffer();
 	}
 
 	void HeaderErase()
@@ -83,7 +83,7 @@ struct IO_Data
 	{
 		SEVER_DATA_TYPE Temp = SST_NONE;
 
-		if (m_Stream.GetSize() == 0 || m_WsaBuf.len == 0)
+		if (m_WsaBuf.len == 0)
 			return Temp;
 
 		memcpy(&Temp, m_WsaBuf.buf, 4);
@@ -92,10 +92,10 @@ struct IO_Data
 	}
 
 private:
-	void CopyBuffer(size_t size)
+	void CopyBuffer()
 	{
 		m_WsaBuf.buf = m_Stream.GetBuffer();
-		m_WsaBuf.len = static_cast<ULONG>(size);
+		m_WsaBuf.len = m_Stream.GetSize();
 	}
 };
 

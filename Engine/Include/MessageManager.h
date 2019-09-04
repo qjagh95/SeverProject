@@ -2,6 +2,7 @@
 
 JEONG_BEGIN
 
+class ReadMemoryStream;
 class JEONG_DLL MessageManager
 {
 public:

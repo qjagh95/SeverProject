@@ -46,11 +46,11 @@ bool MainScene::Init()
 	
 	GameObject* StageObj = GameObject::CreateObject("StageObj", Default);
 	Stage_Com* MainStage = StageObj->AddComponent<Stage_Com>("StageCom");
-	//MainStage->CreateEatting(Vector3(1000.0f, 500.0f ,1.0f), Vector3(255.0f, 255.0f, 255.0f), 10.0f);
 
 	//mainCamera->SetTarget(PlayerObject);
 	SAFE_RELEASE(mainCamera);
-	
+	SAFE_RELEASE(StageObj);
+	SAFE_RELEASE(MainStage);
 	SAFE_RELEASE(Default);
 	SAFE_RELEASE(UILayer);
 	SAFE_RELEASE(BackLayer);

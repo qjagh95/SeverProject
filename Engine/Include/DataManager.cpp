@@ -25,18 +25,17 @@ void DataManager::PushClient(SocketInfo * Socket)
 
 void DataManager::DeleteSocket(SocketInfo * Socket)
 {
-	size_t ClientID = -1;
+	size_t DeleteID = Socket->m_CliendID;
 
 	closesocket(Socket->m_Socket);
 
 	for (size_t i = 0; i < m_vecClient.size(); i++)
 	{
 		if (m_vecClient[i]->m_Socket == Socket->m_Socket)
-		{
 			m_vecClient.erase(m_vecClient.begin() + i);
-			ClientID = i;
-		}
 	}
+
+	//OT도 삭제처리
 }
 
 SocketInfo * DataManager::FindClientIndex(size_t ClientID)

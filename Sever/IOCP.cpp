@@ -45,8 +45,8 @@ bool IOCP::Init()
 	m_CompletionPort = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULLPTR, 0, 0);
 	GetSystemInfo(&Info);
 
-	//CPU갯수 * 2만큼 스레드 생성
-	for (size_t i = 0; i < Info.dwNumberOfProcessors * 2; i++)
+	//CPU갯수 만큼 스레드 생성
+	for (size_t i = 0; i < Info.dwNumberOfProcessors; i++)
 		m_vecThread.push_back(new thread(&IOCP::ThreadFunc, this));
 
 	SetSocket();
@@ -133,13 +133,14 @@ void IOCP::ThreadFunc()
 		{
 			cout << m_SocketInfo->m_CliendID << "번 클라이언트 종료" << endl;
 
-			DataManager::Get()->DeleteSocket(m_SocketInfo);
-			DataManager::m_ClientCount--;
+			MessageManager::Get()->Sever_DieClient(m_SocketInfo);
 			m_IOData->ClearBuffer();
 			continue;
 		}
 
 		if (m_SocketInfo->m_Socket != 0 && m_IOData->m_WsaBuf.len != 0)
+		{
 			MessageManager::Get()->SeverMesageProcess(m_SocketInfo, m_IOData);
+		}
 	}
 }
