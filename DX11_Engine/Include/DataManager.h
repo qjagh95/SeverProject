@@ -12,23 +12,22 @@ public:
 	vector<SocketInfo*>* GetClientList() {	return &m_vecClient; }
 	size_t GetClientCount() const { return m_vecClient.size(); }
 
-	void PushMainPlayerInfo(Player_Com* Player, size_t ClientID);
-	void PushOtherPlayerInfo(Vector4* Color, Vector3* Pos, float* Scale);
+	void PushPlayerInfo(Vector4* Color, Vector3* Pos, size_t ClientID, float* Scale);
 
-	vector<PlayerInfo*>* GetMainPlayerVec() { return &m_vecMainPlayerInfo; }
-	size_t GetMainPlayerCount() const { return m_vecMainPlayerInfo.size(); }
+	vector<PlayerInfo*>* GetPlayerVec() { return &m_vecPlayerInfo; }
+	size_t GetPlayerCount() const { return m_vecPlayerInfo.size(); }
 
 public:
 	static size_t m_ClientCount;
-	static size_t m_OtherPlayerCount;
+	static size_t m_PlayerCount;
 
 private:
 	vector<SocketInfo*> m_vecClient;
 	unordered_map<size_t, SocketInfo*> m_ClientMap;
 
-	vector<PlayerInfo*> m_vecMainPlayerInfo;
-
-	unordered_map<size_t, PlayerInfo*> m_OtherPlayerMap;
+	vector<PlayerInfo*> m_vecPlayerInfo;
+	//CliendID == Key
+	unordered_map<size_t, PlayerInfo*> m_PlayerMap;
 
 public:
 	CLASS_IN_SINGLE(DataManager)

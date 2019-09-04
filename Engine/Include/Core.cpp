@@ -11,7 +11,6 @@
 #include "DataManager.h"
 #include "MessageManager.h"
 
-
 JEONG_USING
 SINGLETON_VAR_INIT(Core)
 bool Core::m_isLoop = true;
@@ -25,6 +24,8 @@ Core::Core()
 	PathManager::Get();
 
 	m_ClientSocket = NULLPTR;
+
+	m_RandomEngine = default_random_engine(m_RandomDevice());
 }
 
 Core::~Core()
@@ -218,6 +219,14 @@ LRESULT Core::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 
 	return 0;
+}
+
+int Core::RandomRange(int R1, int R2)
+{
+	uniform_int_distribution<int> RandNum(R1, R2);
+	auto RandomEngine = Core::Get()->GetRandomEngine();
+
+	return RandNum(RandomEngine);
 }
 
 int Core::Input(float DeltaTime)

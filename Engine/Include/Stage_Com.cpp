@@ -25,8 +25,8 @@ Stage_Com::~Stage_Com()
 
 bool Stage_Com::Init()
 {
-	m_WinSize.x = Core::Get()->GetWinSize().Width;
-	m_WinSize.y = Core::Get()->GetWinSize().Height;
+	m_WinSize.x = static_cast<float>(Core::Get()->GetWinSize().Width);
+	m_WinSize.y = static_cast<float>(Core::Get()->GetWinSize().Height);
 
 	return true;
 }
@@ -135,7 +135,7 @@ Stage_Com * Stage_Com::Clone()
 void Stage_Com::CreateEatting(const Vector3& Pos, const Vector3& RGB, float Scale)
 {
 	char Buffer[12] = {};
-	itoa(m_Count, Buffer, 10);
+	_itoa_s(static_cast<int>(m_Count), Buffer, static_cast<int>(10));
 
 	string Convert = Buffer;                  
 

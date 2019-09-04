@@ -22,6 +22,7 @@
 #include <algorithm>
 #include <atlstr.h>
 #include <process.h>
+#include <random>
 
 #include "MathHeader.h"
 #include <Vector2.h>

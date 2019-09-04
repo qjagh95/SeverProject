@@ -100,7 +100,6 @@ void IOCP::Run()
 		newInfo->m_ClientInfo = ClientAddr;
 		newInfo->m_CliendID = DataManager::m_ClientCount;
 		DataManager::Get()->PushClient(newInfo);
-		DataManager::m_ClientCount++;
 
 		//Overlapped 소켓과 Completion Port 의 연결
 		CreateIoCompletionPort((HANDLE)newInfo->m_Socket, m_CompletionPort, (ULONG_PTR)newInfo, 0);
@@ -109,10 +108,9 @@ void IOCP::Run()
 		MessageManager::Get()->Sever_SendNewPlayerMsg(newInfo);
 
 		//기존 접속한 클라에 OT생성
-		//MessageManager::Get()->Sever_SendConnectClientNewOtherPlayer();
+		MessageManager::Get()->Sever_SendConnectClientNewOtherPlayer(newInfo);
 
-		//새롭게 접속한 클라에 현재 접속한 클라갯수만큼 OT생성명령
-		//MessageManager::Get()->Sever_SendOtharPlayerMsg(newInfo);
+		//새롭게 접속한 클라에 현재 접속한 클라갯수만큼 OT생성 명령
 	}
 }
 
@@ -139,8 +137,6 @@ void IOCP::ThreadFunc()
 		}
 
 		if (m_SocketInfo->m_Socket != 0 && m_IOData->m_WsaBuf.len != 0)
-		{
 			MessageManager::Get()->SeverMesageProcess(m_SocketInfo, m_IOData);
-		}
 	}
 }

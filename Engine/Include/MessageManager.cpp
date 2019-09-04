@@ -45,9 +45,19 @@ void MessageManager::Client_ClientDie()
 
 bool MessageManager::Sever_SendNewPlayerMsg(SocketInfo * Socket)
 {
+	int RandNum = Core::Get()->RandomRange(0, 139);
+	Vector4 RandColor = Vector4::AllColor[RandNum];
+	Vector3 Pos = Vector3(500.0f, 500.0f, 1.0f);
+	float Scale = 10.0f;
+
+	DataManager::Get()->PushPlayerInfo(&RandColor, &Pos, Socket->m_CliendID, &Scale);
+
 	IO_Data IoData;
 	IoData.WriteHeader<CreateMainPlayerMessage>();
 	IoData.WriteBuffer<size_t>(&Socket->m_CliendID);
+	IoData.WriteBuffer<Vector4>(&RandColor);
+	IoData.WriteBuffer<Vector3>(&Pos);
+	IoData.WriteBuffer<float>(&Scale);
 
 	cout << Socket->m_CliendID << "번 클라이언트에게 플레이어 생성메세지 전송" << endl;
 
@@ -66,12 +76,19 @@ bool MessageManager::Sever_NewClientCreateOtherPlayer(SocketInfo * Socket)
 }
 
 //현재 접속한 클라에 OT생셩메세지
-bool MessageManager::Sever_SendConnectClientNewOtherPlayer(SocketInfo * NewSocket, PlayerInfo * Info)
+bool MessageManager::Sever_SendConnectClientNewOtherPlayer(SocketInfo * NewSocket)
 {
 	size_t ClientSize = DataManager::Get()->GetClientCount() - 1;
 
 	if (ClientSize == 1)
 		return true;
+
+	auto getVec = DataManager::Get()->GetPlayerVec();
+
+	if (getVec->size() == 1)
+		return true;
+
+	PlayerInfo* getInfo = getVec->at(getVec->size() - 1);
 
 	for (auto Cur : *DataManager::Get()->GetClientList())
 	{
@@ -80,9 +97,10 @@ bool MessageManager::Sever_SendConnectClientNewOtherPlayer(SocketInfo * NewSocke
 
 		IO_Data IoData;
 		IoData.WriteHeader<CreateConnectClientCreateOtherPlayer>();
-		IoData.WriteBuffer<Vector3>(Info->m_Color);
-		IoData.WriteBuffer<Vector3>(Info->m_Pos);
-		IoData.WriteBuffer<Vector3>(Info->m_Scale);
+		IoData.WriteBuffer<Vector4>(getInfo->m_Color);
+		IoData.WriteBuffer<Vector3>(getInfo->m_Pos);
+		IoData.WriteBuffer<Vector3>(getInfo->m_Scale);
+		IoData.WriteBuffer<size_t>(&getInfo->m_ClientID);
 
 		IOCPServerSend(Cur, &IoData);
 	}
@@ -112,10 +130,7 @@ void MessageManager::Sever_DieClient(SocketInfo* Socket)
 	m_Mutex.lock();
 
 	cout << Socket->m_CliendID << "번 클라이언트 종료" << endl;
-
 	DataManager::Get()->DeleteSocket(Socket);
-	DataManager::m_ClientCount--;
-
 	m_State = SST_NONE;
 
 	m_Mutex.unlock();
@@ -177,15 +192,15 @@ void MessageManager::ClientMessageProcess()
 			case SST_CREATE_EAT_OBJECT:
 				break;
 			case SST_CREATE_PLAYER:
-				CreateMainPlayer(ClientID);
+				CreateMainPlayer(ClientID, Reader);
 				m_ReadBuffer->ClearBuffer();
 				break;
 			case SST_CONNECT_CLIENT_CREATE_OTHER_PLAYER:
-				CreateOtherPlayer(false);
+				CreateOneOtherPlayer();
 				m_ReadBuffer->ClearBuffer();
 				break;
 			case SST_NEW_CLIENT_CREATE_OTHER_PLAYER:
-				CreateOtherPlayer(true);
+				//CreateOtherPlayer();
 				m_ReadBuffer->ClearBuffer();
 				break;
 			case SST_PLAYER_DATA:
@@ -205,7 +220,7 @@ void MessageManager::ClientSend(IO_Data * Data)
 {
 	SOCKET getSocket = *ConnectSever::Get()->GetSocket();
 
-	send(getSocket, Data->m_Stream.GetBuffer(), Data->m_Stream.GetSize(), 0);
+	send(getSocket, Data->m_Stream.GetBuffer(), static_cast<int>(Data->m_Stream.GetSize()), static_cast<int>(0));
 }
 
 bool MessageManager::IOCPServerSend(SocketInfo * Socket, IO_Data * Data)
@@ -240,14 +255,19 @@ SEVER_DATA_TYPE MessageManager::ReadHeader(char * Buffer)
 	return HeaderType;
 }
 
-bool MessageManager::CreateMainPlayer(size_t ClientID)
+bool MessageManager::CreateMainPlayer(size_t ClientID, ReadMemoryStream& Reader)
 {
+	Vector4 Color = Reader.Read<Vector4>();
+	Vector3 Pos = Reader.Read<Vector3>();
+	float Scale = Reader.Read<float>();
+
 	GameObject* newPlayerObj = GameObject::CreateObject("Player", m_CurLayer);
 	Player_Com* newPlayer = newPlayerObj->AddComponent<Player_Com>("Player");
-	newPlayer->SetScale(10.0f);
-	m_CurScene->GetMainCamera()->SetTarget(newPlayerObj);
+	newPlayer->SetRGB(Color.x, Color.y, Color.z);
+	newPlayer->SetScale(Scale);
+	newPlayer->GetTransform()->SetWorldPos(Pos);
 
-	DataManager::Get()->PushMainPlayerInfo(newPlayer, ClientID);
+	m_CurScene->GetMainCamera()->SetTarget(newPlayerObj);
 
 	SAFE_RELEASE(newPlayerObj);
 	SAFE_RELEASE(newPlayer);
@@ -256,49 +276,22 @@ bool MessageManager::CreateMainPlayer(size_t ClientID)
 	return true;
 }
 
-bool MessageManager::CreateOtherPlayer(bool isOne)
+bool MessageManager::CreateOneOtherPlayer()
 {
 	ReadMemoryStream Reader(m_ReadBuffer->GetBuffer(), m_ReadBuffer->GetSize());
-	
-	if (isOne == true)
-	{
-		Vector4 Color = Reader.Read<Vector4>();
-		Vector3 Pos = Reader.Read<Vector3>();
-		float Scale = Reader.Read<float>();
 
-		GameObject* newOtherPlayerObj = GameObject::CreateObject("OtherPlayer", m_CurLayer);
-		OtharPlayer_Com* newOther = newOtherPlayerObj->AddComponent<OtharPlayer_Com>("OtherPlayer");
-		newOther->SetScale(Scale);
-		newOtherPlayerObj->GetTransform()->SetWorldPos(Pos);
-		newOther->SetRGB(Color.x, Color.y, Color.z);
+	Vector4 Color = Reader.Read<Vector4>();
+	Vector3 Pos = Reader.Read<Vector3>();
+	float Scale = Reader.Read<float>();
 
-		DataManager::Get()->PushOtherPlayerInfo(&Color, &Pos, &Scale);
+	GameObject* newOtherPlayerObj = GameObject::CreateObject("OtherPlayer", m_CurLayer);
+	OtharPlayer_Com* newOther = newOtherPlayerObj->AddComponent<OtharPlayer_Com>("OtherPlayer");
+	newOther->SetScale(Scale);
+	newOtherPlayerObj->GetTransform()->SetWorldPos(Pos);
+	newOther->SetRGB(Color.x, Color.y, Color.z);
 
-		SAFE_RELEASE(newOtherPlayerObj);
-		SAFE_RELEASE(newOther);
-	}
-	else
-	{
-		size_t Count = Reader.Read<size_t>();
-
-		for (size_t i = 0; i < Count; i++)
-		{
-			Vector4 Color = Reader.Read<Vector4>();
-			Vector3 Pos = Reader.Read<Vector3>();
-			float Scale = Reader.Read<float>();
-
-			GameObject* newOtherPlayerObj = GameObject::CreateObject("OtherPlayer", m_CurLayer);
-			OtharPlayer_Com* newOther = newOtherPlayerObj->AddComponent<OtharPlayer_Com>("OtherPlayer");
-			newOther->SetScale(Scale);
-			newOtherPlayerObj->GetTransform()->SetWorldPos(Pos);
-			newOther->SetRGB(Color.x, Color.y, Color.z);
-
-			DataManager::Get()->PushOtherPlayerInfo(&Color, &Pos, &Scale);
-
-			SAFE_RELEASE(newOtherPlayerObj);
-			SAFE_RELEASE(newOther);
-		}
-	}
+	SAFE_RELEASE(newOtherPlayerObj);
+	SAFE_RELEASE(newOther);
 
 	m_State = SST_NONE;
 	return true;

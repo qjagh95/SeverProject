@@ -95,7 +95,7 @@ private:
 	void CopyBuffer()
 	{
 		m_WsaBuf.buf = m_Stream.GetBuffer();
-		m_WsaBuf.len = m_Stream.GetSize();
+		m_WsaBuf.len = static_cast<ULONG>(m_Stream.GetSize());
 	}
 };
 

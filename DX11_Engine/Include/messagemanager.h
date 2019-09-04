@@ -13,7 +13,7 @@ public:
 	bool Sever_NewClientCreateOtherPlayer(SocketInfo* Socket);
 
 	//현재 접속한 클라에 OT생셩메세지
-	bool Sever_SendConnectClientNewOtherPlayer(SocketInfo* NewSocket, PlayerInfo* Info);
+	bool Sever_SendConnectClientNewOtherPlayer(SocketInfo* NewSocket);
 
 	//서버 메세지루프
 	bool SeverMesageProcess(SocketInfo * Socket, IO_Data * Data);
@@ -40,8 +40,8 @@ private:
 	void ClientSend(IO_Data* Data);
 
 	//클라이언트 실질적으로 메세지에따라 실행하는 함수.
-	bool CreateMainPlayer(size_t ClientID);
-	bool CreateOtherPlayer(bool isOne = true);
+	bool CreateMainPlayer(size_t ClientID, ReadMemoryStream& Reader);
+	bool CreateOneOtherPlayer();
 
 	SEVER_DATA_TYPE ReadHeader(char* Buffer);
 

@@ -16,6 +16,8 @@ public:
 	HINSTANCE GetHinstance() const { return m_hIstance; }
 	WinSize GetWinSize() const { return m_WinSize; }
 	bool GetIsLoop() const { return m_isLoop; }
+	default_random_engine GetRandomEngine() const { return m_RandomEngine; }
+	int RandomRange(int R1, int R2);
 
 public:
 	PROJECT_TYPE m_ProjectType;
@@ -40,6 +42,8 @@ private:
 	GAME_MODE m_GameMode;
 	static WPARAM m_wParam;
 	SocketInfo* m_ClientSocket;
+	random_device m_RandomDevice;
+	default_random_engine m_RandomEngine;
 
 public:
 	CLASS_IN_SINGLE(Core)
