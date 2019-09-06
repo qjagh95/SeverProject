@@ -37,10 +37,17 @@ void MessageManager::ClientInit()
 
 void MessageManager::Client_ClientDie()
 {
-	IO_Data Data;
-	Data.WriteHeader<ClientDieMessage>();
+	//IO_Data* IoData = new IO_Data();
+	//IoData->WriteHeader<ClientDieMessage>();
+	//ClientSend(IoData);
 
-	ClientSend(&Data);
+	IO_Data* IoData = new IO_Data();
+	IoData->WriteHeader<SendPlayerData>();
+	int a = 5000;
+	IoData->WriteBuffer<int>(&a);
+
+	//IOCPServerSend(Socket, IoData);
+	ClientSend(IoData);
 }
 
 bool MessageManager::Sever_SendNewPlayerMsg(SocketInfo * Socket)
@@ -52,16 +59,16 @@ bool MessageManager::Sever_SendNewPlayerMsg(SocketInfo * Socket)
 
 	DataManager::Get()->PushPlayerInfo(&RandColor, &Pos, Socket->m_CliendID, &Scale);
 
-	IO_Data IoData;
-	IoData.WriteHeader<CreateMainPlayerMessage>();
-	IoData.WriteBuffer<size_t>(&Socket->m_CliendID);
-	IoData.WriteBuffer<Vector4>(&RandColor);
-	IoData.WriteBuffer<Vector3>(&Pos);
-	IoData.WriteBuffer<float>(&Scale);
+	IO_Data* IoData = new IO_Data();
+	IoData->WriteHeader<CreateMainPlayerMessage>();
+	IoData->WriteBuffer<size_t>(&Socket->m_CliendID);
+	IoData->WriteBuffer<Vector4>(&RandColor);
+	IoData->WriteBuffer<Vector3>(&Pos);
+	IoData->WriteBuffer<float>(&Scale);
 
 	cout << Socket->m_CliendID << "번 클라이언트에게 플레이어 생성메세지 전송" << endl;
 
-	return IOCPServerSend(Socket, &IoData);
+	return IOCPServerSend(Socket, IoData);
 }
 
 //새롭게 접속한 클라에 현재 접속한 클라갯수만큼 OT생성 메세지
@@ -109,6 +116,9 @@ bool MessageManager::Sever_SendConnectClientNewOtherPlayer(SocketInfo * NewSocke
 
 bool MessageManager::SeverMesageProcess(SocketInfo * Socket, IO_Data * Data)
 {
+	mutex Mutex;
+	Mutex.lock();
+
 	m_State = IOCPSeverRecvMsg(Socket, Data);
 
 	switch (m_State)
@@ -122,6 +132,8 @@ bool MessageManager::SeverMesageProcess(SocketInfo * Socket, IO_Data * Data)
 		break;
 	}
 
+	SAFE_DELETE(Data);
+	Mutex.unlock();
 	return false;
 }
 
@@ -141,7 +153,12 @@ SEVER_DATA_TYPE MessageManager::IOCPSeverRecvMsg(SocketInfo * Socket, IO_Data * 
 	DWORD Flags = 0;
 	SEVER_DATA_TYPE HeaderType = SST_NONE;
 
-	WSARecv(Socket->m_Socket, &Data->m_WsaBuf, 1, NULLPTR, &Flags, &Data->m_Overlapped, NULLPTR);
+	ZeroMemory(&Data->m_Overlapped, sizeof(Data->m_Overlapped));
+	ZeroMemory(&Data->m_WsaBuf, sizeof(Data->m_WsaBuf));
+
+	int a = WSARecv(Socket->m_Socket, &Data->m_WsaBuf, 1, NULLPTR, &Flags, &Data->m_Overlapped, NULLPTR);
+
+	Data->CopyBuffer();
 	HeaderType = Data->ReadHeader();
 
 	if (Data->m_WsaBuf.len == 0)
@@ -162,9 +179,6 @@ void MessageManager::ClientMessageProcess()
 
 	while (true)
 	{
-		if (Core::Get()->GetIsLoop() == false)
-			break;
-
 		if (m_CurScene == NULLPTR || m_CurLayer == NULLPTR)
 			continue;
 
@@ -218,9 +232,10 @@ void MessageManager::ClientMessageProcess()
 
 void MessageManager::ClientSend(IO_Data * Data)
 {
-	SOCKET getSocket = *ConnectSever::Get()->GetSocket();
+	auto getSocket = ConnectSever::Get()->GetSocket();
+	Data->CopyBuffer();
 
-	send(getSocket, Data->m_Stream.GetBuffer(), static_cast<int>(Data->m_Stream.GetSize()), static_cast<int>(0));
+	send(*getSocket, Data->GetBuffer(), Data->GetSize(), 0);
 }
 
 bool MessageManager::IOCPServerSend(SocketInfo * Socket, IO_Data * Data)

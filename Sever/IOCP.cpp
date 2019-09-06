@@ -3,6 +3,7 @@
 
 #include <DataManager.h>
 #include <WriteMemoryStream.h>
+#include <Core.h>
 
 JEONG_USING
 
@@ -14,10 +15,14 @@ IOCP::IOCP()
 	m_SocketInfo = new SocketInfo();
 	m_SocketInfo->m_Socket = 0;
 	m_SocketInfo->m_CliendID = -1;
+
+	m_IOData = NULLPTR;
 }
 
 IOCP::~IOCP()
 {
+	Core::Delete();
+
 	for (size_t i = 0; i < m_vecThread.size(); i++)
 		m_vecThread[i]->join();
 
@@ -108,7 +113,7 @@ void IOCP::Run()
 		MessageManager::Get()->Sever_SendNewPlayerMsg(newInfo);
 
 		//기존 접속한 클라에 OT생성
-		MessageManager::Get()->Sever_SendConnectClientNewOtherPlayer(newInfo);
+		//MessageManager::Get()->Sever_SendConnectClientNewOtherPlayer(newInfo);
 
 		//새롭게 접속한 클라에 현재 접속한 클라갯수만큼 OT생성 명령
 	}
@@ -116,27 +121,23 @@ void IOCP::Run()
 
 void IOCP::ThreadFunc()
 {
-	HANDLE CompletionPort = reinterpret_cast<HANDLE>(m_CompletionPort);
 	DWORD ByteTransferred;
 
 	while (true)
 	{
 		//입출력이 완료된 소켓의 정보 얻음
-		if (GetQueuedCompletionStatus(CompletionPort, (LPDWORD)&ByteTransferred, (PULONG_PTR)&m_SocketInfo, 
+		if (GetQueuedCompletionStatus(m_CompletionPort, (LPDWORD)&ByteTransferred, (PULONG_PTR)&m_SocketInfo,
 			(LPOVERLAPPED*)&m_IOData, INFINITE) == FALSE)
 			continue;
 
-		// 전송된 바이트가 0일때 종료 (EOF 전송 시에도) 
+		//// 전송된 바이트가 0일때 종료 (EOF 전송 시에도) 
 		if (ByteTransferred == 0)
 		{
-			cout << m_SocketInfo->m_CliendID << "번 클라이언트 종료" << endl;
-
 			MessageManager::Get()->Sever_DieClient(m_SocketInfo);
-			m_IOData->ClearBuffer();
 			continue;
 		}
 
-		if (m_SocketInfo->m_Socket != 0 && m_IOData->m_WsaBuf.len != 0)
-			MessageManager::Get()->SeverMesageProcess(m_SocketInfo, m_IOData);
+		//w키 눌렀을때 0바이트 수신됨 / 8바이트 수신되야 정상인데 ???????????
+		MessageManager::Get()->SeverMesageProcess(m_SocketInfo, m_IOData);
 	}
 }

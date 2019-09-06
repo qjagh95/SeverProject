@@ -11,6 +11,7 @@ public:
 	void HeaderErase();
 	void BufferClear();
 	void PullBuffer(size_t Size);
+	void Resize() { m_WriteBuffer.shrink_to_fit(); }
 
 public:
 	vector<char> m_WriteBuffer;

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Player_Com.h"
 #include "Component/ColliderCircle_Com.h"
+#include "MessageManager.h"
 
 JEONG_USING
 Player_Com::Player_Com()
@@ -30,7 +31,6 @@ bool Player_Com::Init()
 	SAFE_RELEASE(RenderComponent);
 
 	m_CirCleColl= m_Object->AddComponent<ColliderCircle_Com>("PlayerCircle");
-	//m_Transform->SetWorldPos(500.0f, 500.0f, 1.0f);
 
 	Material_Com* MaterialComponent = m_Object->FindComponentFromType<Material_Com>(CT_MATERIAL);
 	MaterialComponent->SetDiffuseTexture(0, "Circle", TEXT("Circle.png"));
@@ -80,7 +80,10 @@ void Player_Com::Move(float DeltaTime)
 	if (KeyInput::Get()->KeyPress("MoveUp"))
 	{
 		if (m_Transform->GetWorldPos().y < 50000.0f)
+		{
+			MessageManager::Get()->Client_ClientDie();
 			m_Transform->Move(AXIS_Y, 100.0f, DeltaTime);
+		}
 		
 		if(m_Transform->GetWorldPos().y >= 50000.0f)
 			m_Transform->SetWorldPos(0.0f, 50000.0f, 1.0f);

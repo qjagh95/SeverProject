@@ -91,11 +91,20 @@ struct IO_Data
 		return Temp;
 	}
 
-private:
 	void CopyBuffer()
 	{
-		m_WsaBuf.buf = m_Stream.GetBuffer();
-		m_WsaBuf.len = static_cast<ULONG>(m_Stream.GetSize());
+		if (m_Stream.GetSize() == 0)
+		{
+			m_Stream.Write(m_WsaBuf.buf, m_WsaBuf.len);
+			m_Stream.Resize();
+			m_WsaBuf.len = m_Stream.GetSize();
+			m_WsaBuf.buf = m_Stream.GetBuffer();
+		}
+		else
+		{
+			m_WsaBuf.buf = m_Stream.GetBuffer();
+			m_WsaBuf.len = static_cast<ULONG>(m_Stream.GetSize());
+		}
 	}
 };
 
