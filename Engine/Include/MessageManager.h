@@ -31,9 +31,9 @@ public:
 	Layer* GetLayer() { return m_CurLayer; }
 
 	void ClientInit();
+	SEVER_DATA_TYPE IOCPSeverRecvMsg(SocketInfo* Socket, IO_Data* Data);
 
 private:
-	SEVER_DATA_TYPE IOCPSeverRecvMsg(SocketInfo* Socket, IO_Data* Data);
 	bool IOCPServerSend(SocketInfo* Socket, IO_Data* Data);
 	bool IOCPSeverSendALL(SocketInfo* SameSocket, IO_Data* Data);
 	void ClientMessageProcess();

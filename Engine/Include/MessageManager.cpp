@@ -41,13 +41,13 @@ void MessageManager::Client_ClientDie()
 	//IoData->WriteHeader<ClientDieMessage>();
 	//ClientSend(IoData);
 
-	IO_Data* IoData = new IO_Data();
-	IoData->WriteHeader<SendPlayerData>();
+	IO_Data IoData = {};
+	IoData.WriteHeader<SendPlayerData>();
 	int a = 5000;
-	IoData->WriteBuffer<int>(&a);
+	IoData.WriteBuffer<int>(&a);
 
 	//IOCPServerSend(Socket, IoData);
-	ClientSend(IoData);
+	ClientSend(&IoData);
 }
 
 bool MessageManager::Sever_SendNewPlayerMsg(SocketInfo * Socket)
@@ -127,12 +127,12 @@ bool MessageManager::SeverMesageProcess(SocketInfo * Socket, IO_Data * Data)
 		Sever_DieClient(Socket);
 		break;
 	case SST_PLAYER_DATA:
+		cout << "¹¹¾ß" << endl;
 		break;
 	case SST_DELETE_EAT_OBJECT:
 		break;
 	}
 
-	SAFE_DELETE(Data);
 	Mutex.unlock();
 	return false;
 }
@@ -154,9 +154,9 @@ SEVER_DATA_TYPE MessageManager::IOCPSeverRecvMsg(SocketInfo * Socket, IO_Data * 
 	SEVER_DATA_TYPE HeaderType = SST_NONE;
 
 	ZeroMemory(&Data->m_Overlapped, sizeof(Data->m_Overlapped));
-	ZeroMemory(&Data->m_WsaBuf, sizeof(Data->m_WsaBuf));
-
+	//ZeroMemory(&Data->m_WsaBuf, sizeof(Data->m_WsaBuf));
 	int a = WSARecv(Socket->m_Socket, &Data->m_WsaBuf, 1, NULLPTR, &Flags, &Data->m_Overlapped, NULLPTR);
+	int b = WSAGetLastError();
 
 	Data->CopyBuffer();
 	HeaderType = Data->ReadHeader();
@@ -232,10 +232,10 @@ void MessageManager::ClientMessageProcess()
 
 void MessageManager::ClientSend(IO_Data * Data)
 {
-	auto getSocket = ConnectSever::Get()->GetSocket();
+	auto getSocket = ConnectSever::Get()->GetSocketInfo();
 	Data->CopyBuffer();
 
-	send(*getSocket, Data->GetBuffer(), Data->GetSize(), 0);
+	IOCPServerSend(getSocket, Data);
 }
 
 bool MessageManager::IOCPServerSend(SocketInfo * Socket, IO_Data * Data)

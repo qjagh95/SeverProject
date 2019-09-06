@@ -11,11 +11,6 @@ IOCP::IOCP()
 {
 	m_SeverSocket.m_CliendID = DataManager::m_ClientCount;
 	DataManager::m_ClientCount++;
-
-	m_SocketInfo = new SocketInfo();
-	m_SocketInfo->m_Socket = 0;
-	m_SocketInfo->m_CliendID = -1;
-
 	m_IOData = NULLPTR;
 }
 
@@ -26,16 +21,8 @@ IOCP::~IOCP()
 	for (size_t i = 0; i < m_vecThread.size(); i++)
 		m_vecThread[i]->join();
 
-	for (size_t i = 0; i < m_vecThread.size(); i++)
-	{
-		if (m_vecThread[i] != nullptr)
-		{
-			delete m_vecThread[i];
-			m_vecThread[i] = nullptr;
-		}
-	}
-
-	SAFE_DELETE(m_SocketInfo);
+	Safe_Delete_VecList(m_vecData);
+	Safe_Delete_VecList(m_vecThread);
 }
 
 bool IOCP::Init()
@@ -109,6 +96,18 @@ void IOCP::Run()
 		//Overlapped 소켓과 Completion Port 의 연결
 		CreateIoCompletionPort((HANDLE)newInfo->m_Socket, m_CompletionPort, (ULONG_PTR)newInfo, 0);
 
+		IO_Data* newData = new IO_Data();
+		ZeroMemory(&newData->m_Overlapped, sizeof(newData->m_Overlapped));
+		newData->m_WsaBuf.buf = newData->GetBuffer();
+		newData->m_WsaBuf.len = newData->GetSize();
+
+		m_vecData.push_back(newData);
+
+		DWORD Flags = 0;
+		LPDWORD RecvBytes = 0;
+
+		WSARecv(newInfo->m_Socket, &newData->m_WsaBuf, 1, RecvBytes, &Flags, &newData->m_Overlapped, NULLPTR);
+
 		//새로 접속한 클라에 메인플레이어 생성
 		MessageManager::Get()->Sever_SendNewPlayerMsg(newInfo);
 
@@ -122,22 +121,25 @@ void IOCP::Run()
 void IOCP::ThreadFunc()
 {
 	DWORD ByteTransferred;
+	IO_Data* IOData;
 
 	while (true)
 	{
 		//입출력이 완료된 소켓의 정보 얻음
 		if (GetQueuedCompletionStatus(m_CompletionPort, (LPDWORD)&ByteTransferred, (PULONG_PTR)&m_SocketInfo,
-			(LPOVERLAPPED*)&m_IOData, INFINITE) == FALSE)
+			(LPOVERLAPPED*)&IOData, INFINITE) == FALSE)
 			continue;
 
-		//// 전송된 바이트가 0일때 종료 (EOF 전송 시에도) 
+		// 전송된 바이트가 0일때 종료 (EOF 전송 시에도) 
 		if (ByteTransferred == 0)
 		{
-			MessageManager::Get()->Sever_DieClient(m_SocketInfo);
+			//MessageManager::Get()->Sever_DieClient(m_SocketInfo);
 			continue;
 		}
-
-		//w키 눌렀을때 0바이트 수신됨 / 8바이트 수신되야 정상인데 ???????????
-		MessageManager::Get()->SeverMesageProcess(m_SocketInfo, m_IOData);
+		
+		mutex Mutex;
+		Mutex.lock();
+		MessageManager::Get()->SeverMesageProcess(m_SocketInfo, IOData);
+		Mutex.unlock();
 	}
 }

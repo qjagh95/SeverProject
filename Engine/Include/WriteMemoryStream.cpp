@@ -5,38 +5,61 @@ JEONG_USING
 
 WriteMemoryStream::WriteMemoryStream()
 {
+	m_Size = 0;
+	m_Capacity = BUFFERSIZE;
+
+	m_Buffer = new char[BUFFERSIZE];
 }
 
 WriteMemoryStream::~WriteMemoryStream()
 {
+	SAFE_DELETE_ARRARY(m_Buffer);
 }
 
 void WriteMemoryStream::Write(const void * Data, size_t Length)
 {
 	char* TempData = (char*)Data;
 
-	for (size_t i = 0; i < Length; i++)
-	{
-		m_WriteBuffer.push_back(TempData[i]);
-	}
+	if (m_Size + Length > m_Capacity)
+		Resize();
+
+	memcpy(m_Buffer + m_Size, TempData, Length);
+	m_Size += Length;
+}
+
+char * WriteMemoryStream::GetBuffer()
+{
+	return m_Buffer;
 }
 
 void WriteMemoryStream::HeaderErase()
 {
-	if (m_WriteBuffer.size() == 0)
+	if (m_Size == 0)
 		return;
 
-	for (size_t i = 0; i < 4; i++)
-		m_WriteBuffer.erase(m_WriteBuffer.begin() + i);
+	memcpy(m_Buffer, m_Buffer + 4, m_Size - 4);
 }
 
 void WriteMemoryStream::BufferClear()
 {
-	m_WriteBuffer.clear();
+	m_Size = 0;
 }
 
 void WriteMemoryStream::PullBuffer(size_t Size)
 {
-	if (m_WriteBuffer.size() == 0)
+	if (m_Size == 0 || m_Size - Size < 0)
 		return;
+
+	memcpy(m_Buffer, m_Buffer + Size, m_Size - Size);
+}
+
+void WriteMemoryStream::Resize()
+{
+	m_Capacity *= 2;
+
+	char* newBuffer = new char[m_Capacity];
+	memcpy(newBuffer, m_Buffer, m_Size);
+	SAFE_DELETE(m_Buffer);
+
+	m_Buffer = newBuffer;
 }

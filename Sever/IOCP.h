@@ -18,6 +18,7 @@ private:
 	HANDLE m_CompletionPort;
 	SocketInfo m_SeverSocket;
 	vector<thread*> m_vecThread;
+	vector<IO_Data*> m_vecData;
 	IO_Data* m_IOData;
 	SocketInfo* m_SocketInfo;
 

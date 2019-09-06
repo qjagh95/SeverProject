@@ -21,7 +21,7 @@ bool ConnectSever::Init()
 		WSADATA Temp;
 		WSAStartup(MAKEWORD(2, 2), &Temp);
 
-		m_Info.m_Socket = socket(AF_INET, SOCK_STREAM, 0);
+		m_Info.m_Socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 
 		string IPAddress = "192.168.1.172";
 
