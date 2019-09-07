@@ -103,15 +103,16 @@ void IOCP::Run()
 
 		m_vecData.push_back(newData);
 
+		//한번 받아줘야함.
 		DWORD Flags = 0;
 		LPDWORD RecvBytes = 0;
-
 		WSARecv(newInfo->m_Socket, &newData->m_WsaBuf, 1, RecvBytes, &Flags, &newData->m_Overlapped, NULLPTR);
 
 		//새로 접속한 클라에 메인플레이어 생성
 		MessageManager::Get()->Sever_SendNewPlayerMsg(newInfo);
 
-		//기존 접속한 클라에 OT생성
+		//기존 접속한 클라에 OT생성(작업시작)
+		//TODO : 
 		//MessageManager::Get()->Sever_SendConnectClientNewOtherPlayer(newInfo);
 
 		//새롭게 접속한 클라에 현재 접속한 클라갯수만큼 OT생성 명령

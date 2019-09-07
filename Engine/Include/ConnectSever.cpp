@@ -7,6 +7,7 @@ SINGLETON_VAR_INIT(ConnectSever)
 
 ConnectSever::ConnectSever()
 {
+	m_ID = 0;
 }
 
 ConnectSever::~ConnectSever()

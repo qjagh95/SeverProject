@@ -19,7 +19,7 @@ WPARAM Core::m_wParam;
 Core::Core()
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(1312);  
+	//_CrtSetBreakAlloc(277);  
 	ZeroMemory(ClearColor, sizeof(float) * 4);
 	PathManager::Get();
 

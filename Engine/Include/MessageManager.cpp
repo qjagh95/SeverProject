@@ -37,16 +37,9 @@ void MessageManager::ClientInit()
 
 void MessageManager::Client_ClientDie()
 {
-	//IO_Data* IoData = new IO_Data();
-	//IoData->WriteHeader<ClientDieMessage>();
-	//ClientSend(IoData);
+	IO_Data IoData;
+	IoData.WriteHeader<ClientDieMessage>();
 
-	IO_Data IoData = {};
-	IoData.WriteHeader<SendPlayerData>();
-	int a = 5000;
-	IoData.WriteBuffer<int>(&a);
-
-	//IOCPServerSend(Socket, IoData);
 	ClientSend(&IoData);
 }
 
@@ -117,23 +110,22 @@ bool MessageManager::Sever_SendConnectClientNewOtherPlayer(SocketInfo * NewSocke
 bool MessageManager::SeverMesageProcess(SocketInfo * Socket, IO_Data * Data)
 {
 	mutex Mutex;
-	Mutex.lock();
 
 	m_State = IOCPSeverRecvMsg(Socket, Data);
 
+	Mutex.lock();
 	switch (m_State)
 	{
 	case SST_CLIENT_DIE:
 		Sever_DieClient(Socket);
 		break;
 	case SST_PLAYER_DATA:
-		cout << "¹¹¾ß" << endl;
 		break;
 	case SST_DELETE_EAT_OBJECT:
 		break;
 	}
-
 	Mutex.unlock();
+
 	return false;
 }
 
@@ -283,6 +275,8 @@ bool MessageManager::CreateMainPlayer(size_t ClientID, ReadMemoryStream& Reader)
 	newPlayer->GetTransform()->SetWorldPos(Pos);
 
 	m_CurScene->GetMainCamera()->SetTarget(newPlayerObj);
+
+	ConnectSever::Get()->SetClientID(ClientID);
 
 	SAFE_RELEASE(newPlayerObj);
 	SAFE_RELEASE(newPlayer);
