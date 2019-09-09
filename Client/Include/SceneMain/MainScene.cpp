@@ -10,6 +10,8 @@
 #include "Component/Component_Base.h"
 #include "Component/BackColor_Com.h"
 
+#include <OtharPlayer_Com.h>
+
 MainScene::MainScene()
 {
 }
@@ -40,14 +42,9 @@ bool MainScene::Init()
 	SAFE_RELEASE(BackCom);
 	SAFE_RELEASE(BackObject);
 
-	//GameObject* PlayerObject = GameObject::CreateObject("Player", Default);
-	//Player_Com* player_Com = PlayerObject->AddComponent<Player_Com>("Player_Com");
-	//SAFE_RELEASE(player_Com);
-	
 	GameObject* StageObj = GameObject::CreateObject("StageObj", Default);
 	Stage_Com* MainStage = StageObj->AddComponent<Stage_Com>("StageCom");
 
-	//mainCamera->SetTarget(PlayerObject);
 	SAFE_RELEASE(mainCamera);
 	SAFE_RELEASE(StageObj);
 	SAFE_RELEASE(MainStage);

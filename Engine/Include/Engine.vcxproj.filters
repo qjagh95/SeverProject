@@ -339,6 +339,9 @@
     <ClInclude Include="Stage_Com.h">
       <Filter>Core\08. Object\Component\UserComponent\BasicInfo</Filter>
     </ClInclude>
+    <ClInclude Include="OTManager.h">
+      <Filter>Core\18 .DataManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Copy.bat">
@@ -501,6 +504,9 @@
     </ClCompile>
     <ClCompile Include="Stage_Com.cpp">
       <Filter>Core\08. Object\Component\UserComponent\BasicInfo</Filter>
+    </ClCompile>
+    <ClCompile Include="OTManager.cpp">
+      <Filter>Core\18 .DataManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

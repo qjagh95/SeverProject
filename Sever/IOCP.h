@@ -21,6 +21,7 @@ private:
 	vector<IO_Data*> m_vecData;
 	IO_Data* m_IOData;
 	SocketInfo* m_SocketInfo;
+	mutex m_Mutex;
 
 public:
 	IOCP();

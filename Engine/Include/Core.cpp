@@ -26,6 +26,7 @@ Core::Core()
 	m_ClientSocket = NULLPTR;
 
 	m_RandomEngine = default_random_engine(m_RandomDevice());
+	mt19937_64 Seed(m_RandomDevice());
 }
 
 Core::~Core()
@@ -224,9 +225,8 @@ LRESULT Core::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 int Core::RandomRange(int R1, int R2)
 {
 	uniform_int_distribution<int> RandNum(R1, R2);
-	auto RandomEngine = Core::Get()->GetRandomEngine();
 
-	return RandNum(RandomEngine);
+	return RandNum(m_RandomEngine);
 }
 
 int Core::Input(float DeltaTime)

@@ -12,7 +12,7 @@ public:
 	vector<SocketInfo*>* GetClientList() {	return &m_vecClient; }
 	size_t GetClientCount() const { return m_vecClient.size(); }
 
-	void PushPlayerInfo(Vector4* Color, Vector3* Pos, size_t ClientID, float* Scale);
+	void PushPlayerInfo(const Vector4& Color, const Vector3& Pos, size_t ClientID, float Scale);
 
 	vector<PlayerInfo*>* GetPlayerVec() { return &m_vecPlayerInfo; }
 	size_t GetPlayerCount() const { return m_vecPlayerInfo.size(); }

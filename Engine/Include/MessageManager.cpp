@@ -7,6 +7,7 @@
 #include "Player_Com.h"
 #include "ConnectSever.h"
 #include "OtharPlayer_Com.h"
+#include "OTManager.h"
 
 JEONG_USING
 
@@ -50,7 +51,7 @@ bool MessageManager::Sever_SendNewPlayerMsg(SocketInfo * Socket)
 	Vector3 Pos = Vector3(500.0f, 500.0f, 1.0f);
 	float Scale = 10.0f;
 
-	DataManager::Get()->PushPlayerInfo(&RandColor, &Pos, Socket->m_CliendID, &Scale);
+	DataManager::Get()->PushPlayerInfo(RandColor, Pos, Socket->m_CliendID, Scale);
 
 	IO_Data* IoData = new IO_Data();
 	IoData->WriteHeader<CreateMainPlayerMessage>();
@@ -78,17 +79,17 @@ bool MessageManager::Sever_NewClientCreateOtherPlayer(SocketInfo * Socket)
 //현재 접속한 클라에 OT생셩메세지
 bool MessageManager::Sever_SendConnectClientNewOtherPlayer(SocketInfo * NewSocket)
 {
-	size_t ClientSize = DataManager::Get()->GetClientCount() - 1;
-
-	if (ClientSize == 1)
-		return true;
+	if (DataManager::Get()->GetClientCount() == 0 || DataManager::Get()->GetClientCount() == 1)
+		return false;
 
 	auto getVec = DataManager::Get()->GetPlayerVec();
 
-	if (getVec->size() == 1)
-		return true;
+	if (getVec->size() == 0 || getVec->size() == 1)
+		return false;
 
 	PlayerInfo* getInfo = getVec->at(getVec->size() - 1);
+
+	cout << NewSocket->m_CliendID << "번 클라이언트에게 OtherPlayer 생성메세지 전송" << endl;
 
 	for (auto Cur : *DataManager::Get()->GetClientList())
 	{
@@ -97,10 +98,10 @@ bool MessageManager::Sever_SendConnectClientNewOtherPlayer(SocketInfo * NewSocke
 
 		IO_Data IoData;
 		IoData.WriteHeader<CreateConnectClientCreateOtherPlayer>();
-		IoData.WriteBuffer<Vector4>(getInfo->m_Color);
-		IoData.WriteBuffer<Vector3>(getInfo->m_Pos);
-		IoData.WriteBuffer<Vector3>(getInfo->m_Scale);
 		IoData.WriteBuffer<size_t>(&getInfo->m_ClientID);
+		IoData.WriteBuffer<Vector4>(&getInfo->m_Color);
+		IoData.WriteBuffer<Vector3>(&getInfo->m_Pos);
+		IoData.WriteBuffer<Vector3>(&getInfo->m_Scale);
 
 		IOCPServerSend(Cur, &IoData);
 	}
@@ -109,11 +110,9 @@ bool MessageManager::Sever_SendConnectClientNewOtherPlayer(SocketInfo * NewSocke
 
 bool MessageManager::SeverMesageProcess(SocketInfo * Socket, IO_Data * Data)
 {
-	mutex Mutex;
-
 	m_State = IOCPSeverRecvMsg(Socket, Data);
 
-	Mutex.lock();
+	lock_guard<mutex> Mutex(m_Mutex);
 	switch (m_State)
 	{
 	case SST_CLIENT_DIE:
@@ -124,9 +123,9 @@ bool MessageManager::SeverMesageProcess(SocketInfo * Socket, IO_Data * Data)
 	case SST_DELETE_EAT_OBJECT:
 		break;
 	}
-	Mutex.unlock();
 
-	return false;
+	//Mutex.unlock();
+	return true;
 }
 
 void MessageManager::Sever_DieClient(SocketInfo* Socket)
@@ -151,6 +150,13 @@ SEVER_DATA_TYPE MessageManager::IOCPSeverRecvMsg(SocketInfo * Socket, IO_Data * 
 	int b = WSAGetLastError();
 
 	Data->CopyBuffer();
+
+	if (Data->m_WsaBuf.buf == NULLPTR)
+	{
+		m_State = HeaderType;
+		return m_State;
+	}
+
 	HeaderType = Data->ReadHeader();
 
 	if (Data->m_WsaBuf.len == 0)
@@ -202,7 +208,7 @@ void MessageManager::ClientMessageProcess()
 				m_ReadBuffer->ClearBuffer();
 				break;
 			case SST_CONNECT_CLIENT_CREATE_OTHER_PLAYER:
-				CreateOneOtherPlayer();
+				CreateOneOtherPlayer(ClientID, Reader);
 				m_ReadBuffer->ClearBuffer();
 				break;
 			case SST_NEW_CLIENT_CREATE_OTHER_PLAYER:
@@ -285,19 +291,19 @@ bool MessageManager::CreateMainPlayer(size_t ClientID, ReadMemoryStream& Reader)
 	return true;
 }
 
-bool MessageManager::CreateOneOtherPlayer()
+bool MessageManager::CreateOneOtherPlayer(size_t ClientID, ReadMemoryStream& Reader)
 {
-	ReadMemoryStream Reader(m_ReadBuffer->GetBuffer(), m_ReadBuffer->GetSize());
-
 	Vector4 Color = Reader.Read<Vector4>();
 	Vector3 Pos = Reader.Read<Vector3>();
 	float Scale = Reader.Read<float>();
 
 	GameObject* newOtherPlayerObj = GameObject::CreateObject("OtherPlayer", m_CurLayer);
 	OtharPlayer_Com* newOther = newOtherPlayerObj->AddComponent<OtharPlayer_Com>("OtherPlayer");
-	newOther->SetScale(Scale);
-	newOtherPlayerObj->GetTransform()->SetWorldPos(Pos);
+	newOther->GetTransform()->SetWorldScale(Scale, Scale ,1.0f);
+	newOther->GetTransform()->SetWorldPos(Pos);
 	newOther->SetRGB(Color.x, Color.y, Color.z);
+
+	OTManager::Get()->InsertOT(ClientID, newOther);
 
 	SAFE_RELEASE(newOtherPlayerObj);
 	SAFE_RELEASE(newOther);

@@ -110,9 +110,9 @@ struct IO_Data
 struct PlayerInfo
 {
 	size_t m_ClientID;
-	Vector4* m_Color;
-	Vector3* m_Pos;
-	float* m_Scale;
+	Vector4 m_Color;
+	Vector3 m_Pos;
+	float m_Scale;
 };
 
 class JEONG_DLL Header

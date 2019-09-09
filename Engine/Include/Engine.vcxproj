@@ -213,6 +213,7 @@
     <ClInclude Include="Macro.h" />
     <ClInclude Include="MessageManager.h" />
     <ClInclude Include="OtharPlayer_Com.h" />
+    <ClInclude Include="OTManager.h" />
     <ClInclude Include="PathManager.h" />
     <ClInclude Include="Player_Com.h" />
     <ClInclude Include="ReadMemoryStream.h" />
@@ -270,6 +271,7 @@
     <ClCompile Include="KeyInput.cpp" />
     <ClCompile Include="MessageManager.cpp" />
     <ClCompile Include="OtharPlayer_Com.cpp" />
+    <ClCompile Include="OTManager.cpp" />
     <ClCompile Include="PathManager.cpp" />
     <ClCompile Include="Player_Com.cpp" />
     <ClCompile Include="ReadMemoryStream.cpp" />

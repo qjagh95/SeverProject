@@ -111,11 +111,11 @@ void IOCP::Run()
 		//새로 접속한 클라에 메인플레이어 생성
 		MessageManager::Get()->Sever_SendNewPlayerMsg(newInfo);
 
-		//기존 접속한 클라에 OT생성(작업시작)
-		//TODO : 
-		//MessageManager::Get()->Sever_SendConnectClientNewOtherPlayer(newInfo);
+		//기존 접속한 클라에 OT생성
+		MessageManager::Get()->Sever_SendConnectClientNewOtherPlayer(newInfo);
 
 		//새롭게 접속한 클라에 현재 접속한 클라갯수만큼 OT생성 명령
+
 	}
 }
 
@@ -134,13 +134,11 @@ void IOCP::ThreadFunc()
 		// 전송된 바이트가 0일때 종료 (EOF 전송 시에도) 
 		if (ByteTransferred == 0)
 		{
-			//MessageManager::Get()->Sever_DieClient(m_SocketInfo);
+			MessageManager::Get()->Sever_DieClient(m_SocketInfo);
 			continue;
 		}
 		
-		mutex Mutex;
-		Mutex.lock();
+		lock_guard<mutex> Mutex(m_Mutex);
 		MessageManager::Get()->SeverMesageProcess(m_SocketInfo, IOData);
-		Mutex.unlock();
 	}
 }

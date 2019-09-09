@@ -41,7 +41,7 @@ private:
 
 	//클라이언트 실질적으로 메세지에따라 실행하는 함수.
 	bool CreateMainPlayer(size_t ClientID, ReadMemoryStream& Reader);
-	bool CreateOneOtherPlayer();
+	bool CreateOneOtherPlayer(size_t ClientID, ReadMemoryStream& Reader);
 
 	SEVER_DATA_TYPE ReadHeader(char* Buffer);
 

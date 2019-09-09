@@ -56,7 +56,7 @@ SocketInfo * DataManager::FindClientMap(size_t Key)
 	return FindIter->second;
 }
 
-void DataManager::PushPlayerInfo(Vector4 * Color, Vector3 * Pos, size_t ClientID, float * Scale)
+void DataManager::PushPlayerInfo(const Vector4& Color, const Vector3& Pos, size_t ClientID, float Scale)
 {
 	PlayerInfo* newInfo = new PlayerInfo();
 	newInfo->m_Scale = Scale;
