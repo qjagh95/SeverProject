@@ -68,10 +68,33 @@ bool MessageManager::Sever_SendNewPlayerMsg(SocketInfo * Socket)
 //새롭게 접속한 클라에 현재 접속한 클라갯수만큼 OT생성 메세지
 bool MessageManager::Sever_NewClientCreateOtherPlayer(SocketInfo * Socket)
 {
+	int ClientCount = DataManager::Get()->GetClientCount() - 1;
+	auto getVec = DataManager::Get()->GetPlayerVec();
+
+	if (ClientCount == 0)
+		return false;
+
+	if (getVec->size() == 1)
+		return false;
+	
 	IO_Data IoData;
 	IoData.WriteHeader<CreateNewClientOtherPlayer>();
+	//클라이언트 갯수를 보낸다(OT생성 갯수가 될것)
+	IoData.WriteBuffer<size_t>(&ClientCount);
 
-	cout << Socket->m_CliendID << "번 클라이언트에게 OtherPlayer 생성메세지 전송" << endl;
+	//데이터를 보낸다
+	for (auto Cur : *getVec)
+	{
+		if (Socket->m_CliendID == Cur->m_ClientID)
+			continue;
+
+		IoData.WriteBuffer<Vector4>(&Cur->m_Color);
+		IoData.WriteBuffer<Vector3>(&Cur->m_Pos);
+		IoData.WriteBuffer<float>(&Cur->m_Scale);
+		IoData.WriteBuffer<size_t>(&Cur->m_ClientID);
+	}
+
+	cout << Socket->m_CliendID << "번 클라이언트에 기존 접속한 클라이언트 갯수만큼 OtherPlayer 생성메세지 전송" << endl;
 
 	return IOCPServerSend(Socket, &IoData);
 }
@@ -110,9 +133,9 @@ bool MessageManager::Sever_SendConnectClientNewOtherPlayer(SocketInfo * NewSocke
 
 bool MessageManager::SeverMesageProcess(SocketInfo * Socket, IO_Data * Data)
 {
+	lock_guard<mutex> Mutex(m_Mutex);
 	m_State = IOCPSeverRecvMsg(Socket, Data);
 
-	lock_guard<mutex> Mutex(m_Mutex);
 	switch (m_State)
 	{
 	case SST_CLIENT_DIE:
@@ -130,13 +153,9 @@ bool MessageManager::SeverMesageProcess(SocketInfo * Socket, IO_Data * Data)
 
 void MessageManager::Sever_DieClient(SocketInfo* Socket)
 {
-	m_Mutex.lock();
-
 	cout << Socket->m_CliendID << "번 클라이언트 종료" << endl;
 	DataManager::Get()->DeleteSocket(Socket);
 	m_State = SST_NONE;
-
-	m_Mutex.unlock();
 }
 
 SEVER_DATA_TYPE MessageManager::IOCPSeverRecvMsg(SocketInfo * Socket, IO_Data * Data)
@@ -148,6 +167,12 @@ SEVER_DATA_TYPE MessageManager::IOCPSeverRecvMsg(SocketInfo * Socket, IO_Data * 
 	//ZeroMemory(&Data->m_WsaBuf, sizeof(Data->m_WsaBuf));
 	int a = WSARecv(Socket->m_Socket, &Data->m_WsaBuf, 1, NULLPTR, &Flags, &Data->m_Overlapped, NULLPTR);
 	int b = WSAGetLastError();
+
+	if (b != WSA_IO_PENDING)
+	{
+		m_State = HeaderType;
+		return m_State;
+	}
 
 	Data->CopyBuffer();
 
@@ -191,14 +216,15 @@ void MessageManager::ClientMessageProcess()
 
 		if (NetWorkEvent.lNetworkEvents & FD_READ)
 		{
+			IO_Data IoData;
 			char Buffer[BUFFERSIZE] = { };
-			recv(getSocket, Buffer, BUFFERSIZE, 0);
+			//TODO
+			//WSARecv(getSocket, Buffer, BUFFERSIZE, 0);
 
 			ReadMemoryStream Reader = ReadMemoryStream(Buffer, BUFFERSIZE);
 			m_State = Reader.Read<SEVER_DATA_TYPE>();
 			size_t ClientID = Reader.Read<size_t>();
 
-			//데이터가 필요하면 그냥 버퍼꺼내쓰면됨.
 			switch (m_State)
 			{
 			case SST_CREATE_EAT_OBJECT:
@@ -212,7 +238,7 @@ void MessageManager::ClientMessageProcess()
 				m_ReadBuffer->ClearBuffer();
 				break;
 			case SST_NEW_CLIENT_CREATE_OTHER_PLAYER:
-				//CreateOtherPlayer();
+				CreateOtherPlayer(ClientID, Reader);
 				m_ReadBuffer->ClearBuffer();
 				break;
 			case SST_PLAYER_DATA:
@@ -310,4 +336,30 @@ bool MessageManager::CreateOneOtherPlayer(size_t ClientID, ReadMemoryStream& Rea
 
 	m_State = SST_NONE;
 	return true;
+}
+
+bool MessageManager::CreateOtherPlayer(size_t ClientID, ReadMemoryStream & Reader)
+{
+	//ClientID가 클라이언트 갯수를 보낼것임 (내꺼빼고).
+
+	for (size_t i = 0; i < ClientID; i++)
+	{
+		Vector4 Color = Reader.Read<Vector4>();
+		Vector3 Pos = Reader.Read<Vector3>();
+		float Scale = Reader.Read<float>();
+		size_t ID = Reader.Read<size_t>();
+
+		GameObject* newOtherPlayerObj = GameObject::CreateObject("OtherPlayer", m_CurLayer);
+		OtharPlayer_Com* newOther = newOtherPlayerObj->AddComponent<OtharPlayer_Com>("OtherPlayer");
+		newOther->GetTransform()->SetWorldScale(Scale, Scale, 1.0f);
+		newOther->GetTransform()->SetWorldPos(Pos);
+		newOther->SetRGB(Color.x, Color.y, Color.z);
+
+		OTManager::Get()->InsertOT(ID, newOther);
+
+		SAFE_RELEASE(newOtherPlayerObj);
+		SAFE_RELEASE(newOther);
+	}
+
+	return false;
 }

@@ -115,7 +115,7 @@ void IOCP::Run()
 		MessageManager::Get()->Sever_SendConnectClientNewOtherPlayer(newInfo);
 
 		//새롭게 접속한 클라에 현재 접속한 클라갯수만큼 OT생성 명령
-
+		MessageManager::Get()->Sever_NewClientCreateOtherPlayer(newInfo);
 	}
 }
 
@@ -131,10 +131,9 @@ void IOCP::ThreadFunc()
 			(LPOVERLAPPED*)&IOData, INFINITE) == FALSE)
 			continue;
 
-		// 전송된 바이트가 0일때 종료 (EOF 전송 시에도) 
+		// 전송된 바이트가 0일때
 		if (ByteTransferred == 0)
 		{
-			MessageManager::Get()->Sever_DieClient(m_SocketInfo);
 			continue;
 		}
 		

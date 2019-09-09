@@ -77,9 +77,6 @@ void Player_Com::ScalePlus(float Scale)
 
 void Player_Com::Move(float DeltaTime)
 {
-	if (KeyInput::Get()->KeyDown("MoveUp"))
-		MessageManager::Get()->Client_ClientDie();
-
 	if (KeyInput::Get()->KeyPress("MoveUp"))
 	{
 		if (m_Transform->GetWorldPos().y < 50000.0f)
