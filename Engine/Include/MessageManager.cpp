@@ -38,13 +38,12 @@ void MessageManager::Client_ClientDie()
 	IoData.WriteBuffer<size_t>(&MyID);
 
 	ClientSend(&IoData);
+	ConnectSever::Get()->CloseSocket();
 }
 
-void MessageManager::Client_OtherPlayerDie(IO_Data * Data)
+void MessageManager::Client_OtherPlayerDie(ReadMemoryStream& Reader)
 {
-	ReadMemoryStream Reader(Data->GetBuffer(), Data->GetSize());
 	size_t DeleteID = Reader.Read<size_t>();
-
 	DataManager::Get()->DeleteOT(DeleteID);
 }
 
@@ -132,25 +131,36 @@ bool MessageManager::SeverMesageProcess(SocketInfo * Socket, IO_Data * Data)
 	switch (m_State)
 	{
 	case SST_CLIENT_DIE:
-		Sever_DieClient(Socket);
+		Sever_DieClient(Socket, Data);
 		break;
 	case SST_PLAYER_DATA:
 		break;
 	case SST_DELETE_EAT_OBJECT:
-		break;
-	case SST_OTHER_PLAYER_DELETE:
-		Client_OtherPlayerDie(Data);
 		break;
 	}
 
 	return true;
 }
 
-void MessageManager::Sever_DieClient(SocketInfo* Socket)
+void MessageManager::Sever_DieClient(SocketInfo* Socket, IO_Data* Data)
 {
-	cout << Socket->m_CliendID << "번 클라이언트 종료" << endl;
+	Data->CopyBuffer();
+	ReadMemoryStream Reader(Data->GetBuffer(), Data->GetSize());
+	size_t ID = Reader.Read<size_t>();
+	
+	cout << ID << "번 클라이언트 종료" << endl;
 	DataManager::Get()->DeleteSocket(Socket);
+
+	Sever_SendDeleteOT(Socket);
 	m_State = SST_NONE;
+}
+
+void MessageManager::Sever_SendDeleteOT(SocketInfo * Socket)
+{
+	IO_Data IoData = {};
+	IoData.WriteHeader< OtherPlayerDelete>();
+	IoData.WriteBuffer<size_t>(&Socket->m_CliendID);
+
 }
 
 SEVER_DATA_TYPE MessageManager::IOCPSeverRecvMsg(SocketInfo * Socket, IO_Data * Data)
@@ -219,6 +229,9 @@ void MessageManager::ClientMessageProcess()
 
 			switch (m_State)
 			{
+			case SST_OTHER_PLAYER_DELETE:
+				Client_OtherPlayerDie(Reader);
+				break;
 			case SST_CREATE_EAT_OBJECT:
 				break;
 			case SST_CREATE_PLAYER:

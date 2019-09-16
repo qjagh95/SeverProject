@@ -32,15 +32,19 @@ void DataManager::DeleteSocket(SocketInfo * Socket)
 {
 	size_t DeleteID = Socket->m_CliendID;
 
-	closesocket(Socket->m_Socket);
-
 	for (size_t i = 0; i < m_vecClient.size(); i++)
 	{
 		if (m_vecClient[i]->m_Socket == Socket->m_Socket)
+		{
 			m_vecClient.erase(m_vecClient.begin() + i);
+			m_vecPlayerInfo.erase(m_vecPlayerInfo.begin() + i);
+		}
 	}
 	m_PlayerCount--;
-	//OT도 삭제처리
+	m_ClientMap.erase(Socket->m_CliendID);
+	m_PlayerMap.erase(Socket->m_CliendID);
+
+	closesocket(Socket->m_Socket);
 }
 
 SocketInfo * DataManager::FindClientIndex(size_t ClientID)

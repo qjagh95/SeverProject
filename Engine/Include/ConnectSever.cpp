@@ -41,6 +41,11 @@ bool ConnectSever::Init()
 	return true;
 }
 
+void ConnectSever::CloseSocket()
+{
+	closesocket(m_Info.m_Socket);
+}
+
 void ConnectSever::Connect()
 {
 	connect(m_Info.m_Socket, reinterpret_cast<sockaddr*>(&m_Info.m_ClientInfo), sizeof(sockaddr_in));
