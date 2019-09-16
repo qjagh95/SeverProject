@@ -20,10 +20,24 @@ public:
 
 	//현재 접속중인 클라이언트에게 OT제거명령(접속종료)
 	void Sever_SendDeleteOT(SocketInfo * Socket);
+	
+	//Pos갱신
+	void Sever_UpdatePos(SocketInfo * Socket, IO_Data* Data);
+
+	//Scale갱신
+	void Sever_UpdateScale(SocketInfo * Socket, IO_Data* Data);
+
+	//플레이어 데이터 보내기
+	void Sever_SendPlayerPos(SocketInfo * Socket, const Vector3& Pos);
+	void Sever_SendPlayerScale(SocketInfo * Socket, float Scale);
 
 	//클라가 서버로 보내는 함수
 	void Client_ClientDie();
+	void Client_SendPlayerPos(const Vector3& Pos);
+	void Client_SendPlayerScale(float Scale);
 	void OtherPlayerDie(ReadMemoryStream& Reader);
+	void Client_UpdateOTPos(ReadMemoryStream& Reader, size_t ID);
+	void Client_UpdateOTScale(ReadMemoryStream& Reader, size_t ID);
 
 	//클라용함수
 	void SetScene(Scene* scene) { m_CurScene = scene; };

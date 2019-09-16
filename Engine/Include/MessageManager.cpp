@@ -41,10 +41,54 @@ void MessageManager::Client_ClientDie()
 	ConnectSever::Get()->CloseSocket();
 }
 
+void MessageManager::Client_SendPlayerPos(const Vector3& Pos)
+{
+	size_t MyID = ConnectSever::Get()->GetClientID();
+	IO_Data IoData;
+	IoData.WriteHeader<ClientDieMessage>();
+	IoData.WriteBuffer<size_t>(&MyID);
+	IoData.WriteBuffer<Vector3>(&Pos);
+
+	ClientSend(&IoData);
+}
+
+void MessageManager::Client_SendPlayerScale(float Scale)
+{
+	size_t MyID = ConnectSever::Get()->GetClientID();
+	IO_Data IoData;
+	IoData.WriteHeader<ClientDieMessage>();
+	IoData.WriteBuffer<size_t>(&MyID);
+	IoData.WriteBuffer<float>(&Scale);
+
+	ClientSend(&IoData);
+}
+
 void MessageManager::OtherPlayerDie(ReadMemoryStream& Reader)
 {
 	size_t DeleteID = Reader.Read<size_t>();
 	OTManager::Get()->DeleteOT(DeleteID);
+}
+
+void MessageManager::Client_UpdateOTPos(ReadMemoryStream & Reader, size_t ID)
+{
+	auto getOT = OTManager::Get()->FindOT(ID);
+
+	if (getOT == NULLPTR)
+		return;
+
+	Vector3 getPos = Reader.Read<Vector3>();
+	getOT->GetTransform()->SetWorldPos(getPos);
+}
+
+void MessageManager::Client_UpdateOTScale(ReadMemoryStream & Reader, size_t ID)
+{
+	auto getOT = OTManager::Get()->FindOT(ID);
+
+	if (getOT == NULLPTR)
+		return;
+
+	Vector3 getPos = Reader.Read<Vector3>();
+	getOT->GetTransform()->SetWorldPos(getPos);
 }
 
 bool MessageManager::Sever_SendNewPlayerMsg(SocketInfo * Socket)
@@ -133,9 +177,13 @@ bool MessageManager::SeverMesageProcess(SocketInfo * Socket, IO_Data * Data)
 	case SST_CLIENT_DIE:
 		Sever_DieClient(Socket, Data);
 		break;
-	case SST_PLAYER_DATA:
-		break;
 	case SST_DELETE_EAT_OBJECT:
+		break;
+	case SST_PLAYER_POS:
+		Sever_UpdatePos(Socket, Data);
+		break;
+	case SST_PLAYER_SCALE:
+		Sever_UpdateScale(Socket, Data);
 		break;
 	}
 
@@ -162,6 +210,68 @@ void MessageManager::Sever_SendDeleteOT(SocketInfo * Socket)
 	IO_Data IoData = {};
 	IoData.WriteHeader<OtherPlayerDelete>();
 	IoData.WriteBuffer<size_t>(&Socket->m_CliendID);
+
+	for (auto CurClient : *getVec)
+	{
+		if (CurClient->m_Socket == Socket->m_Socket)
+			continue;
+
+		IOCPServerSend(CurClient, &IoData);
+	}
+}
+
+void MessageManager::Sever_UpdatePos(SocketInfo * Socket, IO_Data* Data)
+{
+	Data->CopyBuffer();
+	ReadMemoryStream Reader(Data->GetBuffer(), Data->GetSize());
+	size_t ReadID = Reader.Read<size_t>();
+	Vector3 Pos = Reader.Read<Vector3>();
+
+	auto getInfo = DataManager::Get()->FindPlayerInfoKey(Socket->m_CliendID);
+	getInfo->m_Pos = Pos;
+
+	Sever_SendPlayerPos(Socket, Pos);
+}
+
+void MessageManager::Sever_UpdateScale(SocketInfo * Socket, IO_Data* Data)
+{
+	Data->CopyBuffer();
+	ReadMemoryStream Reader(Data->GetBuffer(), Data->GetSize());
+	size_t ReadID = Reader.Read<size_t>();
+	float Scale = Reader.Read<float>();
+
+	auto getInfo = DataManager::Get()->FindPlayerInfoKey(ReadID);
+	getInfo->m_Scale = Scale;
+
+	Sever_SendPlayerPos(Socket, Scale);
+}
+
+void MessageManager::Sever_SendPlayerPos(SocketInfo * Socket, const Vector3 & Pos)
+{
+	auto getVec = DataManager::Get()->GetClientVec();
+
+	IO_Data IoData = {};
+	IoData.WriteHeader<PlayerPos>();
+	IoData.WriteBuffer<size_t>(&Socket->m_CliendID);
+	IoData.WriteBuffer<Vector3>(&Pos);
+
+	for (auto CurClient : *getVec)
+	{
+		if (CurClient->m_Socket == Socket->m_Socket)
+			continue;
+
+		IOCPServerSend(CurClient, &IoData);
+	}
+}
+
+void MessageManager::Sever_SendPlayerScale(SocketInfo * Socket, float Scale)
+{
+	auto getVec = DataManager::Get()->GetClientVec();
+
+	IO_Data IoData = {};
+	IoData.WriteHeader<PlayerPos>();
+	IoData.WriteBuffer<size_t>(&Socket->m_CliendID);
+	IoData.WriteBuffer<float>(&Scale);
 
 	for (auto CurClient : *getVec)
 	{
@@ -238,6 +348,12 @@ void MessageManager::ClientMessageProcess()
 
 			switch (m_State)
 			{
+			case SST_PLAYER_POS:
+				Client_UpdateOTPos(Reader, ClientID);
+				break;
+			case SST_PLAYER_SCALE:
+				Client_UpdateOTScale(Reader, ClientID);
+				break;
 			case SST_OTHER_PLAYER_DELETE:
 				OtherPlayerDie(Reader);
 				break;
@@ -248,8 +364,6 @@ void MessageManager::ClientMessageProcess()
 				break;
 			case SST_CONNECT_CLIENT_CREATE_OTHER_PLAYER:
 				CreateOneOtherPlayer(ClientID, Reader);
-				break;
-			case SST_PLAYER_DATA:
 				break;
 			case SST_DELETE_EAT_OBJECT:
 				break;

@@ -162,15 +162,6 @@ public:
 	}
 };
 
-class JEONG_DLL SendPlayerData : public Header
-{
-public:
-	SendPlayerData()
-	{
-		m_Type = SST_PLAYER_DATA;
-	}
-};
-
 class JEONG_DLL DeleteEatObject : public Header
 {
 public:
@@ -180,13 +171,30 @@ public:
 	}
 };
 
-
 class JEONG_DLL ClientDieMessage : public Header
 {
 public:
 	ClientDieMessage()
 	{
 		m_Type = SST_CLIENT_DIE;
+	}
+};
+
+class JEONG_DLL PlayerPos : public Header
+{
+public:
+	PlayerPos()
+	{
+		m_Type = SST_PLAYER_POS;
+	}
+};
+
+class JEONG_DLL PlayerScale : public Header
+{
+public:
+	PlayerScale()
+	{
+		m_Type = SST_PLAYER_POS;
 	}
 };
 
