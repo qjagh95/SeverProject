@@ -18,11 +18,12 @@ public:
 	//클라이언트 Die처리
 	void Sever_DieClient(SocketInfo* Socket, IO_Data* Data);
 
+	//현재 접속중인 클라이언트에게 OT제거명령(접속종료)
 	void Sever_SendDeleteOT(SocketInfo * Socket);
 
 	//클라가 서버로 보내는 함수
 	void Client_ClientDie();
-	void Client_OtherPlayerDie(ReadMemoryStream& Reader);
+	void OtherPlayerDie(ReadMemoryStream& Reader);
 
 	//클라용함수
 	void SetScene(Scene* scene) { m_CurScene = scene; };
@@ -35,7 +36,6 @@ public:
 
 private:
 	bool IOCPServerSend(SocketInfo* Socket, IO_Data* Data);
-	bool IOCPSeverSendALL(SocketInfo* SameSocket, IO_Data* Data);
 	void ClientMessageProcess();
 	void ClientSend(IO_Data* Data);
 

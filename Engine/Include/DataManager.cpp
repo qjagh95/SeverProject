@@ -36,6 +36,8 @@ void DataManager::DeleteSocket(SocketInfo * Socket)
 	{
 		if (m_vecClient[i]->m_Socket == Socket->m_Socket)
 		{
+			SAFE_DELETE(m_vecClient[i]);
+			SAFE_DELETE(m_vecPlayerInfo[i]);
 			m_vecClient.erase(m_vecClient.begin() + i);
 			m_vecPlayerInfo.erase(m_vecPlayerInfo.begin() + i);
 		}
@@ -88,14 +90,4 @@ void DataManager::PushPlayerInfo(const Vector4& Color, const Vector3& Pos, size_
 	m_vecPlayerInfo.push_back(newInfo);
 	m_PlayerMap.insert(make_pair(ClientID, newInfo));
 	m_PlayerCount++;
-}
-
-void DataManager::DeleteOT(size_t DeleteID)
-{
-	auto getOT = OTManager::Get()->FindOT(DeleteID);
-
-	if (getOT == NULLPTR)
-		return;
-	
-	getOT->GetGameObject()->SetIsActive(false);
 }

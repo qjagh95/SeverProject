@@ -41,10 +41,10 @@ void MessageManager::Client_ClientDie()
 	ConnectSever::Get()->CloseSocket();
 }
 
-void MessageManager::Client_OtherPlayerDie(ReadMemoryStream& Reader)
+void MessageManager::OtherPlayerDie(ReadMemoryStream& Reader)
 {
 	size_t DeleteID = Reader.Read<size_t>();
-	DataManager::Get()->DeleteOT(DeleteID);
+	OTManager::Get()->DeleteOT(DeleteID);
 }
 
 bool MessageManager::Sever_SendNewPlayerMsg(SocketInfo * Socket)
@@ -105,7 +105,7 @@ bool MessageManager::Sever_SendConnectClientNewOtherPlayer(SocketInfo * NewSocke
 
 	cout << NewSocket->m_CliendID << "번 클라이언트에게 OtherPlayer 생성메세지 전송" << endl;
 
-	for (auto Cur : *DataManager::Get()->GetClientList())
+	for (auto Cur : *DataManager::Get()->GetClientVec())
 	{
 		if (Cur->m_Socket == NewSocket->m_Socket)
 			continue;
@@ -150,17 +150,26 @@ void MessageManager::Sever_DieClient(SocketInfo* Socket, IO_Data* Data)
 	
 	cout << ID << "번 클라이언트 종료" << endl;
 	DataManager::Get()->DeleteSocket(Socket);
-
 	Sever_SendDeleteOT(Socket);
+
 	m_State = SST_NONE;
 }
 
 void MessageManager::Sever_SendDeleteOT(SocketInfo * Socket)
 {
+	auto getVec = DataManager::Get()->GetClientVec();
+
 	IO_Data IoData = {};
-	IoData.WriteHeader< OtherPlayerDelete>();
+	IoData.WriteHeader<OtherPlayerDelete>();
 	IoData.WriteBuffer<size_t>(&Socket->m_CliendID);
 
+	for (auto CurClient : *getVec)
+	{
+		if (CurClient->m_Socket == Socket->m_Socket)
+			continue;
+
+		IOCPServerSend(CurClient, &IoData);
+	}
 }
 
 SEVER_DATA_TYPE MessageManager::IOCPSeverRecvMsg(SocketInfo * Socket, IO_Data * Data)
@@ -230,7 +239,7 @@ void MessageManager::ClientMessageProcess()
 			switch (m_State)
 			{
 			case SST_OTHER_PLAYER_DELETE:
-				Client_OtherPlayerDie(Reader);
+				OtherPlayerDie(Reader);
 				break;
 			case SST_CREATE_EAT_OBJECT:
 				break;
@@ -271,18 +280,6 @@ bool MessageManager::IOCPServerSend(SocketInfo * Socket, IO_Data * Data)
 		return false;
 	}
 
-	return true;
-}
-
-bool MessageManager::IOCPSeverSendALL(SocketInfo * SameSocket, IO_Data * Data)
-{
-	for (auto CurClient : *DataManager::Get()->GetClientList())
-	{
-		if (CurClient->m_Socket == SameSocket->m_Socket)
-			continue;
-		
-		IOCPServerSend(CurClient, Data);
-	}
 	return true;
 }
 
