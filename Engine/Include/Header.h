@@ -144,12 +144,12 @@ public:
 	}
 };
 
-class JEONG_DLL CreateNewClientOtherPlayer : public Header
+class JEONG_DLL OtherPlayerDelete : public Header
 {
 public:
-	CreateNewClientOtherPlayer()
+	OtherPlayerDelete()
 	{
-		m_Type = SST_NEW_CLIENT_CREATE_OTHER_PLAYER;
+		m_Type = SST_OTHER_PLAYER_DELETE;
 	}
 };
 

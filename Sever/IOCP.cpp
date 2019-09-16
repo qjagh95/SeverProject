@@ -10,7 +10,6 @@ JEONG_USING
 IOCP::IOCP()
 {
 	m_SeverSocket.m_CliendID = DataManager::m_ClientCount;
-	DataManager::m_ClientCount++;
 	m_IOData = NULLPTR;
 }
 
@@ -38,7 +37,7 @@ bool IOCP::Init()
 	GetSystemInfo(&Info);
 
 	//CPU갯수 만큼 스레드 생성
-	for (size_t i = 0; i < Info.dwNumberOfProcessors; i++)
+	for (size_t i = 0; i < Info.dwNumberOfProcessors * 2; i++)
 		m_vecThread.push_back(new thread(&IOCP::ThreadFunc, this));
 
 	SetSocket();
@@ -108,14 +107,13 @@ void IOCP::Run()
 		LPDWORD RecvBytes = 0;
 		WSARecv(newInfo->m_Socket, &newData->m_WsaBuf, 1, RecvBytes, &Flags, &newData->m_Overlapped, NULLPTR);
 
+		//이 작업을 한꺼번에 해보자. (기존접속은 빼고)
+
 		//새로 접속한 클라에 메인플레이어 생성
 		MessageManager::Get()->Sever_SendNewPlayerMsg(newInfo);
 
 		//기존 접속한 클라에 OT생성
 		MessageManager::Get()->Sever_SendConnectClientNewOtherPlayer(newInfo);
-
-		//새롭게 접속한 클라에 현재 접속한 클라갯수만큼 OT생성 명령
-		MessageManager::Get()->Sever_NewClientCreateOtherPlayer(newInfo);
 	}
 }
 
@@ -133,10 +131,8 @@ void IOCP::ThreadFunc()
 
 		// 전송된 바이트가 0일때
 		if (ByteTransferred == 0)
-		{
 			continue;
-		}
-		
+	
 		lock_guard<mutex> Mutex(m_Mutex);
 		MessageManager::Get()->SeverMesageProcess(m_SocketInfo, IOData);
 	}

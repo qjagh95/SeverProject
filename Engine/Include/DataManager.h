@@ -9,6 +9,8 @@ public:
 	void DeleteSocket(SocketInfo* Socket);
 	SocketInfo* FindClientIndex(size_t ClientID);
 	SocketInfo* FindClientMap(size_t Key);
+	PlayerInfo* FindPlayerInfoIndex(size_t ClientID);
+	PlayerInfo* FindPlayerInfoKey(size_t Key);
 	vector<SocketInfo*>* GetClientList() {	return &m_vecClient; }
 	size_t GetClientCount() const { return m_vecClient.size(); }
 
@@ -16,6 +18,8 @@ public:
 
 	vector<PlayerInfo*>* GetPlayerVec() { return &m_vecPlayerInfo; }
 	size_t GetPlayerCount() const { return m_vecPlayerInfo.size(); }
+
+	void DeleteOT(size_t DeleteID);
 
 public:
 	static size_t m_ClientCount;

@@ -18,12 +18,10 @@ WriteMemoryStream::~WriteMemoryStream()
 
 void WriteMemoryStream::Write(const void * Data, size_t Length)
 {
-	char* TempData = (char*)Data;
-
 	if (m_Size + Length > m_Capacity)
 		Resize();
 
-	memcpy(m_Buffer + m_Size, TempData, Length);
+	memcpy(m_Buffer + m_Size, Data, Length);
 	m_Size += Length;
 }
 
