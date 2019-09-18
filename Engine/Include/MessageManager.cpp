@@ -39,10 +39,6 @@ void MessageManager::Client_ClientDie()
 	IoData.WriteHeader<ClientDieMessage>();
 	IoData.WriteBuffer<size_t>(&MyID);
 
-	//auto getSocket = *ConnectSever::Get()->GetSocket();
-	//send(getSocket, IoData.GetBuffer(), IoData.GetSize(), 0);
-	//int a = GetLastError();
-	//int b = WSAGetLastError();
 	ClientSend(&IoData);
 	ConnectSever::Get()->CloseSocket();
 }
@@ -71,9 +67,8 @@ void MessageManager::Client_SendPlayerScale(float Scale)
 	ClientSend(&IoData);
 }
 
-void MessageManager::OtherPlayerDie(ReadMemoryStream& Reader)
+void MessageManager::OtherPlayerDie(ReadMemoryStream& Reader, size_t DeleteID)
 {
-	size_t DeleteID = Reader.Read<size_t>();
 	OTManager::Get()->DeleteOT(DeleteID);
 }
 
@@ -182,9 +177,6 @@ bool MessageManager::SeverMesageProcess(SocketInfo * Socket, IO_Data * Data)
 
 	switch (m_State)
 	{
-	case SST_CLIENT_DIE:
-		Sever_DieClient(Socket, Data);
-		break;
 	case SST_DELETE_EAT_OBJECT:
 		break;
 	case SST_PLAYER_POS:
@@ -206,8 +198,8 @@ void MessageManager::Sever_DieClient(SocketInfo* Socket, IO_Data* Data)
 	size_t DeleteID = Socket->m_CliendID;
 
 	cout << DeleteID << "번 클라이언트 종료" << endl;
-	DataManager::Get()->DeleteSocket(Socket);
 	Sever_SendDeleteOT(Socket);
+	DataManager::Get()->DeleteSocket(Socket);
 
 	m_State = SST_NONE;
 }
@@ -216,9 +208,14 @@ void MessageManager::Sever_SendDeleteOT(SocketInfo * Socket)
 {
 	auto getVec = DataManager::Get()->GetClientVec();
 
+	if (getVec->size() == 1 || getVec->size() == 0)
+		return;
+
+	size_t DeleteID = Socket->m_CliendID;
+
 	IO_Data IoData = {};
 	IoData.WriteHeader<OtherPlayerDelete>();
-	IoData.WriteBuffer<size_t>(&Socket->m_CliendID);
+	IoData.WriteBuffer<size_t>(&DeleteID);
 
 	for (auto CurClient : *getVec)
 	{
@@ -364,7 +361,7 @@ void MessageManager::ClientMessageProcess()
 				Client_UpdateOTScale(Reader, ClientID);
 				break;
 			case SST_OTHER_PLAYER_DELETE:
-				OtherPlayerDie(Reader);
+				OtherPlayerDie(Reader, ClientID);
 				break;
 			case SST_CREATE_EAT_OBJECT:
 				break;

@@ -32,6 +32,7 @@ OtharPlayer_Com * OTManager::FindOT(size_t Key)
 void OTManager::DeleteOT(size_t key)
 {
 	auto getOT = FindOT(key);
+
 	getOT->GetGameObject()->SetIsActive(false);
 
 	m_OTMap.erase(key);

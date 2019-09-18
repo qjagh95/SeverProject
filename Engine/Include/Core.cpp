@@ -54,8 +54,6 @@ bool Core::Init(HINSTANCE hInst, unsigned int Width, unsigned int Height, const 
 
 	Register(ClassName, iIconID ,iSmallIconID);
 	CreateWnd(TitleName, ClassName);
-
-	LoadLibrary(TEXT("libxl.dll"));
 	
 	return Init(m_hIstance,m_hWnd, Width, Height, bWindowMode);
 }
@@ -120,7 +118,6 @@ bool Core::Init(HINSTANCE hInst, HWND hWnd, unsigned int Width, unsigned int Hei
 	}
 
 	SetClearColor(0, 150, 255, 0);
-	//TODO : 
 	m_ClientSocket = ConnectSever::Get()->GetSocketInfo();
 
 	return true;
@@ -213,7 +210,6 @@ LRESULT Core::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_DESTROY:
 			m_isLoop = false;
 			PostQuitMessage(0);
-			MessageManager::Get()->Client_ClientDie();
 			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
