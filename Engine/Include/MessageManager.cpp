@@ -9,6 +9,7 @@
 #include "OtharPlayer_Com.h"
 #include "OTManager.h"
 
+//TODO : 종료처리 테스트
 JEONG_USING
 
 SINGLETON_VAR_INIT(MessageManager)
@@ -33,10 +34,15 @@ void MessageManager::ClientInit()
 void MessageManager::Client_ClientDie()
 {
 	size_t MyID = ConnectSever::Get()->GetClientID();
+
 	IO_Data IoData;
 	IoData.WriteHeader<ClientDieMessage>();
 	IoData.WriteBuffer<size_t>(&MyID);
 
+	//auto getSocket = *ConnectSever::Get()->GetSocket();
+	//send(getSocket, IoData.GetBuffer(), IoData.GetSize(), 0);
+	//int a = GetLastError();
+	//int b = WSAGetLastError();
 	ClientSend(&IoData);
 	ConnectSever::Get()->CloseSocket();
 }
@@ -44,6 +50,7 @@ void MessageManager::Client_ClientDie()
 void MessageManager::Client_SendPlayerPos(const Vector3& Pos)
 {
 	size_t MyID = ConnectSever::Get()->GetClientID();
+
 	IO_Data IoData;
 	IoData.WriteHeader<ClientDieMessage>();
 	IoData.WriteBuffer<size_t>(&MyID);
@@ -55,6 +62,7 @@ void MessageManager::Client_SendPlayerPos(const Vector3& Pos)
 void MessageManager::Client_SendPlayerScale(float Scale)
 {
 	size_t MyID = ConnectSever::Get()->GetClientID();
+
 	IO_Data IoData;
 	IoData.WriteHeader<ClientDieMessage>();
 	IoData.WriteBuffer<size_t>(&MyID);
@@ -87,8 +95,8 @@ void MessageManager::Client_UpdateOTScale(ReadMemoryStream & Reader, size_t ID)
 	if (getOT == NULLPTR)
 		return;
 
-	Vector3 getPos = Reader.Read<Vector3>();
-	getOT->GetTransform()->SetWorldPos(getPos);
+	float getScale = Reader.Read<float>();
+	getOT->GetTransform()->SetWorldPos(getScale);
 }
 
 bool MessageManager::Sever_SendNewPlayerMsg(SocketInfo * Socket)
@@ -192,11 +200,12 @@ bool MessageManager::SeverMesageProcess(SocketInfo * Socket, IO_Data * Data)
 
 void MessageManager::Sever_DieClient(SocketInfo* Socket, IO_Data* Data)
 {
-	Data->CopyBuffer();
-	ReadMemoryStream Reader(Data->GetBuffer(), Data->GetSize());
-	size_t ID = Reader.Read<size_t>();
+	mutex myMutex;
+	lock_guard<mutex> Mutex(myMutex);
 	
-	cout << ID << "번 클라이언트 종료" << endl;
+	size_t DeleteID = Socket->m_CliendID;
+
+	cout << DeleteID << "번 클라이언트 종료" << endl;
 	DataManager::Get()->DeleteSocket(Socket);
 	Sever_SendDeleteOT(Socket);
 

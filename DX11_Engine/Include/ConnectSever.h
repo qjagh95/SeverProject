@@ -13,6 +13,7 @@ public:
 	WSAEVENT GetEventHandle() { return m_EventHandle; }
 	void SetClientID(size_t ID) { m_ID = ID; }
 	size_t GetClientID() const { return m_ID; }
+	void CloseSocket();
 
 private:
 	void Connect();

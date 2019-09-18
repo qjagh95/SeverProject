@@ -107,8 +107,6 @@ void IOCP::Run()
 		LPDWORD RecvBytes = 0;
 		WSARecv(newInfo->m_Socket, &newData->m_WsaBuf, 1, RecvBytes, &Flags, &newData->m_Overlapped, NULLPTR);
 
-		//이 작업을 한꺼번에 해보자. (기존접속은 빼고)
-
 		//새로 접속한 클라에 메인플레이어 생성
 		MessageManager::Get()->Sever_SendNewPlayerMsg(newInfo);
 
@@ -131,7 +129,10 @@ void IOCP::ThreadFunc()
 
 		// 전송된 바이트가 0일때
 		if (ByteTransferred == 0)
+		{
+			MessageManager::Get()->Sever_DieClient(m_SocketInfo, IOData);
 			continue;
+		}
 	
 		lock_guard<mutex> Mutex(m_Mutex);
 		MessageManager::Get()->SeverMesageProcess(m_SocketInfo, IOData);
