@@ -9,7 +9,6 @@
 #include "OtharPlayer_Com.h"
 #include "OTManager.h"
 
-//TODO : 종료처리 테스트
 JEONG_USING
 
 SINGLETON_VAR_INIT(MessageManager)
@@ -47,7 +46,7 @@ void MessageManager::Client_SendPlayerPos(const Vector3& Pos)
 {
 	size_t MyID = ConnectSever::Get()->GetClientID();
 
-	IO_Data IoData;
+	IO_Data IoData = {};
 	IoData.WriteHeader<ClientDieMessage>();
 	IoData.WriteBuffer<size_t>(&MyID);
 	IoData.WriteBuffer<Vector3>(&Pos);
@@ -59,7 +58,7 @@ void MessageManager::Client_SendPlayerScale(float Scale)
 {
 	size_t MyID = ConnectSever::Get()->GetClientID();
 
-	IO_Data IoData;
+	IO_Data IoData = {};
 	IoData.WriteHeader<ClientDieMessage>();
 	IoData.WriteBuffer<size_t>(&MyID);
 	IoData.WriteBuffer<float>(&Scale);
@@ -118,8 +117,10 @@ bool MessageManager::Sever_SendNewPlayerMsg(SocketInfo * Socket)
 	IoData.WriteBuffer<int>(&ClientCount);
 
 	if (ClientCount == 1)
-		return IOCPServerSend(Socket, &IoData);
-
+	{
+		return  IOCPServerSend(Socket, &IoData);
+	}
+	 
 	//데이터를 보낸다
 	for (auto Cur : *getPlayerVec)
 	{
@@ -134,7 +135,7 @@ bool MessageManager::Sever_SendNewPlayerMsg(SocketInfo * Socket)
 
 	cout << Socket->m_CliendID << "번 클라이언트에 기존 접속한 클라이언트 갯수 : " << ClientCount - 1 << " 개 만큼 OtherPlayer 생성메세지 전송" << endl;
 
-	return IOCPServerSend(Socket, &IoData);
+	return IOCPServerSend(Socket, &IoData);;
 }
 
 //현재 접속한 클라에 OT생셩메세지
@@ -172,13 +173,10 @@ bool MessageManager::Sever_SendConnectClientNewOtherPlayer(SocketInfo * NewSocke
 
 bool MessageManager::SeverMesageProcess(SocketInfo * Socket, IO_Data * Data)
 {
-	lock_guard<mutex> Mutex(m_Mutex);
 	m_State = IOCPSeverRecvMsg(Socket, Data);
 
 	switch (m_State)
 	{
-	case SST_DELETE_EAT_OBJECT:
-		break;
 	case SST_PLAYER_POS:
 		Sever_UpdatePos(Socket, Data);
 		break;
@@ -208,9 +206,6 @@ void MessageManager::Sever_SendDeleteOT(SocketInfo * Socket)
 {
 	auto getVec = DataManager::Get()->GetClientVec();
 
-	if (getVec->size() == 1 || getVec->size() == 0)
-		return;
-
 	size_t DeleteID = Socket->m_CliendID;
 
 	IO_Data IoData = {};
@@ -220,7 +215,7 @@ void MessageManager::Sever_SendDeleteOT(SocketInfo * Socket)
 	for (auto CurClient : *getVec)
 	{
 		if (CurClient->m_Socket == Socket->m_Socket)
-			continue;
+			  continue;
 
 		IOCPServerSend(CurClient, &IoData);
 	}
@@ -249,12 +244,15 @@ void MessageManager::Sever_UpdateScale(SocketInfo * Socket, IO_Data* Data)
 	auto getInfo = DataManager::Get()->FindPlayerInfoKey(ReadID);
 	getInfo->m_Scale = Scale;
 
-	Sever_SendPlayerPos(Socket, Scale);
+	Sever_SendPlayerScale(Socket, Scale);
 }
 
 void MessageManager::Sever_SendPlayerPos(SocketInfo * Socket, const Vector3 & Pos)
 {
 	auto getVec = DataManager::Get()->GetClientVec();
+
+	if (getVec->size() == 0 || getVec->size() == 1)
+		return;
 
 	IO_Data IoData = {};
 	IoData.WriteHeader<PlayerPos>();
@@ -268,11 +266,15 @@ void MessageManager::Sever_SendPlayerPos(SocketInfo * Socket, const Vector3 & Po
 
 		IOCPServerSend(CurClient, &IoData);
 	}
+
 }
 
 void MessageManager::Sever_SendPlayerScale(SocketInfo * Socket, float Scale)
 {
 	auto getVec = DataManager::Get()->GetClientVec();
+
+	if (getVec->size() == 0 || getVec->size() == 1)
+		return;
 
 	IO_Data IoData = {};
 	IoData.WriteHeader<PlayerPos>();
@@ -384,19 +386,21 @@ void MessageManager::ClientSend(IO_Data * Data)
 {
 	auto getSocket = ConnectSever::Get()->GetSocketInfo();
 	Data->CopyBuffer();
-
-	IOCPServerSend(getSocket, Data);
+	
+	send(getSocket->m_Socket, Data->GetBuffer(), Data->GetSize(), 0);
+	//IOCPServerSend(getSocket, Data);
 }
 
 bool MessageManager::IOCPServerSend(SocketInfo * Socket, IO_Data * Data)
 {
 	DWORD Flags = 0;
-
+	
 	int getResult = WSASend(Socket->m_Socket, &Data->m_WsaBuf, 1, NULLPTR, Flags, (LPOVERLAPPED)Data, NULLPTR);
 
 	if (getResult != 0)
 	{
-		cout << "FalseCheck" << endl;
+		int a = WSAGetLastError();
+		cout << "Error : " << a << endl;
 		return false;
 	}
 
@@ -431,7 +435,6 @@ bool MessageManager::CreateMainPlayer(size_t ClientID, ReadMemoryStream& Reader)
 	SAFE_RELEASE(newPlayer);
 
 	int ClientCount = Reader.Read<int>();
-
 	if (ClientCount == 1)
 		return true;
 
@@ -449,7 +452,7 @@ bool MessageManager::CreateOneOtherPlayer(size_t ClientID, ReadMemoryStream& Rea
 
 	GameObject* newOtherPlayerObj = GameObject::CreateObject("OtherPlayer", m_CurLayer);
 	OtharPlayer_Com* newOther = newOtherPlayerObj->AddComponent<OtharPlayer_Com>("OtherPlayer");
-	newOther->GetTransform()->SetWorldScale(Scale, Scale ,1.0f);
+	newOther->GetTransform()->SetWorldScale(Scale, Scale, 1.0f);
 	newOther->GetTransform()->SetWorldPos(Pos);
 	newOther->SetRGB(Color.x, Color.y, Color.z);
 

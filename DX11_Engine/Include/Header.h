@@ -15,11 +15,13 @@ struct IO_Data
 	OVERLAPPED m_Overlapped;
 	WSABUF m_WsaBuf;
 	WriteMemoryStream m_Stream;
+	int m_RWMode;
 
 	IO_Data()
 	{
 		ZeroMemory(&m_Overlapped, sizeof(OVERLAPPED));
 		m_WsaBuf.len = 0;
+		m_RWMode = 0;
 	}
 
 	void WriteBuffer(const void* Buffer, size_t size)

@@ -3,6 +3,7 @@
 
 #include <DataManager.h>
 #include <WriteMemoryStream.h>
+#include <ReadMemoryStream.h>
 #include <Core.h>
 
 JEONG_USING
@@ -102,7 +103,7 @@ void IOCP::Run()
 
 		m_vecData.push_back(newData);
 
-		//한번 받아줘야함.
+		//Overraped입출력 시작 의미
 		DWORD Flags = 0;
 		LPDWORD RecvBytes = 0;
 		WSARecv(newInfo->m_Socket, &newData->m_WsaBuf, 1, RecvBytes, &Flags, &newData->m_Overlapped, NULLPTR);
@@ -112,6 +113,7 @@ void IOCP::Run()
 
 		//기존 접속한 클라에 OT생성
 		MessageManager::Get()->Sever_SendConnectClientNewOtherPlayer(newInfo);
+
 	}
 }
 
@@ -127,14 +129,18 @@ void IOCP::ThreadFunc()
 			(LPOVERLAPPED*)&IOData, INFINITE) == FALSE)
 			continue;
 
-		// 전송된 바이트가 0일때
+		// 전송된 바이트가 0일때(소켓이 닫혔다는 의미)
 		if (ByteTransferred == 0)
 		{
 			MessageManager::Get()->Sever_DieClient(m_SocketInfo, IOData);
+			SAFE_DELETE(IOData);
 			continue;
 		}
-	
-		lock_guard<mutex> Mutex(m_Mutex);
-		MessageManager::Get()->SeverMesageProcess(m_SocketInfo, IOData);
+
+		m_Mutex.lock();
+		{
+			MessageManager::Get()->SeverMesageProcess(m_SocketInfo, IOData);
+		}
+		m_Mutex.unlock();
 	}
 }

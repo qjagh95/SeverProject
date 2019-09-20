@@ -135,12 +135,7 @@ int Core::Run()
 			DispatchMessage(&msg);
 		}
 		else
-		{
 			Logic();
-
-			if (KeyInput::Get()->KeyDown("SystemPause"))
-				TrueAssert(true);
-		}
 	}
 	return (int)msg.wParam;
 }
@@ -210,6 +205,7 @@ LRESULT Core::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_DESTROY:
 			m_isLoop = false;
 			PostQuitMessage(0);
+			ConnectSever::Get()->CloseSocket();
 			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);

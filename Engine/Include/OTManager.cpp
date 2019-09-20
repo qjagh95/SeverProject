@@ -33,8 +33,10 @@ void OTManager::DeleteOT(size_t key)
 {
 	auto getOT = FindOT(key);
 
-	getOT->GetGameObject()->SetIsActive(false);
+	if (getOT == NULLPTR || m_OTMap.size() == 0)
+		return;
 
+	getOT->GetGameObject()->SetIsActive(false);
 	m_OTMap.erase(key);
 }
 

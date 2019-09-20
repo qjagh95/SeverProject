@@ -12,7 +12,8 @@
 #define SAFE_DELETE_ARRARY(p) if(p){delete[] p; p = NULLPTR;}
 
 #define NULLPTR nullptr
-#define MessageByte 4
+#define READ 100;
+#define WRITE 200
 
 #define ROOT_PATH "RootPath"
 #define TEXTURE_PATH "TexturPath"

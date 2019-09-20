@@ -392,7 +392,6 @@ void CollsionManager::Collsion(float DeltaTime)
 				continue;
 			}
 
-			//TODO
 			for (int j = 0; j < getSection->Size; j++)
 				getSection->ColliderList[j]->CheckPrevCollisionInSection(DeltaTime);
 
