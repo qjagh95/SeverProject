@@ -13,19 +13,19 @@ public:
 	bool Sever_SendConnectClientNewOtherPlayer(SocketInfo* NewSocket);
 
 	//서버 메세지루프
-	bool SeverMesageProcess(SocketInfo * Socket, IO_Data * Data);
+	bool SeverMesageProcess(SocketInfo * Socket, char * Data, size_t BufferSize);
 
 	//클라이언트 Die처리
-	void Sever_DieClient(SocketInfo* Socket, IO_Data* Data);
+	void Sever_DieClient(SocketInfo* Socket);
 
 	//현재 접속중인 클라이언트에게 OT제거명령(접속종료)
 	void Sever_SendDeleteOT(SocketInfo * Socket);
 	
 	//Pos갱신
-	void Sever_UpdatePos(SocketInfo * Socket, IO_Data* Data);
+	void Sever_UpdatePos(SocketInfo * Socket, ReadMemoryStream& Reader);
 
 	//Scale갱신
-	void Sever_UpdateScale(SocketInfo * Socket, IO_Data* Data);
+	void Sever_UpdateScale(SocketInfo * Socket, ReadMemoryStream& Reader);
 
 	//플레이어 데이터 보내기
 	void Sever_SendPlayerPos(SocketInfo * Socket, const Vector3& Pos);
@@ -59,6 +59,8 @@ private:
 	bool CreateOtherPlayer(int ClientID, ReadMemoryStream& Reader);
 
 	SEVER_DATA_TYPE ReadHeader(char* Buffer);
+
+	void InitIOData(SocketInfo* Info);
 
 private:
 	SEVER_DATA_TYPE m_State;

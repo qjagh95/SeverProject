@@ -14,11 +14,12 @@ public:
 private:
 	void SetSocket();
 
+	void IOCPSeverSend(SocketInfo * Socket, IO_Data * Data);
+
 private:
 	HANDLE m_CompletionPort;
 	SocketInfo m_SeverSocket;
 	vector<thread*> m_vecThread;
-	vector<IO_Data*> m_vecData;
 	IO_Data* m_IOData;
 	SocketInfo* m_SocketInfo;
 	mutex m_Mutex;

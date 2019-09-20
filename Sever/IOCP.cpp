@@ -21,7 +21,6 @@ IOCP::~IOCP()
 	for (size_t i = 0; i < m_vecThread.size(); i++)
 		m_vecThread[i]->join();
 
-	Safe_Delete_VecList(m_vecData);
 	Safe_Delete_VecList(m_vecThread);
 }
 
@@ -101,8 +100,6 @@ void IOCP::Run()
 		newData->m_WsaBuf.buf = newData->GetBuffer();
 		newData->m_WsaBuf.len = newData->GetSize();
 
-		m_vecData.push_back(newData);
-
 		//Overraped입출력 시작 의미
 		DWORD Flags = 0;
 		LPDWORD RecvBytes = 0;
@@ -113,7 +110,6 @@ void IOCP::Run()
 
 		//기존 접속한 클라에 OT생성
 		MessageManager::Get()->Sever_SendConnectClientNewOtherPlayer(newInfo);
-
 	}
 }
 
@@ -121,6 +117,7 @@ void IOCP::ThreadFunc()
 {
 	DWORD ByteTransferred;
 	IO_Data* IOData;
+	char Buffer[BUFFERSIZE] = {};
 
 	while (true)
 	{
@@ -132,15 +129,20 @@ void IOCP::ThreadFunc()
 		// 전송된 바이트가 0일때(소켓이 닫혔다는 의미)
 		if (ByteTransferred == 0)
 		{
-			MessageManager::Get()->Sever_DieClient(m_SocketInfo, IOData);
+			MessageManager::Get()->Sever_DieClient(m_SocketInfo);
 			SAFE_DELETE(IOData);
 			continue;
 		}
 
-		m_Mutex.lock();
-		{
-			MessageManager::Get()->SeverMesageProcess(m_SocketInfo, IOData);
-		}
-		m_Mutex.unlock();
+		memcpy(Buffer, IOData->GetBuffer(), IOData->GetSize());
+		size_t Size = IOData->GetSize();
+		SAFE_DELETE(IOData);
+
+		lock_guard<mutex> Mutex(m_Mutex);
+		MessageManager::Get()->SeverMesageProcess(m_SocketInfo, Buffer, Size);
 	}
+}
+
+void IOCP::IOCPSeverSend(SocketInfo * Socket, IO_Data * Data)
+{
 }

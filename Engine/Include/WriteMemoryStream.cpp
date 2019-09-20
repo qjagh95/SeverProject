@@ -9,6 +9,7 @@ WriteMemoryStream::WriteMemoryStream()
 	m_Capacity = BUFFERSIZE;
 
 	m_Buffer = new char[BUFFERSIZE];
+	memset(m_Buffer, 0, BUFFERSIZE);
 }
 
 WriteMemoryStream::~WriteMemoryStream()
