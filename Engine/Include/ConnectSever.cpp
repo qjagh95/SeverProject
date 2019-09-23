@@ -13,6 +13,9 @@ ConnectSever::ConnectSever()
 ConnectSever::~ConnectSever()
 {
 	WSACloseEvent(m_EventHandle);
+
+	closesocket(m_Info.m_Socket);
+	WSACleanup();
 }
 
 bool ConnectSever::Init()
@@ -44,6 +47,7 @@ bool ConnectSever::Init()
 void ConnectSever::CloseSocket()
 {
 	closesocket(m_Info.m_Socket);
+	WSACleanup();
 }
 
 void ConnectSever::Connect()

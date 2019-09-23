@@ -91,3 +91,12 @@ void DataManager::PushPlayerInfo(const Vector4& Color, const Vector3& Pos, size_
 	m_PlayerMap.insert(make_pair(ClientID, newInfo));
 	m_PlayerCount++;
 }
+
+void DataManager::CloseAll()
+{
+	for (auto CurClient : m_vecClient)
+	{
+		closesocket(CurClient->m_Socket);
+		DeleteSocket(CurClient);
+	}
+}

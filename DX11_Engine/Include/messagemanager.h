@@ -6,31 +6,6 @@ class ReadMemoryStream;
 class JEONG_DLL MessageManager
 {
 public:
-	//서버가 클라로 메인플레이어 생성 메세지 
-	bool Sever_SendNewPlayerMsg(SocketInfo* Socket);
-
-	//현재 접속한 클라에 OT생셩메세지
-	bool Sever_SendConnectClientNewOtherPlayer(SocketInfo* NewSocket);
-
-	//서버 메세지루프
-	bool SeverMesageProcess(SocketInfo * Socket, char * Data, size_t BufferSize);
-
-	//클라이언트 Die처리
-	void Sever_DieClient(SocketInfo* Socket);
-
-	//현재 접속중인 클라이언트에게 OT제거명령(접속종료)
-	void Sever_SendDeleteOT(SocketInfo * Socket);
-	
-	//Pos갱신
-	void Sever_UpdatePos(SocketInfo * Socket, ReadMemoryStream& Reader);
-
-	//Scale갱신
-	void Sever_UpdateScale(SocketInfo * Socket, ReadMemoryStream& Reader);
-
-	//플레이어 데이터 보내기
-	void Sever_SendPlayerPos(SocketInfo * Socket, const Vector3& Pos);
-	void Sever_SendPlayerScale(SocketInfo * Socket, float Scale);
-
 	//클라가 서버로 보내는 함수
 	void Client_ClientDie();
 	void Client_SendPlayerPos(const Vector3& Pos);
@@ -46,10 +21,8 @@ public:
 	Layer* GetLayer() { return m_CurLayer; }
 
 	void ClientInit();
-	SEVER_DATA_TYPE IOCPSeverRecvMsg(SocketInfo* Socket, IO_Data* Data);
 
 private:
-	bool IOCPServerSend(SocketInfo* Socket, IO_Data* Data);
 	void ClientMessageProcess();
 	void ClientSend(IO_Data* Data);
 

@@ -19,6 +19,8 @@ public:
 	vector<PlayerInfo*>* GetPlayerVec() { return &m_vecPlayerInfo; }
 	size_t GetPlayerCount() const { return m_vecPlayerInfo.size(); }
 
+	void CloseAll();
+
 public:
 	static size_t m_ClientCount;
 	static size_t m_PlayerCount;

@@ -44,6 +44,7 @@ void MessageManager::Client_ClientDie()
 
 void MessageManager::Client_SendPlayerPos(const Vector3& Pos)
 {
+	cout << "포쓰" << endl;
 	size_t MyID = ConnectSever::Get()->GetClientID();
 
 	IO_Data IoData = {};
@@ -91,247 +92,6 @@ void MessageManager::Client_UpdateOTScale(ReadMemoryStream & Reader, size_t ID)
 
 	float getScale = Reader.Read<float>();
 	getOT->GetTransform()->SetWorldPos(getScale);
-}
-
-bool MessageManager::Sever_SendNewPlayerMsg(SocketInfo * Socket)
-{
-	int RandNum = Core::Get()->RandomRange(0, 139);
-	Vector4 RandColor = Vector4::AllColor[RandNum];
-	Vector3 Pos = Vector3(500.0f, 500.0f, 1.0f);
-	float Scale = 10.0f;
-
-	DataManager::Get()->PushPlayerInfo(RandColor, Pos, Socket->m_CliendID, Scale);
-
-	IO_Data* IoData = new IO_Data();
-	IoData->WriteHeader<CreateMainPlayerMessage>();
-	IoData->WriteBuffer<size_t>(&Socket->m_CliendID);
-	IoData->WriteBuffer<Vector4>(&RandColor);
-	IoData->WriteBuffer<Vector3>(&Pos);
-	IoData->WriteBuffer<float>(&Scale);
-
-	cout << Socket->m_CliendID << "번 클라이언트에게 플레이어 생성메세지 전송" << endl << endl;
-
-	int ClientCount = DataManager::Get()->GetClientCount();
-	auto getPlayerVec = DataManager::Get()->GetPlayerVec();
-
-	IoData->WriteBuffer<int>(&ClientCount);
-
-	if (ClientCount == 1)
-		return  IOCPServerSend(Socket, IoData);
-	
-	//데이터를 보낸다
-	for (auto Cur : *getPlayerVec)
-	{
-		if (Socket->m_CliendID == Cur->m_ClientID)
-			continue;
-
-		IoData->WriteBuffer(&Cur->m_Color, 16);
-		IoData->WriteBuffer<Vector3>(&Cur->m_Pos);
-		IoData->WriteBuffer<float>(&Cur->m_Scale);
-		IoData->WriteBuffer<size_t>(&Cur->m_ClientID);
-	}
-
-	cout << Socket->m_CliendID << "번 클라이언트에 기존 접속한 클라이언트 갯수 : " << ClientCount - 1 << " 개 만큼 OtherPlayer 생성메세지 전송" << endl;
-
-	return IOCPServerSend(Socket, IoData);;
-}
-
-//현재 접속한 클라에 OT생셩메세지
-bool MessageManager::Sever_SendConnectClientNewOtherPlayer(SocketInfo * NewSocket)
-{
-	if (DataManager::Get()->GetClientCount() == 0 || DataManager::Get()->GetClientCount() == 1)
-		return false;
-
-	auto getVec = DataManager::Get()->GetPlayerVec();
-
-	if (getVec->size() == 0 || getVec->size() == 1)
-		return false;
-
-	PlayerInfo* getInfo = getVec->at(getVec->size() - 1);
-
-	cout << NewSocket->m_CliendID << "번 클라이언트에게 OtherPlayer 생성메세지 전송" << endl;
-
-	IO_Data* IoData = new IO_Data();
-	IoData->WriteHeader<CreateConnectClientCreateOtherPlayer>();
-	IoData->WriteBuffer<size_t>(&getInfo->m_ClientID);
-	IoData->WriteBuffer<Vector4>(&getInfo->m_Color);
-	IoData->WriteBuffer<Vector3>(&getInfo->m_Pos);
-	IoData->WriteBuffer<Vector3>(&getInfo->m_Scale);
-
-	for (auto Cur : *DataManager::Get()->GetClientVec())
-	{
-		if (Cur->m_Socket == NewSocket->m_Socket)
-			continue;
-
-		IOCPServerSend(Cur, IoData);
-	}
-
-	return true;
-}
-
-bool MessageManager::SeverMesageProcess(SocketInfo * Socket, char * Data, size_t BufferSize)
-{
-	ReadMemoryStream Reader(Data, BufferSize);
-	
-	if (BufferSize == 0)
-		return false;
-
-	m_State = static_cast<SEVER_DATA_TYPE>(Reader.Read<int>());
-
-	switch (m_State)
-	{
-	case SST_PLAYER_POS:
-		Sever_UpdatePos(Socket, Reader);
-		break;
-	case SST_PLAYER_SCALE:
-		Sever_UpdateScale(Socket, Reader);
-		break;
-	}
-
-	InitIOData(Socket);
-
-	//m_State = IOCPSeverRecvMsg(Socket, Data);
-
-	//if (m_State != SST_NONE)
-	//{
-	//	InitIOData(Socket, Data);
-	//}
-
-	return true;
-}
-
-void MessageManager::Sever_DieClient(SocketInfo* Socket)
-{
-	mutex myMutex;
-	lock_guard<mutex> Mutex(myMutex);
-	
-	size_t DeleteID = Socket->m_CliendID;
-
-	cout << DeleteID << "번 클라이언트 종료" << endl;
-	Sever_SendDeleteOT(Socket);
-	DataManager::Get()->DeleteSocket(Socket);
-
-	m_State = SST_NONE;
-}
-
-void MessageManager::Sever_SendDeleteOT(SocketInfo * Socket)
-{
-	auto getVec = DataManager::Get()->GetClientVec();
-
-	size_t DeleteID = Socket->m_CliendID;
-
-	IO_Data IoData = {};
-	IoData.WriteHeader<OtherPlayerDelete>();
-	IoData.WriteBuffer<size_t>(&DeleteID);
-
-	for (auto CurClient : *getVec)
-	{
-		if (CurClient->m_Socket == Socket->m_Socket)
-			  continue;
-
-		IOCPServerSend(CurClient, &IoData);
-	}
-}
-
-void MessageManager::Sever_UpdatePos(SocketInfo * Socket, ReadMemoryStream& Reader)
-{
-	size_t ReadID = Reader.Read<size_t>();
-	Vector3 Pos = Reader.Read<Vector3>();
-
-	auto getInfo = DataManager::Get()->FindPlayerInfoKey(Socket->m_CliendID);
-	getInfo->m_Pos = Pos;
-
-	Sever_SendPlayerPos(Socket, Pos);
-}
-
-void MessageManager::Sever_UpdateScale(SocketInfo * Socket, ReadMemoryStream& Reader)
-{
-	size_t ReadID = Reader.Read<size_t>();
-	float Scale = Reader.Read<float>();
-
-	auto getInfo = DataManager::Get()->FindPlayerInfoKey(ReadID);
-	getInfo->m_Scale = Scale;
-
-	Sever_SendPlayerScale(Socket, Scale);
-}
-
-void MessageManager::Sever_SendPlayerPos(SocketInfo * Socket, const Vector3 & Pos)
-{
-	auto getVec = DataManager::Get()->GetClientVec();
-
-	if (getVec->size() == 0 || getVec->size() == 1)
-		return;
-
-	IO_Data IoData = {};
-	IoData.WriteHeader<PlayerPos>();
-	IoData.WriteBuffer<size_t>(&Socket->m_CliendID);
-	IoData.WriteBuffer<Vector3>(&Pos);
-
-	for (auto CurClient : *getVec)
-	{
-		if (CurClient->m_Socket == Socket->m_Socket)
-			continue;
-
-		IOCPServerSend(CurClient, &IoData);
-	}
-}
-
-void MessageManager::Sever_SendPlayerScale(SocketInfo * Socket, float Scale)
-{
-	auto getVec = DataManager::Get()->GetClientVec();
-
-	if (getVec->size() == 0 || getVec->size() == 1)
-		return;
-
-	IO_Data IoData = {};
-	IoData.WriteHeader<PlayerPos>();
-	IoData.WriteBuffer<size_t>(&Socket->m_CliendID);
-	IoData.WriteBuffer<float>(&Scale);
-
-	for (auto CurClient : *getVec)
-	{
-		if (CurClient->m_Socket == Socket->m_Socket)
-			continue;
-
-		IOCPServerSend(CurClient, &IoData);
-	}
-}
-
-SEVER_DATA_TYPE MessageManager::IOCPSeverRecvMsg(SocketInfo * Socket, IO_Data * Data)
-{
-	DWORD Flags = 0;
-	SEVER_DATA_TYPE HeaderType = SST_NONE;
-
-	ZeroMemory(&Data->m_Overlapped, sizeof(Data->m_Overlapped));
-	int a = WSARecv(Socket->m_Socket, &Data->m_WsaBuf, 1, NULLPTR, &Flags, &Data->m_Overlapped, NULLPTR);
-	int b = WSAGetLastError();
-
-	if (b != WSA_IO_PENDING)
-	{
-		m_State = HeaderType;
-		return m_State;
-	}
-
-	Data->CopyBuffer();
-
-	if (Data->m_WsaBuf.buf == NULLPTR)
-	{
-		m_State = HeaderType;
-		return m_State;
-	}
-
-	HeaderType = Data->ReadHeader();
-
-	if (Data->m_WsaBuf.len == 0)
-	{
-		m_State = HeaderType;
-		return m_State;
-	}
-
-	m_State = HeaderType;
-	Data->HeaderErase();
-
-	return HeaderType;
 }
 
 void MessageManager::ClientMessageProcess()
@@ -397,41 +157,12 @@ void MessageManager::ClientSend(IO_Data * Data)
 	int a = send(getSocket->m_Socket, Data->GetBuffer(), Data->GetSize(), 0);
 }
 
-bool MessageManager::IOCPServerSend(SocketInfo * Socket, IO_Data * Data)
-{
-	DWORD Flags = 0;
-
-	int getResult = WSASend(Socket->m_Socket, &Data->m_WsaBuf, 1, NULLPTR, Flags, (LPOVERLAPPED)Data, NULLPTR);
-
-	if (getResult != 0)
-	{
-		int a = WSAGetLastError();
-		cout << "Error : " << a << endl;
-		return false;
-	}
-
-	return true;
-}
-
 SEVER_DATA_TYPE MessageManager::ReadHeader(char * Buffer)
 {
 	SEVER_DATA_TYPE HeaderType = SST_NONE;
 	memcpy(&HeaderType, Buffer, sizeof(Header));
 
 	return HeaderType;
-}
-
-void MessageManager::InitIOData(SocketInfo* Info)
-{
-	IO_Data* newIOData = new IO_Data();
-	ZeroMemory(&newIOData->m_Overlapped, sizeof(OVERLAPPED));
-	newIOData->m_WsaBuf.buf = newIOData->GetBuffer();
-	newIOData->m_WsaBuf.len = newIOData->GetSize();
-
-	DWORD RecvByte = 0;
-	DWORD Flag = 0;
-
-	WSARecv(Info->m_Socket, &newIOData->m_WsaBuf, 1, &RecvByte, &Flag, &newIOData->m_Overlapped, NULLPTR);
 }
 
 bool MessageManager::CreateMainPlayer(size_t ClientID, ReadMemoryStream& Reader)
@@ -480,7 +211,6 @@ bool MessageManager::CreateOneOtherPlayer(size_t ClientID, ReadMemoryStream& Rea
 	SAFE_RELEASE(newOtherPlayerObj);
 	SAFE_RELEASE(newOther);
 
-	m_State = SST_NONE;
 	return true;
 }
 
