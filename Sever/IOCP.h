@@ -19,10 +19,10 @@ private:
 	void Sever_SendNewPlayerMsg(SocketInfo * Socket);
 
 	//현재 접속한 클라에 OT생셩메세지
-	bool Sever_SendConnectClientNewOtherPlayer(SocketInfo* NewSocket);
+	void Sever_SendConnectClientNewOtherPlayer(SocketInfo* NewSocket);
 
 	//서버 메세지루프
-	bool SeverMesageProcess(SocketInfo * Socket, char * Data, size_t BufferSize);
+	void SeverMesageProcess(SocketInfo * Socket, char * Data, size_t BufferSize);
 
 	//클라이언트 Die처리
 	void Sever_DieClient(SocketInfo* Socket);

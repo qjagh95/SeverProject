@@ -98,7 +98,7 @@ struct IO_Data
 		if (m_Stream.GetSize() == 0)
 		{
 			m_Stream.Write(m_WsaBuf.buf, m_WsaBuf.len);
-			m_WsaBuf.len = m_Stream.GetSize();
+			m_WsaBuf.len = static_cast<ULONG>(m_Stream.GetSize());
 			m_WsaBuf.buf = m_Stream.GetBuffer();
 		}
 		else

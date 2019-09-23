@@ -22,10 +22,11 @@ IOCP::~IOCP()
 		m_vecThread[i]->join();
 
 	Safe_Delete_VecList(m_vecThread);
+	closesocket(m_SeverSocket.m_Socket);
+	CloseHandle(m_CompletionPort);
+	WSACleanup();
 
 	DataManager::Get()->CloseAll();
-	closesocket(m_SeverSocket.m_Socket);
-	WSACleanup();
 }
 
 bool IOCP::Init()
@@ -62,7 +63,7 @@ void IOCP::SetSocket()
 
 	// 바인딩할 소켓 주소정보
 	m_SeverSocket.m_ClientInfo.sin_family = AF_INET;
-	m_SeverSocket.m_ClientInfo.sin_port = htons((uint16_t)PORT);
+	m_SeverSocket.m_ClientInfo.sin_port = htons(static_cast<uint16_t>(PORT));
 	inet_pton(AF_INET, Address.c_str(), &m_SeverSocket.m_ClientInfo.sin_addr);
 
 	//바인딩
@@ -102,7 +103,8 @@ void IOCP::Run()
 		IO_Data* newData = new IO_Data();
 		ZeroMemory(&newData->m_Overlapped, sizeof(newData->m_Overlapped));
 		newData->m_WsaBuf.buf = newData->GetBuffer();
-		newData->m_WsaBuf.len = newData->GetSize();
+		newData->m_WsaBuf.len = static_cast<ULONG>(newData->GetSize());
+		newData->m_Mode = READ;
 
 		//Overraped입출력 시작 의미
 		DWORD Flags = 0;
@@ -141,26 +143,27 @@ void IOCP::ThreadFunc()
 			continue;
 		}
 
+		int RWMode = IOData->m_Mode;
 		memcpy(Buffer, IOData->GetBuffer(), IOData->GetSize());
 		size_t Size = IOData->GetSize();
 		SAFE_DELETE(IOData);
 
 		lock_guard<mutex> Mutex(m_Mutex);
-		SeverMesageProcess(m_SocketInfo, Buffer, Size);
+		
+		if (RWMode == READ)
+			SeverMesageProcess(m_SocketInfo, Buffer, Size);
 	}
 }
 
 void IOCP::IOCPSeverSend(SocketInfo * Socket, IO_Data * Data)
 {
 	DWORD Flags = 0;
+	Data->m_Mode = WRITE;
 
 	int getResult = WSASend(Socket->m_Socket, &Data->m_WsaBuf, 1, NULLPTR, Flags, (LPOVERLAPPED)Data, NULLPTR);
 
 	if (getResult != 0)
-	{
-		int a = WSAGetLastError();
-		cout << "Error : " << a << endl;
-	}
+		cout << "Error : " << WSAGetLastError() << endl;
 }
 
 void IOCP::Sever_SendNewPlayerMsg(SocketInfo * Socket)
@@ -181,7 +184,7 @@ void IOCP::Sever_SendNewPlayerMsg(SocketInfo * Socket)
 
 	cout << Socket->m_CliendID << "번 클라이언트에게 플레이어 생성메세지 전송" << endl << endl;
 
-	int ClientCount = DataManager::Get()->GetClientCount();
+	size_t ClientCount = DataManager::Get()->GetClientCount();
 	auto getPlayerVec = DataManager::Get()->GetPlayerVec();
 
 	IoData->WriteBuffer<int>(&ClientCount);
@@ -209,15 +212,15 @@ void IOCP::Sever_SendNewPlayerMsg(SocketInfo * Socket)
 	IOCPSeverSend(Socket, IoData);
 }
 
-bool IOCP::Sever_SendConnectClientNewOtherPlayer(SocketInfo * NewSocket)
+void IOCP::Sever_SendConnectClientNewOtherPlayer(SocketInfo * NewSocket)
 {
 	if (DataManager::Get()->GetClientCount() == 0 || DataManager::Get()->GetClientCount() == 1)
-		return false;
+		return;
 
 	auto getVec = DataManager::Get()->GetPlayerVec();
 
 	if (getVec->size() == 0 || getVec->size() == 1)
-		return false;
+		return;
 
 	PlayerInfo* getInfo = getVec->at(getVec->size() - 1);
 
@@ -239,12 +242,12 @@ bool IOCP::Sever_SendConnectClientNewOtherPlayer(SocketInfo * NewSocket)
 	}
 }
 
-bool IOCP::SeverMesageProcess(SocketInfo * Socket, char * Data, size_t BufferSize)
+void IOCP::SeverMesageProcess(SocketInfo * Socket, char * Data, size_t BufferSize)
 {
 	ReadMemoryStream Reader(Data, BufferSize);
 
 	if (BufferSize == 0)
-		return false;
+		return;
 
 	m_State = static_cast<SEVER_DATA_TYPE>(Reader.Read<int>());
 
@@ -259,13 +262,6 @@ bool IOCP::SeverMesageProcess(SocketInfo * Socket, char * Data, size_t BufferSiz
 	}
 
 	InitIOData(Socket);
-
-	//m_State = IOCPSeverRecvMsg(Socket, Data);
-
-	//if (m_State != SST_NONE)
-	//{
-	//	InitIOData(Socket, Data);
-	//}
 }
 
 void IOCP::Sever_DieClient(SocketInfo * Socket)
@@ -273,9 +269,8 @@ void IOCP::Sever_DieClient(SocketInfo * Socket)
 	mutex Mutex;
 	size_t DeleteID = Socket->m_CliendID;
 
-	cout << DeleteID << "번 클라이언트 종료" << endl;
-
 	Mutex.lock();
+	cout << DeleteID << "번 클라이언트 종료" << endl;
 
 	Sever_SendDeleteOT(Socket);
 	DataManager::Get()->DeleteSocket(Socket);
@@ -372,15 +367,16 @@ void IOCP::Sever_SendPlayerScale(SocketInfo * Socket, float Scale)
 
 void IOCP::InitIOData(SocketInfo * Info)
 {
-	IO_Data* newIOData = new IO_Data();
-	ZeroMemory(&newIOData->m_Overlapped, sizeof(OVERLAPPED));
-	newIOData->m_WsaBuf.buf = newIOData->GetBuffer();
-	newIOData->m_WsaBuf.len = newIOData->GetSize();
+	IO_Data* IoData = new IO_Data();
+	ZeroMemory(&IoData->m_Overlapped, sizeof(OVERLAPPED));
+	IoData->m_WsaBuf.buf = IoData->GetBuffer();
+	IoData->m_WsaBuf.len = static_cast<ULONG>(IoData->GetSize());
+	IoData->m_Mode = READ;
 
 	DWORD RecvByte = 0;
 	DWORD Flag = 0;
 
-	WSARecv(Info->m_Socket, &newIOData->m_WsaBuf, 1, &RecvByte, &Flag, &newIOData->m_Overlapped, NULLPTR);
+	WSARecv(Info->m_Socket, &IoData->m_WsaBuf, 1, &RecvByte, &Flag, &IoData->m_Overlapped, NULLPTR);
 }
 
 SEVER_DATA_TYPE IOCP::ReadHeader(char * Buffer)
@@ -397,10 +393,9 @@ SEVER_DATA_TYPE IOCP::IOCPSeverRecvMsg(SocketInfo * Socket, IO_Data * Data)
 	SEVER_DATA_TYPE HeaderType = SST_NONE;
 
 	ZeroMemory(&Data->m_Overlapped, sizeof(Data->m_Overlapped));
-	int a = WSARecv(Socket->m_Socket, &Data->m_WsaBuf, 1, NULLPTR, &Flags, &Data->m_Overlapped, NULLPTR);
-	int b = WSAGetLastError();
+	int RecvByte = WSARecv(Socket->m_Socket, &Data->m_WsaBuf, 1, NULLPTR, &Flags, &Data->m_Overlapped, NULLPTR);
 
-	if (b != WSA_IO_PENDING)
+	if (WSAGetLastError() != WSA_IO_PENDING)
 	{
 		m_State = HeaderType;
 		return m_State;

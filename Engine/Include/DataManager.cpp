@@ -30,6 +30,9 @@ void DataManager::PushClient(SocketInfo * Socket)
 
 void DataManager::DeleteSocket(SocketInfo * Socket)
 {
+	mutex Mutex;
+	lock_guard<mutex> MyMutex(Mutex);
+
 	size_t DeleteID = Socket->m_CliendID;
 
 	for (size_t i = 0; i < m_vecClient.size(); i++)

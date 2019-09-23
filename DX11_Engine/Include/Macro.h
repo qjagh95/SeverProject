@@ -12,7 +12,7 @@
 #define SAFE_DELETE_ARRARY(p) if(p){delete[] p; p = NULLPTR;}
 
 #define NULLPTR nullptr
-#define READ 100;
+#define READ 100
 #define WRITE 200
 
 #define ROOT_PATH "RootPath"

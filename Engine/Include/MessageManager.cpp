@@ -44,7 +44,6 @@ void MessageManager::Client_ClientDie()
 
 void MessageManager::Client_SendPlayerPos(const Vector3& Pos)
 {
-	cout << "Æ÷¾²" << endl;
 	size_t MyID = ConnectSever::Get()->GetClientID();
 
 	IO_Data IoData = {};
@@ -154,7 +153,10 @@ void MessageManager::ClientSend(IO_Data * Data)
 	auto getSocket = ConnectSever::Get()->GetSocketInfo();
 	Data->CopyBuffer();
 	
-	int a = send(getSocket->m_Socket, Data->GetBuffer(), Data->GetSize(), 0);
+	int SendByte = send(getSocket->m_Socket, Data->GetBuffer(), Data->GetSize(), 0);
+
+	if (SendByte == 0)
+		cout << "Error : " << WSAGetLastError() << endl;
 }
 
 SEVER_DATA_TYPE MessageManager::ReadHeader(char * Buffer)
