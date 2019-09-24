@@ -309,9 +309,6 @@
     <ClInclude Include="Header.h">
       <Filter>Core\03. Header</Filter>
     </ClInclude>
-    <ClInclude Include="ConnectSever.h">
-      <Filter>Core\01. Window</Filter>
-    </ClInclude>
     <ClInclude Include="DataManager.h">
       <Filter>Core\18. DataManager</Filter>
     </ClInclude>

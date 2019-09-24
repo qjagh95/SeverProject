@@ -41,7 +41,6 @@ private:
 	float ClearColor[4];
 	GAME_MODE m_GameMode;
 	static WPARAM m_wParam;
-	SocketInfo* m_ClientSocket;
 	random_device m_RandomDevice;
 	default_random_engine m_RandomEngine;
 

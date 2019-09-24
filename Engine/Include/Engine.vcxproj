@@ -201,7 +201,6 @@
     <ClInclude Include="Component\Renderer_Com.h" />
     <ClInclude Include="Component\Transform_Com.h" />
     <ClInclude Include="Component\UIBase_Com.h" />
-    <ClInclude Include="ConnectSever.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="DataManager.h" />
     <ClInclude Include="Device.h" />

@@ -21,6 +21,7 @@ struct IO_Data
 	{
 		ZeroMemory(&m_Overlapped, sizeof(OVERLAPPED));
 		m_WsaBuf.len = 0;
+		m_Mode = -1;
 	}
 
 	void WriteBuffer(const void* Buffer, size_t size)

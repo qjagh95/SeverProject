@@ -43,15 +43,6 @@ bool IOCP::Init()
 	for (size_t i = 0; i < Info.dwNumberOfProcessors * 2; i++)
 		m_vecThread.push_back(new thread(&IOCP::ThreadFunc, this));
 
-	SetSocket();
-
-	cout << "클라 접속 대기중..." << endl;
-
-	return true;
-}
-
-void IOCP::SetSocket()
-{
 	string Address = "192.168.1.172";
 
 	m_SeverSocket.m_Socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
@@ -70,6 +61,8 @@ void IOCP::SetSocket()
 
 	if (::listen(m_SeverSocket.m_Socket, 10) == SOCKET_ERROR)
 		assert(false);
+
+	return true;
 }
 
 void IOCP::Run()
@@ -101,7 +94,7 @@ void IOCP::Run()
 		IO_Data* newData = new IO_Data();
 		ZeroMemory(&newData->m_Overlapped, sizeof(newData->m_Overlapped));
 		newData->m_WsaBuf.buf = newData->GetBuffer();
-		newData->m_WsaBuf.len = static_cast<ULONG>(newData->GetSize());
+		newData->m_WsaBuf.len = BUFFERSIZE;
 		newData->m_Mode = READ;
 
 		//Overraped입출력 시작 의미
@@ -239,7 +232,7 @@ void IOCP::Sever_SendConnectClientNewOtherPlayer(SocketInfo * NewSocket)
 	}
 }
 
-void _stdcall IOCP::SeverMesageProcess(SocketInfo * Socket, char * Data, size_t BufferSize)
+void IOCP::SeverMesageProcess(SocketInfo * Socket, char * Data, size_t BufferSize)
 {
 	ReadMemoryStream Reader(Data, BufferSize);
 
@@ -367,7 +360,7 @@ void IOCP::RecvInitIOData(SocketInfo * Info)
 	IO_Data* IoData = new IO_Data();
 	ZeroMemory(&IoData->m_Overlapped, sizeof(OVERLAPPED));
 	IoData->m_WsaBuf.buf = IoData->GetBuffer();
-	IoData->m_WsaBuf.len = static_cast<ULONG>(IoData->GetSize());
+	IoData->m_WsaBuf.len = BUFFERSIZE;
 	IoData->m_Mode = READ;
 
 	DWORD RecvByte = 0;

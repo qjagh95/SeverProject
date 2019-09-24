@@ -14,8 +14,6 @@ public:
 	void ThreadFunc();
 
 private:
-	void SetSocket();
-
 	void IOCPSeverSend(SocketInfo * Socket, IO_Data * Data);
 
 	//서버가 클라로 메인플레이어 생성 메세지 
@@ -25,7 +23,7 @@ private:
 	void Sever_SendConnectClientNewOtherPlayer(SocketInfo* NewSocket);
 
 	//서버 메세지루프
-	void _stdcall SeverMesageProcess(SocketInfo * Socket, char * Data, size_t BufferSize);
+	void SeverMesageProcess(SocketInfo * Socket, char * Data, size_t BufferSize);
 
 	//클라이언트 Die처리
 	void Sever_DieClient(SocketInfo* Socket);

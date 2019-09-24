@@ -20,8 +20,6 @@ Core::Core()
 	ZeroMemory(ClearColor, sizeof(float) * 4);
 	PathManager::Get();
 
-	m_ClientSocket = NULLPTR;
-
 	m_RandomEngine = default_random_engine(m_RandomDevice());
 	mt19937_64 Seed(m_RandomDevice());
 }
