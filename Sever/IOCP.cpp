@@ -5,6 +5,7 @@
 #include <WriteMemoryStream.h>
 #include <ReadMemoryStream.h>
 #include <Core.h>
+#include <Timer.h>
 
 JEONG_USING
 
@@ -12,12 +13,18 @@ IOCP::IOCP()
 {
 	m_State = SST_NONE;
 	m_SeverSocket.m_CliendID = DataManager::m_ClientCount;
+	TimeManager::Get()->Init();
+
+	m_TimeVar = 0.0f;
+	m_OneSecond = 1.0f;
+	m_TempSocket = NULLPTR;
 }
 
 IOCP::~IOCP()
 {
 	for (size_t i = 0; i < m_vecThread.size(); i++)
 		m_vecThread[i]->join();
+
 
 	Safe_Delete_VecList(m_vecThread);
 	closesocket(m_SeverSocket.m_Socket);
@@ -61,6 +68,8 @@ bool IOCP::Init()
 
 	if (::listen(m_SeverSocket.m_Socket, 10) == SOCKET_ERROR)
 		assert(false);
+
+	cout << "클라이언트 접속 대기중..." << endl;
 
 	return true;
 }
@@ -118,6 +127,7 @@ void IOCP::ThreadFunc()
 
 	while (true)
 	{
+		m_TempSocket = NULLPTR;
 		//입출력이 완료된 소켓의 정보 얻음
 		GetQueuedCompletionStatus(m_CompletionPort, (LPDWORD)&ByteTransferred, (PULONG_PTR)&m_SocketInfo, (LPOVERLAPPED*)&IOData, INFINITE);
 
@@ -133,13 +143,16 @@ void IOCP::ThreadFunc()
 		}
 
 		int RWMode = IOData->m_Mode;
+		IOData->CopyBuffer();
 		memcpy(Buffer, IOData->GetBuffer(), IOData->GetSize());
 
 		size_t Size = IOData->GetSize();
 		SAFE_DELETE(IOData);
 
 		lock_guard<mutex> myMutex(m_Mutex);
-		
+
+		m_TempSocket = m_SocketInfo;
+
 		if (RWMode == READ)
 			SeverMesageProcess(m_SocketInfo, Buffer, Size);
 	}
@@ -297,9 +310,17 @@ void IOCP::Sever_UpdatePos(SocketInfo * Socket, ReadMemoryStream & Reader)
 	Vector3 Pos = Reader.Read<Vector3>();
 
 	auto getInfo = DataManager::Get()->FindPlayerInfoKey(Socket->m_CliendID);
+
+	if (getInfo == NULLPTR)
+	{
+		cout << "Error! 서버에 플레이어 데이터가 없습니다." << endl;
+		TrueAssert(true);
+		return;
+	}
+
 	getInfo->m_Pos = Pos;
 
-	Sever_SendPlayerPos(Socket, Pos);
+	Sever_SendPlayerPos(Socket);
 }
 
 void IOCP::Sever_UpdateScale(SocketInfo * Socket, ReadMemoryStream & Reader)
@@ -313,24 +334,37 @@ void IOCP::Sever_UpdateScale(SocketInfo * Socket, ReadMemoryStream & Reader)
 	Sever_SendPlayerScale(Socket, Scale);
 }
 
-void IOCP::Sever_SendPlayerPos(SocketInfo * Socket, const Vector3 & Pos)
+void IOCP::Sever_SendPlayerPos(SocketInfo * Socket)
 {
+	if (Socket == NULLPTR)
+		return;
+
 	auto getVec = DataManager::Get()->GetClientVec();
 
 	if (getVec->size() == 0 || getVec->size() == 1)
 		return;
 
-	IO_Data* IoData = new IO_Data();
-	IoData->WriteHeader<PlayerPosMessage>();
-	IoData->WriteBuffer<size_t>(&Socket->m_CliendID);
-	IoData->WriteBuffer<Vector3>(&Pos);
+	static int TempFrame = 0;
+	TempFrame++;
 
-	for (auto CurClient : *getVec)
+	if (TempFrame >= 5)
 	{
-		if (CurClient->m_Socket == Socket->m_Socket)
-			continue;
+		TempFrame = 0;
 
-		IOCPSeverSend(CurClient, IoData);
+		IO_Data* IoData = new IO_Data();
+		IoData->WriteHeader<PlayerPosMessage>();
+		IoData->WriteBuffer<size_t>(&Socket->m_CliendID);
+
+		auto getInfo = DataManager::Get()->FindPlayerInfoKey(Socket->m_CliendID);
+		IoData->WriteBuffer<Vector3>(&getInfo->m_Pos);
+
+		for (auto CurClient : *getVec)
+		{
+			if (CurClient->m_Socket == Socket->m_Socket)
+				continue;
+
+			IOCPSeverSend(CurClient, IoData);
+		}
 	}
 }
 

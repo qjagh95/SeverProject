@@ -12,6 +12,7 @@ JEONG_USING
 SINGLETON_VAR_INIT(Core)
 bool Core::m_isLoop = true;
 WPARAM Core::m_wParam;
+bool Core::m_isWindowActive = false;
 
 Core::Core()
 {
@@ -194,12 +195,22 @@ LRESULT Core::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message)
 	{
-		case WM_DESTROY:
-			m_isLoop = false;
-			PostQuitMessage(0);
-			break;
-		default:
-			return DefWindowProc(hWnd, message, wParam, lParam);
+	case WM_ACTIVATE:
+	{
+		///비활성화
+		if (LOWORD(wParam) == WA_INACTIVE)
+			m_isWindowActive = false;
+		else
+			m_isWindowActive = true;
+	}
+		break;
+
+	case WM_DESTROY:
+		m_isLoop = false;
+		PostQuitMessage(0);
+		break;
+	default:
+		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 
 	return 0;

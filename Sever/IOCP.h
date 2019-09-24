@@ -38,12 +38,14 @@ private:
 	void Sever_UpdateScale(SocketInfo * Socket, ReadMemoryStream& Reader);
 
 	//플레이어 데이터 보내기
-	void Sever_SendPlayerPos(SocketInfo * Socket, const Vector3& Pos);
+	void Sever_SendPlayerPos(SocketInfo * Socket);
 	void Sever_SendPlayerScale(SocketInfo * Socket, float Scale);
 
 	void RecvInitIOData(SocketInfo* Info);
 	SEVER_DATA_TYPE ReadHeader(char* Buffer);
 	SEVER_DATA_TYPE IOCPSeverRecvMsg(SocketInfo* Socket, IO_Data* Data);
+
+	void SendPosFunc();
 
 private:
 	HANDLE m_CompletionPort;
@@ -52,6 +54,9 @@ private:
 	SocketInfo* m_SocketInfo;
 	mutex m_Mutex;
 	SEVER_DATA_TYPE m_State;
+	float m_TimeVar;
+	float m_OneSecond;
+	SocketInfo* m_TempSocket;
 
 public:
 	IOCP();

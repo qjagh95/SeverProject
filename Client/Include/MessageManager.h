@@ -42,6 +42,8 @@ private:
 	Layer* m_CurLayer;
 	thread m_Thread;
 	mutex m_Mutex;
+	float m_TimeVar;
+	float m_Second;
 
 private:
 	CLASS_IN_SINGLE(MessageManager)

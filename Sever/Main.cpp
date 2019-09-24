@@ -4,7 +4,6 @@
 #include <DataManager.h>
 #include <Core.h>
 
-
 int main()
 {
 	IOCP* newIocp = new IOCP();

@@ -13,6 +13,9 @@ MessageManager::MessageManager()
 	m_State = SST_NONE;
 	m_CurLayer = NULLPTR;
 	m_CurScene = NULLPTR;
+
+	m_TimeVar = 0.0f;
+	m_Second = 1.0f;
 }
 
 MessageManager::~MessageManager()
@@ -71,10 +74,21 @@ void MessageManager::Client_UpdateOTPos(ReadMemoryStream & Reader, size_t ID)
 	auto getOT = OTManager::Get()->FindOT(ID);
 
 	if (getOT == NULLPTR)
+	{
+		cout << "Error! OT가 없습니다" << endl;
+		TrueAssert(true);
 		return;
+	}
 
+	//Pos받음
 	Vector3 getPos = Reader.Read<Vector3>();
-	getOT->GetTransform()->SetWorldPos(getPos);
+	Vector3 OriginPos = getOT->GetTransform()->GetWorldPos();
+	Vector3 Dir = OriginPos - getPos;
+	Dir.Nomallize();
+
+	getOT->GetTransform()->Move(Dir, 100.0f);
+	
+	//getOT->GetTransform()->SetWorldPos(getPos);
 }
 
 void MessageManager::Client_UpdateOTScale(ReadMemoryStream & Reader, size_t ID)
@@ -82,10 +96,14 @@ void MessageManager::Client_UpdateOTScale(ReadMemoryStream & Reader, size_t ID)
 	auto getOT = OTManager::Get()->FindOT(ID);
 
 	if (getOT == NULLPTR)
+	{
+		cout << "Error! OT가 없습니다" << endl;
+		TrueAssert(true);
 		return;
+	}
 
 	float getScale = Reader.Read<float>();
-	getOT->GetTransform()->SetWorldPos(getScale);
+	getOT->GetTransform()->SetWorldScale(getScale, getScale, 1.0f);
 }
 
 void MessageManager::ClientMessageProcess()

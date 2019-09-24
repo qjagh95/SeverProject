@@ -183,7 +183,11 @@ bool KeyInput::KeyDown(const string & Name)
 	if (getKey == NULLPTR)
 		return false;
 
-	return getKey->KeyDown;
+	if (Core::m_isWindowActive == true)
+		return getKey->KeyDown;
+	else
+		return false;
+
 }
 
 bool KeyInput::KeyPress(const string & Name)
@@ -193,7 +197,10 @@ bool KeyInput::KeyPress(const string & Name)
 	if (getKey == NULLPTR)
 		return false;
 
-	return getKey->KeyPress;
+	if (Core::m_isWindowActive == true)
+		return getKey->KeyPress;
+	else
+		return false;
 }
 
 bool KeyInput::KeyUp(const string & Name)
@@ -203,7 +210,10 @@ bool KeyInput::KeyUp(const string & Name)
 	if (getKey == NULLPTR)
 		return false;
 
-	return getKey->KeyUp;
+	if (Core::m_isWindowActive == true)
+		return getKey->KeyUp;
+	else
+		return false;
 }
    
 KeyInfo* KeyInput::FindKey(const string& Name)

@@ -21,6 +21,7 @@ public:
 
 public:
 	PROJECT_TYPE m_ProjectType;
+	static bool m_isWindowActive;
 
 private:
 	int Input(float DeltaTime);
