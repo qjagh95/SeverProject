@@ -1,10 +1,7 @@
 #pragma once
 
-JEONG_BEGIN
-
-class Eatting;
-class Player_Com;
-class JEONG_DLL Stage_Com : public UserComponent_Base
+JEONG_USING
+class Stage_Com : public UserComponent_Base
 {
 public:
 	bool Init() override;
@@ -23,6 +20,7 @@ private:
 	vector<GameObject*> m_vecAllEatting;
 	unordered_map<__int64, GameObject*> m_AllEattingMap; //매모리를 희생해서 찾는속도를 빠르게하겠다.
 	vector<GameObject*> m_UpdateEatting;
+	unordered_map<__int64, GameObject*> m_SeeList;
 	static __int64 m_Count;
 	Vector2 m_WinSize;
 
@@ -31,5 +29,3 @@ public:
 	Stage_Com(const Stage_Com& CopyData);
 	~Stage_Com();
 };
-
-JEONG_END

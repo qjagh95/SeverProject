@@ -1,7 +1,5 @@
-#include "stdafx.h"
+#include "ClientHeader.h"
 #include "OtharPlayer_Com.h"
-
-JEONG_USING
 
 OtharPlayer_Com::OtharPlayer_Com()
 {

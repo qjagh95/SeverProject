@@ -1,7 +1,5 @@
 #pragma once
 JEONG_BEGIN
-
-class Player_Com;
 class JEONG_DLL DataManager
 {
 public:

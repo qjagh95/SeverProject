@@ -8,13 +8,11 @@
 int main()
 {
 	IOCP* newIocp = new IOCP();
-	MessageManager::Get();
 
 	newIocp->Init();
 	newIocp->Run();
 
 	SAFE_DELETE(newIocp);
-	MessageManager::Delete();
 	Core::Delete();
 	DataManager::Delete();
 }

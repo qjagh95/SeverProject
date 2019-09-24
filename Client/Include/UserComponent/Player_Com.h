@@ -1,8 +1,8 @@
 #pragma once
 #include "BasicInfo.h"
 
-JEONG_BEGIN
-class JEONG_DLL OtharPlayer_Com : public BasicInfo
+JEONG_USING
+class Player_Com : public BasicInfo
 {
 public:
 	bool Init() override;
@@ -11,11 +11,18 @@ public:
 	int LateUpdate(float DeltaTime) override;
 	void Collision(float DeltaTime) override;
 	void Render(float DeltaTime) override;
-	OtharPlayer_Com* Clone() override;
+	Player_Com* Clone() override;
+	
+	void ScalePlus(float Scale);
+
+private:
+	void Move(float DeltaTime);
+
+protected:
+	Player_Com();
+	Player_Com(const Player_Com& userCom);
+	~Player_Com();
 
 public:
-	OtharPlayer_Com();
-	~OtharPlayer_Com();
+	friend class GameObject;
 };
-
-JEONG_END

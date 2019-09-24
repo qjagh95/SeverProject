@@ -2,14 +2,11 @@
 #include "Core.h"
 #include "Device.h"
 #include "Timer.h"
-#include "MessageManager.h"
-#include "ConnectSever.h"
 
 #include "Resource/Mesh.h"
 
 #include "Render\Shader.h"
 #include "DataManager.h"
-#include "MessageManager.h"
 
 JEONG_USING
 SINGLETON_VAR_INIT(Core)
@@ -40,8 +37,6 @@ Core::~Core()
 	CollsionManager::Delete();
 	KeyInput::Delete();
 	RenderManager::Delete();
-	ConnectSever::Delete();
-	MessageManager::Delete();
 	DataManager::Delete();
 	CoUninitialize();
 }
@@ -118,7 +113,6 @@ bool Core::Init(HINSTANCE hInst, HWND hWnd, unsigned int Width, unsigned int Hei
 	}
 
 	SetClearColor(0, 150, 255, 0);
-	m_ClientSocket = ConnectSever::Get()->GetSocketInfo();
 
 	return true;
 }
@@ -205,7 +199,6 @@ LRESULT Core::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_DESTROY:
 			m_isLoop = false;
 			PostQuitMessage(0);
-			ConnectSever::Get()->CloseSocket();
 			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);

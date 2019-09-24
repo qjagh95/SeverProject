@@ -224,19 +224,34 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BasicInfo.cpp" />
     <ClCompile Include="ClientHeader.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="ConnectSever.cpp" />
+    <ClCompile Include="MessageManager.cpp" />
     <ClCompile Include="SceneMain\MainScene.cpp" />
+    <ClCompile Include="UserComponent\Eatting_Com.cpp" />
+    <ClCompile Include="UserComponent\OtharPlayer_Com.cpp" />
+    <ClCompile Include="UserComponent\OTManager.cpp" />
+    <ClCompile Include="UserComponent\Player_Com.cpp" />
+    <ClCompile Include="UserComponent\Stage_Com.cpp" />
     <ClCompile Include="WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicInfo.h" />
     <ClInclude Include="ClientHeader.h" />
+    <ClInclude Include="ConnectSever.h" />
+    <ClInclude Include="MessageManager.h" />
     <ClInclude Include="SceneMain\MainScene.h" />
+    <ClInclude Include="UserComponent\Eatting_Com.h" />
+    <ClInclude Include="UserComponent\OtharPlayer_Com.h" />
+    <ClInclude Include="UserComponent\OTManager.h" />
+    <ClInclude Include="UserComponent\Player_Com.h" />
+    <ClInclude Include="UserComponent\Stage_Com.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\DirectXTK\DirectXTK_Desktop_2017_Win10.vcxproj" />

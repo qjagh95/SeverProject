@@ -1,9 +1,5 @@
 #include "stdafx.h"
 #include "DataManager.h"
-#include "Player_Com.h"
-#include "OtharPlayer_Com.h"
-
-#include "OTManager.h"
 
 JEONG_USING
 SINGLETON_VAR_INIT(DataManager)

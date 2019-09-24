@@ -1,11 +1,11 @@
 #pragma once
 
-#include "UserComponent/UserComponent_Base.h"
-JEONG_BEGIN
+#include <UserComponent/UserComponent_Base.h>
+#include <Component/ColliderRect_Com.h>
+#include <Component/ColliderCircle_Com.h>
 
-class ColliderCircle_Com;
-class ColliderRect_Com;
-class JEONG_DLL BasicInfo : public UserComponent_Base
+JEONG_USING
+class BasicInfo : public UserComponent_Base
 {
 public:
 	virtual bool Init() override;
@@ -37,6 +37,3 @@ public:
 	BasicInfo();
 	virtual ~BasicInfo();
 };
-
-JEONG_END
-

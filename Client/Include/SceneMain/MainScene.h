@@ -1,9 +1,6 @@
 #pragma once
 #include "Scene/SceneComponent.h"
-
-#include <Eatting_Com.h>
-#include <Stage_Com.h>
-#include <Player_Com.h>
+#include "UserComponent/Stage_Com.h"
 
 JEONG_USING
 class MainScene : public SceneComponent

@@ -2,6 +2,9 @@
 
 JEONG_USING
 
+#include <ReadMemoryStream.h>
+#include <WriteMemoryStream.h>
+
 class IOCP
 {
 public:

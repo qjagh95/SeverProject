@@ -1,8 +1,7 @@
-#include "stdafx.h"
+#include "ClientHeader.h"
 #include "OTManager.h"
 #include "OtharPlayer_Com.h"
 
-JEONG_USING
 SINGLETON_VAR_INIT(OTManager)
 
 OTManager::OTManager()

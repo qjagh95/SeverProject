@@ -1,8 +1,7 @@
-#include "stdafx.h"
+#include "ClientHeader.h"
 #include "ConnectSever.h"
-#include "Core.h"
+#include <Core.h>
 
-JEONG_USING
 SINGLETON_VAR_INIT(ConnectSever)
 
 ConnectSever::ConnectSever()

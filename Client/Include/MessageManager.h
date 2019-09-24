@@ -1,9 +1,12 @@
 #pragma once
 
-JEONG_BEGIN
+#include <ReadMemoryStream.h>
+#include <WriteMemoryStream.h>
+#include "UserComponent/Player_Com.h"
 
-class ReadMemoryStream;
-class JEONG_DLL MessageManager
+JEONG_USING
+class Player_Com;
+class MessageManager
 {
 public:
 	//클라가 서버로 보내는 함수
@@ -33,8 +36,6 @@ private:
 
 	SEVER_DATA_TYPE ReadHeader(char* Buffer);
 
-	void InitIOData(SocketInfo* Info);
-
 private:
 	SEVER_DATA_TYPE m_State;
 	Scene* m_CurScene;
@@ -45,5 +46,3 @@ private:
 private:
 	CLASS_IN_SINGLE(MessageManager)
 };
-
-JEONG_END

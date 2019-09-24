@@ -1,15 +1,10 @@
-#include "stdafx.h"
+#include "ClientHeader.h"
+#include <Core.h>
 #include "MessageManager.h"
-#include "WriteMemoryStream.h"
-#include "ReadMemoryStream.h"
 #include "DataManager.h"
-#include "Core.h"
-#include "Player_Com.h"
+#include "UserComponent/OtharPlayer_Com.h"
 #include "ConnectSever.h"
-#include "OtharPlayer_Com.h"
-#include "OTManager.h"
-
-JEONG_USING
+#include "UserComponent/OTManager.h"
 
 SINGLETON_VAR_INIT(MessageManager)
 

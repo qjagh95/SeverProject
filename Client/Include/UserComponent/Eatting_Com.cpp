@@ -1,11 +1,8 @@
-#include "stdafx.h"
+#include "ClientHeader.h"
 #include "Eatting_Com.h"
 #include "Stage_Com.h"
 #include "Player_Com.h"
 
-#include "Component/ColliderCircle_Com.h"
-
-JEONG_USING
 Eatting_Com::Eatting_Com()
 {
 	m_isUpdate = true;

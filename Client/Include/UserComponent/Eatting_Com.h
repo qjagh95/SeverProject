@@ -1,10 +1,9 @@
 #pragma once
 #include "BasicInfo.h"
 
-JEONG_BEGIN
-
+JEONG_USING
 class Stage_Com;
-class JEONG_DLL Eatting_Com : public BasicInfo
+class Eatting_Com : public BasicInfo
 {
 public:
 	bool Init() override;
@@ -32,6 +31,3 @@ public:
 	Eatting_Com();
 	~Eatting_Com();
 };
-
-
-JEONG_END

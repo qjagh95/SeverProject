@@ -1,8 +1,8 @@
 #pragma once
 #include "BasicInfo.h"
 
-JEONG_BEGIN
-class JEONG_DLL OtharPlayer_Com : public BasicInfo
+JEONG_USING
+class OtharPlayer_Com : public BasicInfo
 {
 public:
 	bool Init() override;
@@ -17,5 +17,3 @@ public:
 	OtharPlayer_Com();
 	~OtharPlayer_Com();
 };
-
-JEONG_END

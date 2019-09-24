@@ -2,15 +2,17 @@
 #include "MainScene.h"
 #include "GameObject.h"
 
-#include <messagemanager.h>
+#include "MessageManager.h"
 
 #include "Scene/Scene.h"
 #include "scene/Layer.h"
 
-#include "Component/Component_Base.h"
-#include "Component/BackColor_Com.h"
+#include "UserComponent/OtharPlayer_Com.h"
+#include "UserComponent/Eatting_Com.h"
+#include "UserComponent/Stage_Com.h"
+#include "UserComponent/Player_Com.h"
 
-#include <OtharPlayer_Com.h>
+#include <Component/BackColor_Com.h>
 
 MainScene::MainScene()
 {
@@ -51,7 +53,6 @@ bool MainScene::Init()
 	SAFE_RELEASE(Default);
 	SAFE_RELEASE(UILayer);
 	SAFE_RELEASE(BackLayer);
-
 
 	return true;
 }

@@ -185,7 +185,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="BasicInfo.h" />
     <ClInclude Include="BineryReader.h" />
     <ClInclude Include="BineryWriter.h" />
     <ClInclude Include="CollsionManager.h" />
@@ -206,16 +205,11 @@
     <ClInclude Include="Core.h" />
     <ClInclude Include="DataManager.h" />
     <ClInclude Include="Device.h" />
-    <ClInclude Include="Eatting_Com.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Header.h" />
     <ClInclude Include="KeyInput.h" />
     <ClInclude Include="Macro.h" />
-    <ClInclude Include="MessageManager.h" />
-    <ClInclude Include="OtharPlayer_Com.h" />
-    <ClInclude Include="OTManager.h" />
     <ClInclude Include="PathManager.h" />
-    <ClInclude Include="Player_Com.h" />
     <ClInclude Include="ReadMemoryStream.h" />
     <ClInclude Include="RefCount.h" />
     <ClInclude Include="Render\BlendState.h" />
@@ -234,7 +228,6 @@
     <ClInclude Include="Scene\Scene.h" />
     <ClInclude Include="Scene\SceneComponent.h" />
     <ClInclude Include="Scene\SceneManager.h" />
-    <ClInclude Include="Stage_Com.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TimeManager.h" />
     <ClInclude Include="Timer.h" />
@@ -244,7 +237,6 @@
     <ClInclude Include="WriteMemoryStream.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BasicInfo.cpp" />
     <ClCompile Include="BineryReader.cpp" />
     <ClCompile Include="BineryWriter.cpp" />
     <ClCompile Include="CollsionManager.cpp" />
@@ -261,19 +253,13 @@
     <ClCompile Include="Component\Renderer_Com.cpp" />
     <ClCompile Include="Component\Transform_Com.cpp" />
     <ClCompile Include="Component\UIBase_Com.cpp" />
-    <ClCompile Include="ConnectSever.cpp" />
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="DataManager.cpp" />
     <ClCompile Include="Device.cpp" />
-    <ClCompile Include="Eatting_Com.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Header.cpp" />
     <ClCompile Include="KeyInput.cpp" />
-    <ClCompile Include="MessageManager.cpp" />
-    <ClCompile Include="OtharPlayer_Com.cpp" />
-    <ClCompile Include="OTManager.cpp" />
     <ClCompile Include="PathManager.cpp" />
-    <ClCompile Include="Player_Com.cpp" />
     <ClCompile Include="ReadMemoryStream.cpp" />
     <ClCompile Include="RefCount.cpp" />
     <ClCompile Include="Render\BlendState.cpp" />
@@ -291,7 +277,6 @@
     <ClCompile Include="Scene\Scene.cpp" />
     <ClCompile Include="Scene\SceneComponent.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
-    <ClCompile Include="Stage_Com.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>

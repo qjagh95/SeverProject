@@ -16,7 +16,6 @@
 #pragma comment(lib, "Engine64.lib")
 
 #include <stdafx.h>
-#include <MessageManager.h>
 
 #include <MathHeader.h>
 #include <Vector4.h>

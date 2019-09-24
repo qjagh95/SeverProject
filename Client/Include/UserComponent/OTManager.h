@@ -1,9 +1,8 @@
 #pragma once
 
-JEONG_BEGIN
-
+JEONG_USING
 class OtharPlayer_Com;
-class JEONG_DLL OTManager
+class OTManager
 {
 public:
 	void InsertOT(size_t Key, OtharPlayer_Com* OT);
@@ -17,6 +16,4 @@ private:
 private:
 	CLASS_IN_SINGLE(OTManager)
 };
-
-JEONG_END
 

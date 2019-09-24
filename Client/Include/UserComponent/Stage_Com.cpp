@@ -1,11 +1,10 @@
-#include "stdafx.h"
+#include "ClientHeader.h"
 #include "Stage_Com.h"
 #include "Eatting_Com.h"
 #include "Player_Com.h"
 
 #include "Core.h"
 
-JEONG_USING
 __int64 Stage_Com::m_Count = 0;
 
 Stage_Com::Stage_Com()

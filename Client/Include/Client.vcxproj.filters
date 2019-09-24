@@ -14,6 +14,12 @@
     <Filter Include="BasicInfo">
       <UniqueIdentifier>{51687e10-03d8-4381-9b3e-08be84b66297}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MainScene\Com">
+      <UniqueIdentifier>{5746feb3-e87f-4758-9aa1-252fc1ef554b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MessageManager">
+      <UniqueIdentifier>{938c7b67-7dba-4e64-9b2e-d0c5b7be9af5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -23,6 +29,30 @@
       <Filter>MainScene\SceneMain</Filter>
     </ClCompile>
     <ClCompile Include="ClientHeader.cpp">
+      <Filter>WinMain</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Eatting_Com.cpp">
+      <Filter>MainScene\Com</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\OtharPlayer_Com.cpp">
+      <Filter>MainScene\Com</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\OTManager.cpp">
+      <Filter>MainScene\Com</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Player_Com.cpp">
+      <Filter>MainScene\Com</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Stage_Com.cpp">
+      <Filter>MainScene\Com</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicInfo.cpp">
+      <Filter>BasicInfo</Filter>
+    </ClCompile>
+    <ClCompile Include="MessageManager.cpp">
+      <Filter>MessageManager</Filter>
+    </ClCompile>
+    <ClCompile Include="ConnectSever.cpp">
       <Filter>WinMain</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,6 +65,27 @@
     </ClInclude>
     <ClInclude Include="BasicInfo.h">
       <Filter>BasicInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Eatting_Com.h">
+      <Filter>MainScene\Com</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\OtharPlayer_Com.h">
+      <Filter>MainScene\Com</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\OTManager.h">
+      <Filter>MainScene\Com</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Player_Com.h">
+      <Filter>MainScene\Com</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Stage_Com.h">
+      <Filter>MainScene\Com</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageManager.h">
+      <Filter>MessageManager</Filter>
+    </ClInclude>
+    <ClInclude Include="ConnectSever.h">
+      <Filter>WinMain</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

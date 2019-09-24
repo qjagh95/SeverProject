@@ -1,8 +1,7 @@
 #pragma once
 
-JEONG_BEGIN
-
-class JEONG_DLL ConnectSever
+JEONG_USING
+class ConnectSever
 {
 public:
 	bool Init();
@@ -27,5 +26,3 @@ private:
 public:
 	CLASS_IN_SINGLE(ConnectSever)
 };
-
-JEONG_END

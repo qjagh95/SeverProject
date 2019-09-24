@@ -1,10 +1,5 @@
-#include "stdafx.h"
+#include "ClientHeader.h"
 #include "BasicInfo.h"
-
-#include "Component/ColliderCircle_Com.h"
-#include "Component/ColliderRect_Com.h"
-
-JEONG_USING
 
 BasicInfo::BasicInfo()
 {
