@@ -15,13 +15,12 @@ struct IO_Data
 	OVERLAPPED m_Overlapped;
 	WSABUF m_WsaBuf;
 	WriteMemoryStream m_Stream;
-	int m_Mode;
+	int	m_Mode;
 
 	IO_Data()
 	{
 		ZeroMemory(&m_Overlapped, sizeof(OVERLAPPED));
 		m_WsaBuf.len = 0;
-		m_Mode = WRITE;
 	}
 
 	void WriteBuffer(const void* Buffer, size_t size)
@@ -43,7 +42,7 @@ struct IO_Data
 	void WriteHeader()
 	{
 		T Header;
-		m_Stream.Write(&Header.m_Type, sizeof(4));
+		m_Stream.Write(&Header.m_Type, 4);
 		CopyBuffer();
 	}
 
@@ -182,19 +181,19 @@ public:
 	}
 };
 
-class JEONG_DLL PlayerPos : public Header
+class JEONG_DLL PlayerPosMessage : public Header
 {
 public:
-	PlayerPos()
+	PlayerPosMessage()
 	{
 		m_Type = SST_PLAYER_POS;
 	}
 };
 
-class JEONG_DLL PlayerScale : public Header
+class JEONG_DLL PlayerScaleMessage : public Header
 {
 public:
-	PlayerScale()
+	PlayerScaleMessage()
 	{
 		m_Type = SST_PLAYER_POS;
 	}

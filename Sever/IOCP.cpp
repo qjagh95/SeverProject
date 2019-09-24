@@ -16,8 +16,6 @@ IOCP::IOCP()
 
 IOCP::~IOCP()
 {
-	Core::Delete();
-
 	for (size_t i = 0; i < m_vecThread.size(); i++)
 		m_vecThread[i]->join();
 
@@ -108,8 +106,8 @@ void IOCP::Run()
 
 		//Overraped입출력 시작 의미
 		DWORD Flags = 0;
-		LPDWORD RecvBytes = 0;
-		WSARecv(ClientSock, &newData->m_WsaBuf, 1, RecvBytes, &Flags, &newData->m_Overlapped, NULLPTR);
+		DWORD RecvBytes = 0;
+		WSARecv(ClientSock, &newData->m_WsaBuf, 1, &RecvBytes, &Flags, &newData->m_Overlapped, NULLPTR);
 
 		//새로 접속한 클라에 메인플레이어 생성
 		Sever_SendNewPlayerMsg(newInfo);
@@ -134,21 +132,20 @@ void IOCP::ThreadFunc()
 		if (ByteTransferred == 0)
 		{
 			mutex Mutex;
-			Mutex.lock();
+			lock_guard<mutex> LockMutex(Mutex);
 
 			Sever_DieClient(m_SocketInfo);
 			SAFE_DELETE(IOData);
-
-			Mutex.unlock();
 			continue;
 		}
 
 		int RWMode = IOData->m_Mode;
 		memcpy(Buffer, IOData->GetBuffer(), IOData->GetSize());
+
 		size_t Size = IOData->GetSize();
 		SAFE_DELETE(IOData);
 
-		lock_guard<mutex> Mutex(m_Mutex);
+		lock_guard<mutex> myMutex(m_Mutex);
 		
 		if (RWMode == READ)
 			SeverMesageProcess(m_SocketInfo, Buffer, Size);
@@ -242,7 +239,7 @@ void IOCP::Sever_SendConnectClientNewOtherPlayer(SocketInfo * NewSocket)
 	}
 }
 
-void IOCP::SeverMesageProcess(SocketInfo * Socket, char * Data, size_t BufferSize)
+void _stdcall IOCP::SeverMesageProcess(SocketInfo * Socket, char * Data, size_t BufferSize)
 {
 	ReadMemoryStream Reader(Data, BufferSize);
 
@@ -261,7 +258,7 @@ void IOCP::SeverMesageProcess(SocketInfo * Socket, char * Data, size_t BufferSiz
 		break;
 	}
 
-	InitIOData(Socket);
+	RecvInitIOData(Socket);
 }
 
 void IOCP::Sever_DieClient(SocketInfo * Socket)
@@ -285,9 +282,9 @@ void IOCP::Sever_SendDeleteOT(SocketInfo * Socket)
 
 	size_t DeleteID = Socket->m_CliendID;
 
-	IO_Data IoData = {};
-	IoData.WriteHeader<OtherPlayerDelete>();
-	IoData.WriteBuffer<size_t>(&DeleteID);
+	IO_Data* IoData = new IO_Data();
+	IoData->WriteHeader<OtherPlayerDelete>();
+	IoData->WriteBuffer<size_t>(&DeleteID);
 
 	mutex Mutex;
 	lock_guard<mutex> LockMutex(Mutex);
@@ -297,7 +294,7 @@ void IOCP::Sever_SendDeleteOT(SocketInfo * Socket)
 		if (CurClient->m_Socket == Socket->m_Socket)
 			continue;
 
-		IOCPSeverSend(CurClient, &IoData);
+		IOCPSeverSend(CurClient, IoData);
 	}
 }
 
@@ -330,17 +327,17 @@ void IOCP::Sever_SendPlayerPos(SocketInfo * Socket, const Vector3 & Pos)
 	if (getVec->size() == 0 || getVec->size() == 1)
 		return;
 
-	IO_Data IoData = {};
-	IoData.WriteHeader<PlayerPos>();
-	IoData.WriteBuffer<size_t>(&Socket->m_CliendID);
-	IoData.WriteBuffer<Vector3>(&Pos);
+	IO_Data* IoData = new IO_Data();
+	IoData->WriteHeader<PlayerPosMessage>();
+	IoData->WriteBuffer<size_t>(&Socket->m_CliendID);
+	IoData->WriteBuffer<Vector3>(&Pos);
 
 	for (auto CurClient : *getVec)
 	{
 		if (CurClient->m_Socket == Socket->m_Socket)
 			continue;
 
-		IOCPSeverSend(CurClient, &IoData);
+		IOCPSeverSend(CurClient, IoData);
 	}
 }
 
@@ -351,21 +348,21 @@ void IOCP::Sever_SendPlayerScale(SocketInfo * Socket, float Scale)
 	if (getVec->size() == 0 || getVec->size() == 1)
 		return;
 
-	IO_Data IoData = {};
-	IoData.WriteHeader<PlayerPos>();
-	IoData.WriteBuffer<size_t>(&Socket->m_CliendID);
-	IoData.WriteBuffer<float>(&Scale);
+	IO_Data* IoData = new IO_Data();
+	IoData->WriteHeader<PlayerScaleMessage>();
+	IoData->WriteBuffer<size_t>(&Socket->m_CliendID);
+	IoData->WriteBuffer<float>(&Scale);
 
 	for (auto CurClient : *getVec)
 	{
 		if (CurClient->m_Socket == Socket->m_Socket)
 			continue;
 
-		IOCPSeverSend(CurClient, &IoData);
+		IOCPSeverSend(CurClient, IoData);
 	}
 }
 
-void IOCP::InitIOData(SocketInfo * Info)
+void IOCP::RecvInitIOData(SocketInfo * Info)
 {
 	IO_Data* IoData = new IO_Data();
 	ZeroMemory(&IoData->m_Overlapped, sizeof(OVERLAPPED));
@@ -422,3 +419,4 @@ SEVER_DATA_TYPE IOCP::IOCPSeverRecvMsg(SocketInfo * Socket, IO_Data * Data)
 
 	return HeaderType;
 }
+

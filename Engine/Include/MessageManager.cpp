@@ -47,7 +47,7 @@ void MessageManager::Client_SendPlayerPos(const Vector3& Pos)
 	size_t MyID = ConnectSever::Get()->GetClientID();
 
 	IO_Data IoData = {};
-	IoData.WriteHeader<PlayerPos>();
+	IoData.WriteHeader<PlayerPosMessage>();
 	IoData.WriteBuffer<size_t>(&MyID);
 	IoData.WriteBuffer<Vector3>(&Pos);
 
@@ -59,14 +59,14 @@ void MessageManager::Client_SendPlayerScale(float Scale)
 	size_t MyID = ConnectSever::Get()->GetClientID();
 
 	IO_Data IoData = {};
-	IoData.WriteHeader<ClientDieMessage>();
+	IoData.WriteHeader<PlayerScaleMessage>();
 	IoData.WriteBuffer<size_t>(&MyID);
 	IoData.WriteBuffer<float>(&Scale);
 
 	ClientSend(&IoData);
 }
 
-void MessageManager::OtherPlayerDie(ReadMemoryStream& Reader, size_t DeleteID)
+void MessageManager::OtherPlayerDie(size_t DeleteID)
 {
 	OTManager::Get()->DeleteOT(DeleteID);
 }
@@ -129,7 +129,7 @@ void MessageManager::ClientMessageProcess()
 				Client_UpdateOTScale(Reader, ClientID);
 				break;
 			case SST_OTHER_PLAYER_DELETE:
-				OtherPlayerDie(Reader, ClientID);
+				OtherPlayerDie(ClientID);
 				break;
 			case SST_CREATE_EAT_OBJECT:
 				break;
@@ -153,10 +153,10 @@ void MessageManager::ClientSend(IO_Data * Data)
 	auto getSocket = ConnectSever::Get()->GetSocketInfo();
 	Data->CopyBuffer();
 	
-	int SendByte = send(getSocket->m_Socket, Data->GetBuffer(), Data->GetSize(), 0);
+	int SendByte = send(getSocket->m_Socket, Data->GetBuffer(), static_cast<int>(Data->GetSize()), 0);
 
 	if (SendByte == 0)
-		cout << "Error : " << WSAGetLastError() << endl;
+		cout << "Error : " << GetLastError() << endl;
 }
 
 SEVER_DATA_TYPE MessageManager::ReadHeader(char * Buffer)

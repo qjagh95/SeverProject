@@ -10,9 +10,9 @@ public:
 	void Client_ClientDie();
 	void Client_SendPlayerPos(const Vector3& Pos);
 	void Client_SendPlayerScale(float Scale);
-	void OtherPlayerDie(ReadMemoryStream& Reader, size_t DeleteID);
 	void Client_UpdateOTPos(ReadMemoryStream& Reader, size_t ID);
 	void Client_UpdateOTScale(ReadMemoryStream& Reader, size_t ID);
+	void OtherPlayerDie(size_t DeleteID);
 
 	//클라용함수
 	void SetScene(Scene* scene) { m_CurScene = scene; };

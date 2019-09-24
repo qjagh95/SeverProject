@@ -22,7 +22,7 @@ private:
 	void Sever_SendConnectClientNewOtherPlayer(SocketInfo* NewSocket);
 
 	//서버 메세지루프
-	void SeverMesageProcess(SocketInfo * Socket, char * Data, size_t BufferSize);
+	void _stdcall SeverMesageProcess(SocketInfo * Socket, char * Data, size_t BufferSize);
 
 	//클라이언트 Die처리
 	void Sever_DieClient(SocketInfo* Socket);
@@ -40,7 +40,7 @@ private:
 	void Sever_SendPlayerPos(SocketInfo * Socket, const Vector3& Pos);
 	void Sever_SendPlayerScale(SocketInfo * Socket, float Scale);
 
-	void InitIOData(SocketInfo* Info);
+	void RecvInitIOData(SocketInfo* Info);
 	SEVER_DATA_TYPE ReadHeader(char* Buffer);
 	SEVER_DATA_TYPE IOCPSeverRecvMsg(SocketInfo* Socket, IO_Data* Data);
 

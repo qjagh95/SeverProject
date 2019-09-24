@@ -41,7 +41,7 @@ struct IO_Data
 	void WriteHeader()
 	{
 		T Header;
-		m_Stream.Write(&Header.m_Type, sizeof(4));
+		m_Stream.Write(&Header.m_Type, 4);
 		CopyBuffer();
 	}
 
@@ -96,7 +96,7 @@ struct IO_Data
 		if (m_Stream.GetSize() == 0)
 		{
 			m_Stream.Write(m_WsaBuf.buf, m_WsaBuf.len);
-			m_WsaBuf.len = m_Stream.GetSize();
+			m_WsaBuf.len = static_cast<ULONG>(m_Stream.GetSize());
 			m_WsaBuf.buf = m_Stream.GetBuffer();
 		}
 		else
@@ -180,19 +180,19 @@ public:
 	}
 };
 
-class JEONG_DLL PlayerPos : public Header
+class JEONG_DLL PlayerPosMessage : public Header
 {
 public:
-	PlayerPos()
+	PlayerPosMessage()
 	{
 		m_Type = SST_PLAYER_POS;
 	}
 };
 
-class JEONG_DLL PlayerScale : public Header
+class JEONG_DLL PlayerScaleMessage : public Header
 {
 public:
-	PlayerScale()
+	PlayerScaleMessage()
 	{
 		m_Type = SST_PLAYER_POS;
 	}
