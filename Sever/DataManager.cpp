@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "DataManager.h"
+#include <Core.h>
 
 JEONG_USING
 SINGLETON_VAR_INIT(DataManager)
@@ -9,12 +10,14 @@ size_t DataManager::m_PlayerCount = 0;
 
 DataManager::DataManager()
 {
+
 }
 
 DataManager::~DataManager()
 {
 	Safe_Delete_VecList(m_vecClient);
 	Safe_Delete_VecList(m_vecPlayerInfo);
+	Safe_Delete_VecList(m_vecEat);
 }
 
 void DataManager::PushClient(SocketInfo * Socket)
@@ -97,5 +100,27 @@ void DataManager::CloseAll()
 	{
 		closesocket(CurClient->m_Socket);
 		DeleteSocket(CurClient);
+	}
+}
+
+void DataManager::Init()
+{
+	m_vecEat.reserve(10000);
+
+	for (size_t i = 0; i < 10000; i++)
+	{
+		int RandIndex = Core::Get()->RandomRange(0, 140);
+
+		EatInfo* newInfo = new EatInfo();
+		newInfo->Color = Vector4::AllColor[RandIndex];
+		newInfo->ID = static_cast<int>(i);
+
+		float X = static_cast<float>(Core::Get()->RandomRange(0, 50000));
+		float Y = static_cast<float>(Core::Get()->RandomRange(0, 50000));
+		newInfo->Pos.x = static_cast<float>(X);
+		newInfo->Pos.y = static_cast<float>(Y);
+		newInfo->Pos.z = 1.0f;
+
+		m_vecEat.push_back(newInfo);
 	}
 }

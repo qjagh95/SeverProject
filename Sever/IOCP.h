@@ -45,6 +45,8 @@ private:
 	SEVER_DATA_TYPE ReadHeader(char* Buffer);
 	SEVER_DATA_TYPE IOCPSeverRecvMsg(SocketInfo* Socket, IO_Data* Data);
 
+	void Sever_SendSeeList(SocketInfo * Socket);
+
 private:
 	HANDLE m_CompletionPort;
 	SocketInfo m_SeverSocket;

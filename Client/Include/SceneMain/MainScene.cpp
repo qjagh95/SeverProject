@@ -34,9 +34,6 @@ bool MainScene::Init()
 	Layer* Default = m_Scene->FindLayer("Default");
 	Layer* UILayer = m_Scene->FindLayer("UI");
 
-	MessageManager::Get()->SetScene(m_Scene);
-	MessageManager::Get()->SetLayer(Default);
-
 	GameObject* BackObject = GameObject::CreateObject("BackObject", BackLayer);
 	BackColor_Com* BackCom = BackObject->AddComponent<BackColor_Com>("BackColor");
 	BackCom->SetBackColor(Vector4(100.0f, 50.0f, 255.0f, 255.0f));
@@ -46,6 +43,10 @@ bool MainScene::Init()
 
 	GameObject* StageObj = GameObject::CreateObject("StageObj", Default);
 	Stage_Com* MainStage = StageObj->AddComponent<Stage_Com>("StageCom");
+
+	MessageManager::Get()->SetScene(m_Scene);
+	MessageManager::Get()->SetLayer(Default);
+	MessageManager::Get()->SetStage(MainStage);
 
 	SAFE_RELEASE(mainCamera);
 	SAFE_RELEASE(StageObj);

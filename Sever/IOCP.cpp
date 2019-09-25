@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "IOCP.h"
 
-#include <DataManager.h>
+#include "DataManager.h"
 #include <WriteMemoryStream.h>
 #include <ReadMemoryStream.h>
 #include <Core.h>
@@ -67,6 +67,7 @@ bool IOCP::Init()
 	if (::listen(m_SeverSocket.m_Socket, 10) == SOCKET_ERROR)
 		assert(false);
 
+	DataManager::Get()->Init();
 	cout << "클라이언트 접속 대기중..." << endl;
 
 	return true;
@@ -114,6 +115,10 @@ void IOCP::Run()
 
 		//기존 접속한 클라에 OT생성
 		Sever_SendConnectClientNewOtherPlayer(newInfo);
+
+		Sleep(500);
+		//EatData전송
+		Sever_SendSeeList(newInfo);
 	}
 }
 
@@ -437,4 +442,37 @@ SEVER_DATA_TYPE IOCP::IOCPSeverRecvMsg(SocketInfo * Socket, IO_Data * Data)
 	Data->HeaderErase();
 
 	return HeaderType;
+}
+
+void IOCP::Sever_SendSeeList(SocketInfo * Socket)
+{
+	auto getEatVec = DataManager::Get()->GetEatVec();
+	vector<EatInfo*> SendList;
+	SendList.reserve(50);
+
+	for (auto CurEat : *getEatVec)
+	{
+		//시야판단
+		//초기위치
+		Vector3 Origin = Vector3(0.0f, 500.0f, 0);
+		Vector3 EatPos = CurEat->Pos;
+
+		if ((Origin.x <= EatPos.x && Origin.y <= EatPos.y ) && (Origin.x + 1280.0f >= EatPos.x && Origin.y + 720.0f >= EatPos.y))
+			SendList.push_back(CurEat);
+	}
+
+	size_t ListSize = SendList.size();
+
+	IO_Data* newData = new IO_Data();
+	newData->WriteHeader<CreateEatObjectMessage>();
+	newData->WriteBuffer<size_t>(&ListSize);
+
+	for (auto CurEat : SendList)
+	{
+		newData->WriteBuffer<Vector3>(&CurEat->Pos);
+		newData->WriteBuffer<Vector4>(&CurEat->Color);
+		newData->WriteBuffer<int>(&CurEat->ID);
+	}
+
+	IOCPSeverSend(Socket, newData);
 }

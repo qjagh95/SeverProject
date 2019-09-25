@@ -20,7 +20,10 @@ public:
 	vector<PlayerInfo*>* GetPlayerVec() { return &m_vecPlayerInfo; }
 	size_t GetPlayerCount() const { return m_vecPlayerInfo.size(); }
 
+	vector<EatInfo*>* GetEatVec() { return &m_vecEat; }
+
 	void CloseAll();
+	void Init();
 
 public:
 	static size_t m_ClientCount;
@@ -34,6 +37,7 @@ private:
 	//CliendID == Key
 	unordered_map<size_t, PlayerInfo*> m_PlayerMap;
 
+	vector<EatInfo*> m_vecEat;
 
 public:
 	CLASS_IN_SINGLE(DataManager)

@@ -18,14 +18,14 @@ public:
 
 	bool GetisUpdate() const { return m_isUpdate; }
 	void SetIsUpdate(bool isUpdate) { m_isUpdate = isUpdate; }
-	void SetStage(Stage_Com* Stage) { m_IncludeStage = Stage; }
-	void SetIndex(int Index) { m_Index = Index; }
-	__int64 GetIndex() const { return m_Index; }
+	void SetStage(Stage_Com* Stage) { m_CurStage = Stage; }
+	void SetID(int Index) { m_ID = Index; }
+	int GetID() const { return m_ID; }
 
 private:
 	bool m_isUpdate;
-	__int64 m_Index;
-	Stage_Com* m_IncludeStage;
+	int m_ID;
+	Stage_Com* m_CurStage;
 
 public:
 	Eatting_Com();

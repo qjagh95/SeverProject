@@ -5,17 +5,18 @@
 
 #include "Core.h"
 
-__int64 Stage_Com::m_Count = 0;
-
 Stage_Com::Stage_Com()
 {
-
+	m_MainPlayer = NULLPTR;
+	m_TimeVar = 0.0f;
+	m_Sec = 0.5f;
+	m_isTimeCheck = false;
+	m_isCheck = false;
 }
 
 Stage_Com::Stage_Com(const Stage_Com & CopyData)
 	:UserComponent_Base(CopyData)
 {
-	Safe_Release_VecList(m_vecAllEatting);
 }
 
 Stage_Com::~Stage_Com()
@@ -32,24 +33,24 @@ bool Stage_Com::Init()
 
 int Stage_Com::Input(float DeltaTime)
 {
-	m_UpdateEatting.clear();
+	if (m_MainPlayer == NULLPTR)
+		return 0;
+	
+	if(m_isTimeCheck == false)
+		m_TimeVar += DeltaTime;
+
+	if (m_TimeVar >= m_Sec)
+		m_isCheck = true;
+
+	if (m_isCheck == false)
+		return 0;
 
 	Vector3 CameraPos = m_Scene->GetMainCameraTransform()->GetWorldPos();
 	Vector3 PlusPos;
 	PlusPos.x = CameraPos.x + m_WinSize.x;
 	PlusPos.y = CameraPos.y + m_WinSize.y;
 
-	//가시판단
-	for (auto CurObject : m_vecAllEatting)
-	{
-		Vector3 getPos = CurObject->GetTransform()->GetWorldPos();
-
-		if ((getPos.x >= CameraPos.x && getPos.x <= PlusPos.x) && (getPos.y >= CameraPos.y && getPos.y <= PlusPos.y))
-			m_UpdateEatting.push_back(CurObject);
-
-		else
-			continue;
-	}
+	bool isCheck = false;
 
 	for (size_t i = 0; i < m_UpdateEatting.size(); i++)
 	{
@@ -58,8 +59,17 @@ int Stage_Com::Input(float DeltaTime)
 			SAFE_RELEASE(m_UpdateEatting[i]);
 			m_UpdateEatting.erase(m_UpdateEatting.begin() + i);
 		}
-		else
+
+		Vector3 EatPos = m_UpdateEatting[i]->GetTransform()->GetWorldPos();
+
+		if ((EatPos.x >= CameraPos.x && EatPos.x <= PlusPos.x) && (EatPos.y >= CameraPos.y && EatPos.y <= PlusPos.y))
 			m_UpdateEatting[i]->Input(DeltaTime);
+		else
+		{
+			m_UpdateEatting[i]->SetIsActive(false);
+			SAFE_RELEASE(m_UpdateEatting[i]);
+			m_UpdateEatting.erase(m_UpdateEatting.begin() + i);
+		}
 	}
 
 	return 0;
@@ -67,6 +77,11 @@ int Stage_Com::Input(float DeltaTime)
 
 int Stage_Com::Update(float DeltaTime)
 {
+	if (m_MainPlayer == NULLPTR)
+		return 0;
+	if (m_isCheck == false)
+		return 0;
+
 	for (size_t i = 0; i < m_UpdateEatting.size(); i++)
 	{
 		if (m_UpdateEatting[i]->GetIsDelete() == true)
@@ -83,6 +98,9 @@ int Stage_Com::Update(float DeltaTime)
 
 int Stage_Com::LateUpdate(float DeltaTime)
 {
+	if (m_isCheck == false)
+		return 0;
+
 	for (size_t i = 0; i < m_UpdateEatting.size(); i++)
 	{
 		if (m_UpdateEatting[i]->GetIsDelete() == true)
@@ -103,6 +121,12 @@ void Stage_Com::Collision(float DeltaTime)
 
 void Stage_Com::Render(float DeltaTime)
 {
+	if (m_MainPlayer == NULLPTR)
+		return;
+
+	if (m_isCheck == false)
+		return;
+
 	for (size_t i = 0; i < m_UpdateEatting.size(); i++)
 	{
 		if (m_UpdateEatting[i]->GetIsDelete() == true)
@@ -131,48 +155,34 @@ Stage_Com * Stage_Com::Clone()
 	return nullptr;
 }
 
-void Stage_Com::CreateEatting(const Vector3& Pos, const Vector3& RGB, float Scale)
+void Stage_Com::CreateEatting(const Vector3& Pos, const Vector4& RGB, size_t ID)
 {
-	char Buffer[12] = {};
-	_itoa_s(static_cast<int>(m_Count), Buffer, static_cast<int>(10));
+	bool isUpdateOverapped = false;
+	for (size_t i = 0; i < m_UpdateEatting.size(); i++)
+	{
+		Eatting_Com* getCom = m_UpdateEatting[i]->FindComponentFromType<Eatting_Com>(CT_EATTING);
 
-	string Convert = Buffer;                  
+		if (getCom->GetID() == ID)
+		{
+			isUpdateOverapped = true;
+			SAFE_RELEASE(getCom);
+			break;
+		}
+		
+		SAFE_RELEASE(getCom);
+	}
 
-	GameObject* newObject = GameObject::CreateObject(Convert, NULLPTR);
-	newObject->SetScene(m_Scene);
-	newObject->SetLayer(m_Layer);
+	if (isUpdateOverapped == false)
+	{
+		GameObject* newObject = GameObject::CreateObject("Eatting", NULLPTR);
+		newObject->SetScene(m_Scene);
+		newObject->SetLayer(m_Layer);
 
-	Eatting_Com* newEatting = newObject->AddComponent<Eatting_Com>("Eatting" + Convert);
-	newEatting->GetTransform()->SetWorldPos(Pos);
-	newEatting->SetRGB(RGB.x, RGB.y, RGB.z);
-	newEatting->SetCollScale(Scale * 0.5f);
-	newEatting->SetStage(this);
+		Eatting_Com* newEatting = newObject->AddComponent<Eatting_Com>("Eatting");
+		newEatting->GetTransform()->SetWorldPos(Pos);
+		newEatting->SetRGB(RGB.x, RGB.y, RGB.z);
+		newEatting->SetStage(this);
 
-	m_vecAllEatting.push_back(newObject);
-	m_AllEattingMap.insert(make_pair(m_Count, newObject));
-
-	m_Count++;
-}
-
-GameObject * Stage_Com::FindEatting(__int64 Key)
-{
-	auto FindIter = m_AllEattingMap.find(Key);
-
-	if (FindIter == m_AllEattingMap.end())
-		return NULLPTR;
-
-	return FindIter->second;
-}
-
-void Stage_Com::DeleteEatting(__int64 Key)
-{
-	GameObject* getObject = FindEatting(Key);
-
-	if (getObject == NULLPTR)
-		return;
-
-	m_AllEattingMap.erase(Key);
-	m_vecAllEatting.erase(m_vecAllEatting.begin() + Key);
-	
-	getObject->SetIsDelete(true);
+		m_UpdateEatting.push_back(newObject);
+	}
 }

@@ -28,7 +28,7 @@ Camera_Com::Camera_Com(const Camera_Com & camera)
 bool Camera_Com::Init()
 {
 	m_WinSize = Vector3(1280.0f, 720.0f, 1.0f);
-	m_MaxPos = Vector3(5000, 5000, 1.0f);
+	m_MaxPos = Vector3(50000.0f, 50000.0f, 1.0f);
 	return true;
 }
 

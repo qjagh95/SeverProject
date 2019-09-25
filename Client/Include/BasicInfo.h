@@ -19,6 +19,7 @@ public:
 	void SetRGB(float R, float G, float B);
 	void SetScale(float Scale);
 	void SetCollScale(float Scale);
+	void SetRectCollScale(float Scale);
 	Vector4 GetRGB() const { return m_RGB; }
 	float* GetScale() { return &m_Scale; }
 

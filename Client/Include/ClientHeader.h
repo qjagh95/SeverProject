@@ -12,3 +12,10 @@ enum USERCOMPONENT_TYPE
 	UT_EAT_OBJECT,
 	UT_OTHER_PLAYER,
 };
+
+struct EatInfo
+{
+	Vector3 Pos;
+	Vector4 Color;
+	int ID;
+};

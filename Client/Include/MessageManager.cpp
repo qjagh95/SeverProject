@@ -4,6 +4,7 @@
 #include "UserComponent/OtharPlayer_Com.h"
 #include "ConnectSever.h"
 #include "UserComponent/OTManager.h"
+#include "UserComponent/Stage_Com.h"
 
 SINGLETON_VAR_INIT(MessageManager)
 
@@ -12,6 +13,7 @@ MessageManager::MessageManager()
 	m_State = SST_NONE;
 	m_CurLayer = NULLPTR;
 	m_CurScene = NULLPTR;
+	m_CurStage = NULLPTR;
 }
 
 MessageManager::~MessageManager()
@@ -117,7 +119,6 @@ void MessageManager::ClientMessageProcess()
 
 			int RecvSize = 0;
 			RecvSize = recv(getSocket, Buffer, BUFFERSIZE, 0);
-			cout << RecvSize << endl;
 
 			ReadMemoryStream Reader = ReadMemoryStream(Buffer, BUFFERSIZE);
 			m_State = Reader.Read<SEVER_DATA_TYPE>();
@@ -135,6 +136,7 @@ void MessageManager::ClientMessageProcess()
 				OtherPlayerDie(ClientID);
 				break;
 			case SST_CREATE_EAT_OBJECT:
+				CreateEat(ClientID, Reader);
 				break;
 			case SST_CREATE_PLAYER:
 				CreateMainPlayer(ClientID, Reader);
@@ -169,7 +171,7 @@ void MessageManager::ClearRecvBuffer()
 	unsigned long TempLong = 0;
 	auto getSock = *ConnectSever::Get()->GetSocket();
 	char TempBuf;
-	ioctlsocket(getSock, FIONREAD, &TempLong);
+	::ioctlsocket(getSock, FIONREAD, &TempLong);
 
 	for (size_t i = 0; i < TempLong; i++)
 		recv(getSock, &TempBuf, 1, 0);
@@ -198,6 +200,7 @@ bool MessageManager::CreateMainPlayer(size_t ClientID, ReadMemoryStream& Reader)
 	m_CurScene->GetMainCamera()->SetTarget(newPlayerObj);
 
 	ConnectSever::Get()->SetClientID(ClientID);
+	m_CurStage->SetPlayer(newPlayer);
 
 	SAFE_RELEASE(newPlayerObj);
 	SAFE_RELEASE(newPlayer);
@@ -255,4 +258,18 @@ bool MessageManager::CreateOtherPlayer(int ClientID, ReadMemoryStream & Reader)
 	}
 
 	return false;
+}
+
+void MessageManager::CreateEat(size_t ClientID, ReadMemoryStream & Reader)
+{
+	cout << ClientID << endl;
+	for (size_t i = 0; i < ClientID; i++)
+	{
+		//생성한다
+		Vector3 Pos = Reader.Read<Vector3>();
+		Vector4 Color = Reader.Read<Vector4>();
+		int ID = Reader.Read<int>();
+
+		m_CurStage->CreateEatting(Pos, Color, ID);
+	}
 }

@@ -6,6 +6,7 @@
 
 JEONG_USING
 class Player_Com;
+class Stage_Com;
 class MessageManager
 {
 public:
@@ -24,6 +25,7 @@ public:
 	Layer* GetLayer() { return m_CurLayer; }
 
 	void ClientInit();
+	void SetStage(Stage_Com* CurStage) { m_CurStage = CurStage; }
 
 private:
 	void ClientMessageProcess();
@@ -34,6 +36,7 @@ private:
 	bool CreateMainPlayer(size_t ClientID, ReadMemoryStream& Reader);
 	bool CreateOneOtherPlayer(size_t ClientID, ReadMemoryStream& Reader);
 	bool CreateOtherPlayer(int ClientID, ReadMemoryStream& Reader);
+	void CreateEat(size_t ClientID, ReadMemoryStream& Reader);
 
 	SEVER_DATA_TYPE ReadHeader(char* Buffer);
 
@@ -43,6 +46,7 @@ private:
 	Layer* m_CurLayer;
 	thread m_Thread;
 	mutex m_Mutex;
+	Stage_Com* m_CurStage;
 
 private:
 	CLASS_IN_SINGLE(MessageManager)

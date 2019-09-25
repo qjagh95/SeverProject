@@ -86,3 +86,12 @@ void BasicInfo::SetCollScale(float Scale)
 	m_Transform->SetWorldScale(Scale);
 	m_CirCleColl->SetInfo(m_CollScale);
 }
+
+void BasicInfo::SetRectCollScale(float Scale)
+{
+	m_Scale = Scale;
+	m_CollScale = Scale * 0.5f;
+
+	m_Transform->SetWorldScale(Scale);
+	m_RectColl->SetInfo(Vector3::Zero, Vector3(m_CollScale, m_CollScale, 1.0f));
+}
