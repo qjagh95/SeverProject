@@ -45,8 +45,6 @@ private:
 	SEVER_DATA_TYPE ReadHeader(char* Buffer);
 	SEVER_DATA_TYPE IOCPSeverRecvMsg(SocketInfo* Socket, IO_Data* Data);
 
-	void SendPosFunc();
-
 private:
 	HANDLE m_CompletionPort;
 	SocketInfo m_SeverSocket;
@@ -56,7 +54,6 @@ private:
 	SEVER_DATA_TYPE m_State;
 	float m_TimeVar;
 	float m_OneSecond;
-	SocketInfo* m_TempSocket;
 
 public:
 	IOCP();

@@ -17,14 +17,12 @@ IOCP::IOCP()
 
 	m_TimeVar = 0.0f;
 	m_OneSecond = 1.0f;
-	m_TempSocket = NULLPTR;
 }
 
 IOCP::~IOCP()
 {
 	for (size_t i = 0; i < m_vecThread.size(); i++)
 		m_vecThread[i]->join();
-
 
 	Safe_Delete_VecList(m_vecThread);
 	closesocket(m_SeverSocket.m_Socket);
@@ -127,7 +125,6 @@ void IOCP::ThreadFunc()
 
 	while (true)
 	{
-		m_TempSocket = NULLPTR;
 		//입출력이 완료된 소켓의 정보 얻음
 		GetQueuedCompletionStatus(m_CompletionPort, (LPDWORD)&ByteTransferred, (PULONG_PTR)&m_SocketInfo, (LPOVERLAPPED*)&IOData, INFINITE);
 
@@ -142,16 +139,14 @@ void IOCP::ThreadFunc()
 			continue;
 		}
 
+		lock_guard<mutex> myMutex(m_Mutex);
+
 		int RWMode = IOData->m_Mode;
 		IOData->CopyBuffer();
 		memcpy(Buffer, IOData->GetBuffer(), IOData->GetSize());
 
 		size_t Size = IOData->GetSize();
 		SAFE_DELETE(IOData);
-
-		lock_guard<mutex> myMutex(m_Mutex);
-
-		m_TempSocket = m_SocketInfo;
 
 		if (RWMode == READ)
 			SeverMesageProcess(m_SocketInfo, Buffer, Size);
@@ -336,9 +331,6 @@ void IOCP::Sever_UpdateScale(SocketInfo * Socket, ReadMemoryStream & Reader)
 
 void IOCP::Sever_SendPlayerPos(SocketInfo * Socket)
 {
-	if (Socket == NULLPTR)
-		return;
-
 	auto getVec = DataManager::Get()->GetClientVec();
 
 	if (getVec->size() == 0 || getVec->size() == 1)
@@ -347,7 +339,7 @@ void IOCP::Sever_SendPlayerPos(SocketInfo * Socket)
 	static int TempFrame = 0;
 	TempFrame++;
 
-	if (TempFrame >= 5)
+	if (TempFrame >= 7)
 	{
 		TempFrame = 0;
 
@@ -446,4 +438,3 @@ SEVER_DATA_TYPE IOCP::IOCPSeverRecvMsg(SocketInfo * Socket, IO_Data * Data)
 
 	return HeaderType;
 }
-

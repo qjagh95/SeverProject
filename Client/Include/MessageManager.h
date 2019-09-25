@@ -28,6 +28,7 @@ public:
 private:
 	void ClientMessageProcess();
 	void ClientSend(IO_Data* Data);
+	void ClearRecvBuffer();
 
 	//클라이언트 실질적으로 메세지에따라 실행하는 함수.
 	bool CreateMainPlayer(size_t ClientID, ReadMemoryStream& Reader);
@@ -42,8 +43,6 @@ private:
 	Layer* m_CurLayer;
 	thread m_Thread;
 	mutex m_Mutex;
-	float m_TimeVar;
-	float m_Second;
 
 private:
 	CLASS_IN_SINGLE(MessageManager)

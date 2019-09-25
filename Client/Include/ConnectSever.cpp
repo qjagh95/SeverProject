@@ -37,6 +37,15 @@ bool ConnectSever::Init()
 		if (WSAEventSelect(m_Info.m_Socket, m_EventHandle, FD_READ | FD_WRITE) != 0)
 			assert(false);
 
+		//소켓 옵션을 가져온다
+		int optVar;
+		int Len = sizeof(optVar);
+		::getsockopt(m_Info.m_Socket, SOL_SOCKET, SO_RCVBUF, (char*)&optVar, &Len);
+
+		//소켓 수신버퍼크기를 늘린다.
+		optVar = 2048;
+		::setsockopt(m_Info.m_Socket, SOL_SOCKET, SO_RCVBUF, (char*)&optVar, sizeof(optVar));
+
 		Connect();
 	}
 

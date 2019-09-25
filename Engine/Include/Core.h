@@ -18,6 +18,7 @@ public:
 	bool GetIsLoop() const { return m_isLoop; }
 	default_random_engine GetRandomEngine() const { return m_RandomEngine; }
 	int RandomRange(int R1, int R2);
+	float GetDeltaTime() const { return m_DeltaTime; }
 
 public:
 	PROJECT_TYPE m_ProjectType;
@@ -44,6 +45,7 @@ private:
 	static WPARAM m_wParam;
 	random_device m_RandomDevice;
 	default_random_engine m_RandomEngine;
+	float m_DeltaTime;
 
 public:
 	CLASS_IN_SINGLE(Core)

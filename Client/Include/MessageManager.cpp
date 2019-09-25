@@ -13,9 +13,6 @@ MessageManager::MessageManager()
 	m_State = SST_NONE;
 	m_CurLayer = NULLPTR;
 	m_CurScene = NULLPTR;
-
-	m_TimeVar = 0.0f;
-	m_Second = 1.0f;
 }
 
 MessageManager::~MessageManager()
@@ -74,21 +71,12 @@ void MessageManager::Client_UpdateOTPos(ReadMemoryStream & Reader, size_t ID)
 	auto getOT = OTManager::Get()->FindOT(ID);
 
 	if (getOT == NULLPTR)
-	{
-		cout << "Error! OT가 없습니다" << endl;
-		TrueAssert(true);
 		return;
-	}
 
 	//Pos받음
 	Vector3 getPos = Reader.Read<Vector3>();
-	Vector3 OriginPos = getOT->GetTransform()->GetWorldPos();
-	Vector3 Dir = OriginPos - getPos;
-	Dir.Nomallize();
 
-	getOT->GetTransform()->Move(Dir, 100.0f);
-	
-	//getOT->GetTransform()->SetWorldPos(getPos);
+	getOT->GetTransform()->SetWorldPos(getPos);
 }
 
 void MessageManager::Client_UpdateOTScale(ReadMemoryStream & Reader, size_t ID)
@@ -155,6 +143,8 @@ void MessageManager::ClientMessageProcess()
 			case SST_DELETE_EAT_OBJECT:
 				break;
 			}
+
+			ClearRecvBuffer();
 		}
 	}
 
@@ -170,6 +160,17 @@ void MessageManager::ClientSend(IO_Data * Data)
 
 	if (SendByte == 0)
 		cout << "Error : " << GetLastError() << endl;
+}
+
+void MessageManager::ClearRecvBuffer()
+{
+	unsigned long TempLong = 0;
+	auto getSock = *ConnectSever::Get()->GetSocket();
+	char TempBuf;
+	ioctlsocket(getSock, FIONREAD, &TempLong);
+
+	for (size_t i = 0; i < TempLong; i++)
+		recv(getSock, &TempBuf, 1, 0);
 }
 
 SEVER_DATA_TYPE MessageManager::ReadHeader(char * Buffer)

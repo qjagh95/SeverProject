@@ -44,6 +44,17 @@ void WriteMemoryStream::BufferClear()
 	m_Size = 0;
 }
 
+void WriteMemoryStream::InsertByteSize()
+{
+	//m_Size += 4;
+
+	//char* TempBuf = new char[m_Size - 4];
+	//memcpy(TempBuf, m_Buffer + 4, m_Size - 4);
+
+
+	//SAFE_DELETE_ARRARY(TempBuf);
+}
+
 void WriteMemoryStream::PullBuffer(size_t Size)
 {
 	if (m_Size == 0 || m_Size - Size < 0)

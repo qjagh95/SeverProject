@@ -138,13 +138,13 @@ void Core::Logic()
 	Timer* getTimer = TimeManager::Get()->FindTimer("MainTimer");
 	getTimer->Update();
 
-	float Time = getTimer->GetDeltaTime();
+	m_DeltaTime = getTimer->GetDeltaTime();
 
-	Input(Time);
-	Update(Time);
-	LateUpdate(Time);
-	Collsion(Time);
-	Render(Time);
+	Input(m_DeltaTime);
+	Update(m_DeltaTime);
+	LateUpdate(m_DeltaTime);
+	Collsion(m_DeltaTime);
+	Render(m_DeltaTime);
 }
 
 void Core::SetClearColor(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
