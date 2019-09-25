@@ -253,7 +253,6 @@
     <ClCompile Include="Component\Transform_Com.cpp" />
     <ClCompile Include="Component\UIBase_Com.cpp" />
     <ClCompile Include="Core.cpp" />
-    <ClCompile Include="DataManager.cpp" />
     <ClCompile Include="Device.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Header.cpp" />

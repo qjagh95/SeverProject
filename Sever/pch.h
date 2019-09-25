@@ -25,4 +25,18 @@
 
 using namespace std;
 
+struct EatInfo
+{
+	int ID;
+	Vector3 Pos;
+	Vector4 Color;
+
+	EatInfo()
+	{
+		ID = -1;
+		Pos = Vector3::Zero;
+		Color = Vector4::Zero;
+	}
+};
+
 #endif //PCH_H

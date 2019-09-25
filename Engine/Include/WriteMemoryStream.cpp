@@ -46,13 +46,13 @@ void WriteMemoryStream::BufferClear()
 
 void WriteMemoryStream::InsertByteSize()
 {
-	//m_Size += 4;
+	m_Size += 4;
 
-	//char* TempBuf = new char[m_Size - 4];
-	//memcpy(TempBuf, m_Buffer + 4, m_Size - 4);
+	char* TempBuf = new char[m_Size - 4];
+	memcpy(TempBuf, m_Buffer + 4, m_Size - 4);
 
 
-	//SAFE_DELETE_ARRARY(TempBuf);
+	SAFE_DELETE_ARRARY(TempBuf);
 }
 
 void WriteMemoryStream::PullBuffer(size_t Size)

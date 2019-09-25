@@ -89,6 +89,7 @@
     <LibraryPath>../DX11_Engine/Bin;$(LibraryPath)</LibraryPath>
     <OutDir>./Bin\</OutDir>
     <IntDir>./BinObj\</IntDir>
+    <TargetName>$(ProjectName)_Release</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -159,10 +160,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DataManager.h" />
     <ClInclude Include="IOCP.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DataManager.cpp" />
     <ClCompile Include="IOCP.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

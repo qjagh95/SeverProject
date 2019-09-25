@@ -144,8 +144,8 @@ void IOCP::ThreadFunc()
 		int RWMode = IOData->m_Mode;
 		IOData->CopyBuffer();
 		memcpy(Buffer, IOData->GetBuffer(), IOData->GetSize());
-
 		size_t Size = IOData->GetSize();
+
 		SAFE_DELETE(IOData);
 
 		if (RWMode == READ)

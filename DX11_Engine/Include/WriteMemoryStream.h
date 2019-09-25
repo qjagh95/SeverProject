@@ -10,6 +10,8 @@ public:
 	char* GetBuffer();
 	void HeaderErase();
 	void BufferClear();
+	//메세지헤더(4바이트)뒤에 내사이즈를 넣는다
+	void InsertByteSize();
 	void PullBuffer(size_t Size);
 	
 private:

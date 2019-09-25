@@ -1,7 +1,6 @@
 #include "ClientHeader.h"
 #include <Core.h>
 #include "MessageManager.h"
-#include "DataManager.h"
 #include "UserComponent/OtharPlayer_Com.h"
 #include "ConnectSever.h"
 #include "UserComponent/OTManager.h"
@@ -115,7 +114,10 @@ void MessageManager::ClientMessageProcess()
 		if (NetWorkEvent.lNetworkEvents & FD_READ)
 		{
 			char Buffer[BUFFERSIZE] = { };
-			recv(getSocket, Buffer, BUFFERSIZE, 0);
+
+			int RecvSize = 0;
+			RecvSize = recv(getSocket, Buffer, BUFFERSIZE, 0);
+			cout << RecvSize << endl;
 
 			ReadMemoryStream Reader = ReadMemoryStream(Buffer, BUFFERSIZE);
 			m_State = Reader.Read<SEVER_DATA_TYPE>();

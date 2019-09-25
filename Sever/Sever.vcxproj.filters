@@ -8,6 +8,9 @@
     <Filter Include="소스 파일\IOCP">
       <UniqueIdentifier>{7ae59830-e7f3-44ee-950d-86cc477883a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\DataManage">
+      <UniqueIdentifier>{d1016e55-f861-4d09-b30e-6acf95f519ef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -19,6 +22,9 @@
     <ClCompile Include="IOCP.cpp">
       <Filter>소스 파일\IOCP</Filter>
     </ClCompile>
+    <ClCompile Include="DataManager.cpp">
+      <Filter>소스 파일\DataManage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -26,6 +32,9 @@
     </ClInclude>
     <ClInclude Include="IOCP.h">
       <Filter>소스 파일\IOCP</Filter>
+    </ClInclude>
+    <ClInclude Include="DataManager.h">
+      <Filter>소스 파일\DataManage</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

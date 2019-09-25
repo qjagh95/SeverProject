@@ -8,7 +8,6 @@
 #include "SceneMain/MainScene.h"
 #include <ConnectSever.h>
 #include "MessageManager.h"
-#include <DataManager.h>
 
 JEONG_USING
 
@@ -32,7 +31,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hIstance, _In_opt_ HINSTANCE hPrevInstance,
 	ConnectSever::Get()->CloseSocket();
 	MessageManager::Delete();
 	ConnectSever::Delete();
-	DataManager::Delete();
 
 	return Result;
 }

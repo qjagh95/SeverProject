@@ -6,7 +6,6 @@
 #include "Resource/Mesh.h"
 
 #include "Render\Shader.h"
-#include "DataManager.h"
 
 JEONG_USING
 SINGLETON_VAR_INIT(Core)
@@ -36,7 +35,6 @@ Core::~Core()
 	CollsionManager::Delete();
 	KeyInput::Delete();
 	RenderManager::Delete();
-	DataManager::Delete();
 	CoUninitialize();
 }
 
