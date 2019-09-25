@@ -12,7 +12,7 @@ class MessageManager
 public:
 	//클라가 서버로 보내는 함수
 	void Client_ClientDie();
-	void Client_SendPlayerPos(const Vector3& Pos);
+	void Client_SendPlayerPos(const Vector3& Pos, const Vector3& CameraPos);
 	void Client_SendPlayerScale(float Scale);
 	void Client_UpdateOTPos(ReadMemoryStream& Reader, size_t ID);
 	void Client_UpdateOTScale(ReadMemoryStream& Reader, size_t ID);
@@ -37,6 +37,7 @@ private:
 	bool CreateOneOtherPlayer(size_t ClientID, ReadMemoryStream& Reader);
 	bool CreateOtherPlayer(int ClientID, ReadMemoryStream& Reader);
 	void CreateEat(size_t ClientID, ReadMemoryStream& Reader);
+	void UpdateEat(size_t ClientID, ReadMemoryStream& Reader);
 
 	SEVER_DATA_TYPE ReadHeader(char* Buffer);
 

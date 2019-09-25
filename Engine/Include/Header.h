@@ -198,4 +198,14 @@ public:
 	}
 };
 
+class JEONG_DLL UpdateEatListMessage : public Header
+{
+public:
+	UpdateEatListMessage()
+	{
+		m_Type = SST_UPDATE_EAT_LIST;
+	}
+};
+
+
 JEONG_END

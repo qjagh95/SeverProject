@@ -76,6 +76,8 @@ void Player_Com::ScalePlus(float Scale)
 
 void Player_Com::Move(float DeltaTime)
 {
+	Vector3 CameraPos = m_Scene->GetMainCameraTransform()->GetWorldPos();
+
 	if (KeyInput::Get()->KeyPress("MoveUp"))
 	{
 		if (m_Transform->GetWorldPos().y < 50000.0f)
@@ -84,7 +86,7 @@ void Player_Com::Move(float DeltaTime)
 		if(m_Transform->GetWorldPos().y > 50000.0f)
 			m_Transform->SetWorldPos(0.0f, 50000.0f, 1.0f);
 
-		MessageManager::Get()->Client_SendPlayerPos(m_Transform->GetWorldPos());
+		MessageManager::Get()->Client_SendPlayerPos(m_Transform->GetWorldPos(), CameraPos);
 	}
 	else if (KeyInput::Get()->KeyPress("MoveDown"))
 	{
@@ -94,7 +96,7 @@ void Player_Com::Move(float DeltaTime)
 		if (m_Transform->GetWorldPos().y < 0.0f)
 			m_Transform->SetWorldPos(m_Transform->GetWorldPos().x, 0.0f, 1.0f);
 		
-		MessageManager::Get()->Client_SendPlayerPos(m_Transform->GetWorldPos());
+		MessageManager::Get()->Client_SendPlayerPos(m_Transform->GetWorldPos(), CameraPos);
 	}
 
 	if (KeyInput::Get()->KeyPress("MoveLeft"))
@@ -105,7 +107,7 @@ void Player_Com::Move(float DeltaTime)
 		if (m_Transform->GetWorldPos().x < 0.0f)
 			m_Transform->SetWorldPos(0.0f, m_Transform->GetWorldPos().y, 1.0f);
 
-		MessageManager::Get()->Client_SendPlayerPos(m_Transform->GetWorldPos());
+		MessageManager::Get()->Client_SendPlayerPos(m_Transform->GetWorldPos(), CameraPos);
 	}
 	else if (KeyInput::Get()->KeyPress("MoveRight"))
 	{
@@ -115,6 +117,6 @@ void Player_Com::Move(float DeltaTime)
 		if (m_Transform->GetWorldPos().x > 50000.0f)
 			m_Transform->SetWorldPos(50000.0f, m_Transform->GetWorldPos().y, 1.0f);
 
-		MessageManager::Get()->Client_SendPlayerPos(m_Transform->GetWorldPos());
+		MessageManager::Get()->Client_SendPlayerPos(m_Transform->GetWorldPos(), CameraPos);
 	}
 }

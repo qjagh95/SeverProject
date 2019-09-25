@@ -308,6 +308,7 @@ void IOCP::Sever_UpdatePos(SocketInfo * Socket, ReadMemoryStream & Reader)
 {
 	size_t ReadID = Reader.Read<size_t>();
 	Vector3 Pos = Reader.Read<Vector3>();
+	Vector3 CameraPos = Reader.Read<Vector3>();
 
 	auto getInfo = DataManager::Get()->FindPlayerInfoKey(Socket->m_CliendID);
 
@@ -320,7 +321,7 @@ void IOCP::Sever_UpdatePos(SocketInfo * Socket, ReadMemoryStream & Reader)
 
 	getInfo->m_Pos = Pos;
 
-	Sever_SendPlayerPos(Socket);
+	Sever_SendPlayerPos(Socket, CameraPos);
 }
 
 void IOCP::Sever_UpdateScale(SocketInfo * Socket, ReadMemoryStream & Reader)
@@ -334,7 +335,7 @@ void IOCP::Sever_UpdateScale(SocketInfo * Socket, ReadMemoryStream & Reader)
 	Sever_SendPlayerScale(Socket, Scale);
 }
 
-void IOCP::Sever_SendPlayerPos(SocketInfo * Socket)
+void IOCP::Sever_SendPlayerPos(SocketInfo * Socket, const Vector3& CameraPos)
 {
 	auto getVec = DataManager::Get()->GetClientVec();
 
@@ -358,8 +359,27 @@ void IOCP::Sever_SendPlayerPos(SocketInfo * Socket)
 		for (auto CurClient : *getVec)
 		{
 			if (CurClient->m_Socket == Socket->m_Socket)
-				continue;
+			{
+				//ID값으로 갯수보낼 예정
+				IO_Data* newData = new IO_Data();
+				newData->WriteHeader<UpdateEatListMessage>();
 
+				vector<EatInfo*> TempVec;
+				TempVec.reserve(50);
+
+				//TODO : 여기서 시야판단한 EatList 보내주자
+				auto getVec = DataManager::Get()->GetEatVec();
+				for (auto CurEat : *getVec)
+				{
+					Vector3 EatPos = CurEat->Pos;
+
+					if((CameraPos.x <= EatPos.x && CameraPos.y <= EatPos.y) && (CameraPos.x + 1280.0f >= EatPos.x && CameraPos.y + 720.0f >= EatPos.y))
+						TempVec.push_back(CurEat);
+				}
+
+				continue;
+			}
+			
 			IOCPSeverSend(CurClient, IoData);
 		}
 	}
@@ -454,7 +474,7 @@ void IOCP::Sever_SendSeeList(SocketInfo * Socket)
 	{
 		//시야판단
 		//초기위치
-		Vector3 Origin = Vector3(0.0f, 500.0f, 0);
+		Vector3 Origin = Vector3(0.0f, 0.0f, 0);
 		Vector3 EatPos = CurEat->Pos;
 
 		if ((Origin.x <= EatPos.x && Origin.y <= EatPos.y ) && (Origin.x + 1280.0f >= EatPos.x && Origin.y + 720.0f >= EatPos.y))

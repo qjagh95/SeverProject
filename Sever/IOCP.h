@@ -38,7 +38,7 @@ private:
 	void Sever_UpdateScale(SocketInfo * Socket, ReadMemoryStream& Reader);
 
 	//플레이어 데이터 보내기
-	void Sever_SendPlayerPos(SocketInfo * Socket);
+	void Sever_SendPlayerPos(SocketInfo * Socket, const Vector3& CameraPos);
 	void Sever_SendPlayerScale(SocketInfo * Socket, float Scale);
 
 	void RecvInitIOData(SocketInfo* Info);

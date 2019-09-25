@@ -38,7 +38,7 @@ void MessageManager::Client_ClientDie()
 	ConnectSever::Get()->CloseSocket();
 }
 
-void MessageManager::Client_SendPlayerPos(const Vector3& Pos)
+void MessageManager::Client_SendPlayerPos(const Vector3& Pos, const Vector3& CameraPos)
 {
 	size_t MyID = ConnectSever::Get()->GetClientID();
 
@@ -145,6 +145,9 @@ void MessageManager::ClientMessageProcess()
 				CreateOneOtherPlayer(ClientID, Reader);
 				break;
 			case SST_DELETE_EAT_OBJECT:
+				break;
+			case SST_UPDATE_EAT_LIST: //이미 로직을 처리해놔서 상관없을듯 하다.
+				CreateEat(ClientID, Reader);
 				break;
 			}
 
@@ -262,7 +265,6 @@ bool MessageManager::CreateOtherPlayer(int ClientID, ReadMemoryStream & Reader)
 
 void MessageManager::CreateEat(size_t ClientID, ReadMemoryStream & Reader)
 {
-	cout << ClientID << endl;
 	for (size_t i = 0; i < ClientID; i++)
 	{
 		//생성한다

@@ -15,13 +15,12 @@ struct IO_Data
 	OVERLAPPED m_Overlapped;
 	WSABUF m_WsaBuf;
 	WriteMemoryStream m_Stream;
-	int	m_Mode;
+	int m_Mode;
 
 	IO_Data()
 	{
 		ZeroMemory(&m_Overlapped, sizeof(OVERLAPPED));
 		m_WsaBuf.len = 0;
-		m_Mode = -1;
 	}
 
 	void WriteBuffer(const void* Buffer, size_t size)
@@ -199,5 +198,15 @@ public:
 		m_Type = SST_PLAYER_POS;
 	}
 };
+
+class JEONG_DLL UpdateEatListMessage : public Header
+{
+public:
+	UpdateEatListMessage()
+	{
+		//m_Type = SST_UPDATE_EAT_LIST;
+	}
+};
+
 
 JEONG_END

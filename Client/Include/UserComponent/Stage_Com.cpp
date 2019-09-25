@@ -158,6 +158,7 @@ Stage_Com * Stage_Com::Clone()
 void Stage_Com::CreateEatting(const Vector3& Pos, const Vector4& RGB, size_t ID)
 {
 	bool isUpdateOverapped = false;
+
 	for (size_t i = 0; i < m_UpdateEatting.size(); i++)
 	{
 		Eatting_Com* getCom = m_UpdateEatting[i]->FindComponentFromType<Eatting_Com>(CT_EATTING);
