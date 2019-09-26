@@ -146,7 +146,7 @@ void MessageManager::ClientMessageProcess()
 				break;
 			case SST_DELETE_EAT_OBJECT:
 				break;
-			case SST_UPDATE_EAT_LIST: //이미 로직을 처리해놔서 상관없을듯 하다.
+			case SST_UPDATE_EAT_LIST: //이미 로직을 처리해놔서 r같은함수여도 상관없을듯 하다.
 				CreateEat(ClientID, Reader);
 				break;
 			}

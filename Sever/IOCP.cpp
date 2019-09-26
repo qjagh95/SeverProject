@@ -117,8 +117,9 @@ void IOCP::Run()
 		Sever_SendConnectClientNewOtherPlayer(newInfo);
 
 		Sleep(500);
+
 		//EatData전송
-		Sever_SendSeeList(newInfo);
+		Sever_SendFirstSeeList(newInfo);
 	}
 }
 
@@ -377,6 +378,17 @@ void IOCP::Sever_SendPlayerPos(SocketInfo * Socket, const Vector3& CameraPos)
 						TempVec.push_back(CurEat);
 				}
 
+				size_t vecSize = TempVec.size();
+				newData->WriteBuffer<size_t>(&vecSize);
+
+				for (auto CurEat : TempVec)
+				{
+					newData->WriteBuffer<Vector3>(&CurEat->Pos);
+					newData->WriteBuffer<Vector4>(&CurEat->Color);
+					newData->WriteBuffer<int>(&CurEat->ID);
+				}
+
+				IOCPSeverSend(CurClient, IoData);
 				continue;
 			}
 			
@@ -464,7 +476,7 @@ SEVER_DATA_TYPE IOCP::IOCPSeverRecvMsg(SocketInfo * Socket, IO_Data * Data)
 	return HeaderType;
 }
 
-void IOCP::Sever_SendSeeList(SocketInfo * Socket)
+void IOCP::Sever_SendFirstSeeList(SocketInfo * Socket)
 {
 	auto getEatVec = DataManager::Get()->GetEatVec();
 	vector<EatInfo*> SendList;
@@ -473,7 +485,6 @@ void IOCP::Sever_SendSeeList(SocketInfo * Socket)
 	for (auto CurEat : *getEatVec)
 	{
 		//시야판단
-		//초기위치
 		Vector3 Origin = Vector3(0.0f, 0.0f, 0);
 		Vector3 EatPos = CurEat->Pos;
 
