@@ -181,14 +181,14 @@ void IOCP::Sever_SendNewPlayerMsg(SocketInfo * Socket)
 
 	IO_Data* IoData = new IO_Data();
 	IoData->WriteHeader<CreateMainPlayerMessage>();
-	IoData->WriteBuffer<size_t>(&Socket->m_CliendID);
+	IoData->WriteBuffer<int>(&Socket->m_CliendID);
 	IoData->WriteBuffer<Vector4>(&RandColor);
 	IoData->WriteBuffer<Vector3>(&Pos);
 	IoData->WriteBuffer<float>(&Scale);
 
 	cout << Socket->m_CliendID << "번 클라이언트에게 플레이어 생성메세지 전송" << endl << endl;
 
-	size_t ClientCount = DataManager::Get()->GetClientCount();
+	int ClientCount = static_cast<int>(DataManager::Get()->GetClientCount());
 	auto getPlayerVec = DataManager::Get()->GetPlayerVec();
 
 	IoData->WriteBuffer<int>(&ClientCount);
@@ -208,7 +208,7 @@ void IOCP::Sever_SendNewPlayerMsg(SocketInfo * Socket)
 		IoData->WriteBuffer(&Cur->m_Color, 16);
 		IoData->WriteBuffer<Vector3>(&Cur->m_Pos);
 		IoData->WriteBuffer<float>(&Cur->m_Scale);
-		IoData->WriteBuffer<size_t>(&Cur->m_ClientID);
+		IoData->WriteBuffer<int>(&Cur->m_ClientID);
 	}
 
 	cout << Socket->m_CliendID << "번 클라이언트에 기존 접속한 클라이언트 갯수 : " << ClientCount - 1 << " 개 만큼 OtherPlayer 생성메세지 전송" << endl;
@@ -232,7 +232,7 @@ void IOCP::Sever_SendConnectClientNewOtherPlayer(SocketInfo * NewSocket)
 
 	IO_Data* IoData = new IO_Data();
 	IoData->WriteHeader<CreateConnectClientCreateOtherPlayer>();
-	IoData->WriteBuffer<size_t>(&getInfo->m_ClientID);
+	IoData->WriteBuffer<int>(&getInfo->m_ClientID);
 	IoData->WriteBuffer<Vector4>(&getInfo->m_Color);
 	IoData->WriteBuffer<Vector3>(&getInfo->m_Pos);
 	IoData->WriteBuffer<Vector3>(&getInfo->m_Scale);
@@ -271,7 +271,7 @@ void IOCP::SeverMesageProcess(SocketInfo * Socket, char * Data, size_t BufferSiz
 void IOCP::Sever_DieClient(SocketInfo * Socket)
 {
 	mutex Mutex;
-	size_t DeleteID = Socket->m_CliendID;
+	int DeleteID = static_cast<int>(Socket->m_CliendID);
 
 	Mutex.lock();
 	cout << DeleteID << "번 클라이언트 종료" << endl;
@@ -287,11 +287,11 @@ void IOCP::Sever_SendDeleteOT(SocketInfo * Socket)
 {
 	auto getVec = DataManager::Get()->GetClientVec();
 
-	size_t DeleteID = Socket->m_CliendID;
+	int DeleteID = static_cast<int>(Socket->m_CliendID);
 
 	IO_Data* IoData = new IO_Data();
 	IoData->WriteHeader<OtherPlayerDelete>();
-	IoData->WriteBuffer<size_t>(&DeleteID);
+	IoData->WriteBuffer<int>(&DeleteID);
 
 	mutex Mutex;
 	lock_guard<mutex> LockMutex(Mutex);
@@ -307,9 +307,10 @@ void IOCP::Sever_SendDeleteOT(SocketInfo * Socket)
 
 void IOCP::Sever_UpdatePos(SocketInfo * Socket, ReadMemoryStream & Reader)
 {
-	size_t ReadID = Reader.Read<size_t>();
+	int ReadID = Reader.Read<int>();
 	Vector3 Pos = Reader.Read<Vector3>();
 	Vector3 CameraPos = Reader.Read<Vector3>();
+	int vecSize = Reader.Read<int>();
 
 	auto getInfo = DataManager::Get()->FindPlayerInfoKey(Socket->m_CliendID);
 
@@ -322,12 +323,12 @@ void IOCP::Sever_UpdatePos(SocketInfo * Socket, ReadMemoryStream & Reader)
 
 	getInfo->m_Pos = Pos;
 
-	Sever_SendPlayerPos(Socket, CameraPos);
+	Sever_SendPlayerPos(Socket, CameraPos, vecSize);
 }
 
 void IOCP::Sever_UpdateScale(SocketInfo * Socket, ReadMemoryStream & Reader)
 {
-	size_t ReadID = Reader.Read<size_t>();
+	int ReadID = Reader.Read<int>();
 	float Scale = Reader.Read<float>();
 
 	auto getInfo = DataManager::Get()->FindPlayerInfoKey(ReadID);
@@ -336,23 +337,23 @@ void IOCP::Sever_UpdateScale(SocketInfo * Socket, ReadMemoryStream & Reader)
 	Sever_SendPlayerScale(Socket, Scale);
 }
 
-void IOCP::Sever_SendPlayerPos(SocketInfo * Socket, const Vector3& CameraPos)
+void IOCP::Sever_SendPlayerPos(SocketInfo * Socket, const Vector3& CameraPos, int UpdateVecSize)
 {
 	auto getVec = DataManager::Get()->GetClientVec();
 
-	if (getVec->size() == 0 || getVec->size() == 1)
+	if (getVec->size() == 0)
 		return;
 
 	static int TempFrame = 0;
 	TempFrame++;
 
-	if (TempFrame >= 7)
+	if (TempFrame >= 8)
 	{
 		TempFrame = 0;
 
 		IO_Data* IoData = new IO_Data();
 		IoData->WriteHeader<PlayerPosMessage>();
-		IoData->WriteBuffer<size_t>(&Socket->m_CliendID);
+		IoData->WriteBuffer<int>(&Socket->m_CliendID);
 
 		auto getInfo = DataManager::Get()->FindPlayerInfoKey(Socket->m_CliendID);
 		IoData->WriteBuffer<Vector3>(&getInfo->m_Pos);
@@ -368,7 +369,6 @@ void IOCP::Sever_SendPlayerPos(SocketInfo * Socket, const Vector3& CameraPos)
 				vector<EatInfo*> TempVec;
 				TempVec.reserve(50);
 
-				//TODO : 여기서 시야판단한 EatList 보내주자
 				auto getVec = DataManager::Get()->GetEatVec();
 				for (auto CurEat : *getVec)
 				{
@@ -378,17 +378,28 @@ void IOCP::Sever_SendPlayerPos(SocketInfo * Socket, const Vector3& CameraPos)
 						TempVec.push_back(CurEat);
 				}
 
-				size_t vecSize = TempVec.size();
-				newData->WriteBuffer<size_t>(&vecSize);
+				int vecSize = 0;
 
-				for (auto CurEat : TempVec)
+				if (TempVec.size() == UpdateVecSize)
 				{
-					newData->WriteBuffer<Vector3>(&CurEat->Pos);
-					newData->WriteBuffer<Vector4>(&CurEat->Color);
-					newData->WriteBuffer<int>(&CurEat->ID);
+					vecSize = -1;
+					newData->WriteBuffer<int>(&vecSize);
+					IOCPSeverSend(CurClient, newData);
 				}
+				else
+				{
+					vecSize = static_cast<int>(TempVec.size());
+					newData->WriteBuffer<int>(&vecSize);
 
-				IOCPSeverSend(CurClient, IoData);
+					for (auto CurEat : TempVec)
+					{
+						newData->WriteBuffer<Vector3>(&CurEat->Pos);
+						newData->WriteBuffer<Vector4>(&CurEat->Color);
+						newData->WriteBuffer<int>(&CurEat->ID);
+					}
+
+					IOCPSeverSend(CurClient, newData);
+				}
 				continue;
 			}
 			
@@ -406,7 +417,7 @@ void IOCP::Sever_SendPlayerScale(SocketInfo * Socket, float Scale)
 
 	IO_Data* IoData = new IO_Data();
 	IoData->WriteHeader<PlayerScaleMessage>();
-	IoData->WriteBuffer<size_t>(&Socket->m_CliendID);
+	IoData->WriteBuffer<int>(&Socket->m_CliendID);
 	IoData->WriteBuffer<float>(&Scale);
 
 	for (auto CurClient : *getVec)
@@ -496,7 +507,7 @@ void IOCP::Sever_SendFirstSeeList(SocketInfo * Socket)
 
 	IO_Data* newData = new IO_Data();
 	newData->WriteHeader<CreateEatObjectMessage>();
-	newData->WriteBuffer<size_t>(&ListSize);
+	newData->WriteBuffer<int>(&ListSize);
 
 	for (auto CurEat : SendList)
 	{

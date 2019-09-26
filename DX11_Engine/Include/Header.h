@@ -21,6 +21,7 @@ struct IO_Data
 	{
 		ZeroMemory(&m_Overlapped, sizeof(OVERLAPPED));
 		m_WsaBuf.len = 0;
+		m_Mode = -1;
 	}
 
 	void WriteBuffer(const void* Buffer, size_t size)
@@ -195,7 +196,16 @@ class JEONG_DLL PlayerScaleMessage : public Header
 public:
 	PlayerScaleMessage()
 	{
-		m_Type = SST_PLAYER_POS;
+		m_Type = SST_PLAYER_SCALE;
+	}
+};
+
+class JEONG_DLL EattingDieMessage : public Header
+{
+public:
+	EattingDieMessage()
+	{
+		m_Type = SST_DELETE_EAT_OBJECT;
 	}
 };
 
@@ -204,7 +214,7 @@ class JEONG_DLL UpdateEatListMessage : public Header
 public:
 	UpdateEatListMessage()
 	{
-		//m_Type = SST_UPDATE_EAT_LIST;
+		m_Type = SST_UPDATE_EAT_LIST;
 	}
 };
 

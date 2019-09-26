@@ -79,6 +79,7 @@ int Stage_Com::Update(float DeltaTime)
 {
 	if (m_MainPlayer == NULLPTR)
 		return 0;
+
 	if (m_isCheck == false)
 		return 0;
 
@@ -183,7 +184,28 @@ void Stage_Com::CreateEatting(const Vector3& Pos, const Vector4& RGB, size_t ID)
 		newEatting->GetTransform()->SetWorldPos(Pos);
 		newEatting->SetRGB(RGB.x, RGB.y, RGB.z);
 		newEatting->SetStage(this);
+		newEatting->SetID(static_cast<int>(ID));
 
 		m_UpdateEatting.push_back(newObject);
+	}
+}
+
+void Stage_Com::DeleteEatObject(size_t ID)
+{
+	int Index = 0;
+	for (auto CurEat : m_UpdateEatting)
+	{
+		Eatting_Com* getCom = CurEat->FindComponentFromType<Eatting_Com>(CT_EATTING);
+
+		if (getCom->GetID() == ID)
+		{
+			CurEat->SetIsActive(false);
+			m_UpdateEatting.erase(m_UpdateEatting.begin() + Index);
+			SAFE_RELEASE(getCom);
+			break;
+		}
+
+		SAFE_RELEASE(getCom);
+		Index++;
 	}
 }

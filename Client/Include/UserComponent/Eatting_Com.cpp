@@ -2,6 +2,7 @@
 #include "Eatting_Com.h"
 #include "Stage_Com.h"
 #include "Player_Com.h"
+#include "MessageManager.h"
 
 Eatting_Com::Eatting_Com()
 {
@@ -65,9 +66,10 @@ void Eatting_Com::PlayerColl(Collider_Com * Src, Collider_Com * Dest, float Delt
 	{
 		//서버로 파괴될 오브젝트 정보로 나자신 넘기기(서버가 Delete명령, 명령에따른 Delete호출)
 		Player_Com* getPlayer = Dest->FindComponentFromType<Player_Com>(CT_PLAYER);
-		getPlayer->ScalePlus(m_Scale);
+		getPlayer->ScalePlus(2.0f);
 
-		//m_IncludeStage->DeleteEatting(m_Index);
+		m_CurStage->DeleteEatObject(m_ID);
+		MessageManager::Get()->Client_SendDieEatting(m_ID);
 
 		SAFE_RELEASE(getPlayer);
 	}

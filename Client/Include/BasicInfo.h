@@ -21,7 +21,7 @@ public:
 	void SetCollScale(float Scale);
 	void SetRectCollScale(float Scale);
 	Vector4 GetRGB() const { return m_RGB; }
-	float* GetScale() { return &m_Scale; }
+	float GetScale() { return m_Scale; }
 
 protected:
 	float m_Scale;

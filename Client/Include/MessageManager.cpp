@@ -32,7 +32,7 @@ void MessageManager::Client_ClientDie()
 
 	IO_Data IoData = {};
 	IoData.WriteHeader<ClientDieMessage>();
-	IoData.WriteBuffer<size_t>(&MyID);
+	IoData.WriteBuffer<int>(&MyID);
 
 	ClientSend(&IoData);
 	ConnectSever::Get()->CloseSocket();
@@ -41,22 +41,32 @@ void MessageManager::Client_ClientDie()
 void MessageManager::Client_SendPlayerPos(const Vector3& Pos, const Vector3& CameraPos)
 {
 	size_t MyID = ConnectSever::Get()->GetClientID();
+	int vecSize = static_cast<int>(m_CurStage->GetUpdateEattingSize());
 
 	IO_Data IoData = {};
 	IoData.WriteHeader<PlayerPosMessage>();
-	IoData.WriteBuffer<size_t>(&MyID);
+	IoData.WriteBuffer<int>(&MyID);
 	IoData.WriteBuffer<Vector3>(&Pos);
+	IoData.WriteBuffer<Vector3>(&CameraPos);
+	IoData.WriteBuffer<int>(&vecSize);
 
 	ClientSend(&IoData);
 }
 
-void MessageManager::Client_SendPlayerScale(float Scale)
+void MessageManager::Client_SendDieEatting(int DeleteEatID)
 {
-	size_t MyID = ConnectSever::Get()->GetClientID();
+	int ID = ConnectSever::Get()->GetClientID();
+	auto getPlayer = m_CurStage->GetMainPlayer();
+
+	if (getPlayer == NULLPTR)
+		return;
+
+	float Scale = getPlayer->GetScale();
 
 	IO_Data IoData = {};
-	IoData.WriteHeader<PlayerScaleMessage>();
-	IoData.WriteBuffer<size_t>(&MyID);
+	IoData.WriteHeader<EattingDieMessage>();
+	IoData.WriteBuffer<int>(&ID);
+	IoData.WriteBuffer<int>(&DeleteEatID);
 	IoData.WriteBuffer<float>(&Scale);
 
 	ClientSend(&IoData);
@@ -67,7 +77,7 @@ void MessageManager::OtherPlayerDie(size_t DeleteID)
 	OTManager::Get()->DeleteOT(DeleteID);
 }
 
-void MessageManager::Client_UpdateOTPos(ReadMemoryStream & Reader, size_t ID)
+void MessageManager::Client_UpdateOTPos(ReadMemoryStream & Reader, int ID)
 {
 	auto getOT = OTManager::Get()->FindOT(ID);
 
@@ -80,7 +90,7 @@ void MessageManager::Client_UpdateOTPos(ReadMemoryStream & Reader, size_t ID)
 	getOT->GetTransform()->SetWorldPos(getPos);
 }
 
-void MessageManager::Client_UpdateOTScale(ReadMemoryStream & Reader, size_t ID)
+void MessageManager::Client_UpdateOTScale(ReadMemoryStream & Reader, int ID)
 {
 	auto getOT = OTManager::Get()->FindOT(ID);
 
@@ -122,7 +132,7 @@ void MessageManager::ClientMessageProcess()
 
 			ReadMemoryStream Reader = ReadMemoryStream(Buffer, BUFFERSIZE);
 			m_State = Reader.Read<SEVER_DATA_TYPE>();
-			size_t ClientID = Reader.Read<size_t>();
+			int ClientID = Reader.Read<int>();
 
 			switch (m_State)
 			{
@@ -146,7 +156,7 @@ void MessageManager::ClientMessageProcess()
 				break;
 			case SST_DELETE_EAT_OBJECT:
 				break;
-			case SST_UPDATE_EAT_LIST: //이미 로직을 처리해놔서 r같은함수여도 상관없을듯 하다.
+			case SST_UPDATE_EAT_LIST: //이미 로직을 처리해놔서 같은함수여도 상관없을듯 하다.
 				CreateEat(ClientID, Reader);
 				break;
 			}
@@ -188,7 +198,7 @@ SEVER_DATA_TYPE MessageManager::ReadHeader(char * Buffer)
 	return HeaderType;
 }
 
-bool MessageManager::CreateMainPlayer(size_t ClientID, ReadMemoryStream& Reader)
+bool MessageManager::CreateMainPlayer(int ClientID, ReadMemoryStream& Reader)
 {
 	Vector4 Color = Reader.Read<Vector4>();
 	Vector3 Pos = Reader.Read<Vector3>();
@@ -218,7 +228,7 @@ bool MessageManager::CreateMainPlayer(size_t ClientID, ReadMemoryStream& Reader)
 	return true;
 }
 
-bool MessageManager::CreateOneOtherPlayer(size_t ClientID, ReadMemoryStream& Reader)
+bool MessageManager::CreateOneOtherPlayer(int ClientID, ReadMemoryStream& Reader)
 {
 	Vector4 Color = Reader.Read<Vector4>();
 	Vector3 Pos = Reader.Read<Vector3>();
@@ -246,7 +256,7 @@ bool MessageManager::CreateOtherPlayer(int ClientID, ReadMemoryStream & Reader)
 		Vector4 Color = Reader.Read<Vector4>();
 		Vector3 Pos = Reader.Read<Vector3>();
 		float Scale = Reader.Read<float>();
-		size_t ID = Reader.Read<size_t>();
+		int ID = Reader.Read<int>();
 
 		GameObject* newOtherPlayerObj = GameObject::CreateObject("OtherPlayer", m_CurLayer);
 		OtharPlayer_Com* newOther = newOtherPlayerObj->AddComponent<OtharPlayer_Com>("OtherPlayer");
@@ -263,9 +273,30 @@ bool MessageManager::CreateOtherPlayer(int ClientID, ReadMemoryStream & Reader)
 	return false;
 }
 
-void MessageManager::CreateEat(size_t ClientID, ReadMemoryStream & Reader)
+void MessageManager::CreateEat(int ClientID, ReadMemoryStream & Reader)
 {
+	if (ClientID == -1)
+		return;
+
 	for (size_t i = 0; i < ClientID; i++)
+	{
+		//생성한다
+		Vector3 Pos = Reader.Read<Vector3>();
+		Vector4 Color = Reader.Read<Vector4>();
+		int ID = Reader.Read<int>();
+
+		m_CurStage->CreateEatting(Pos, Color, ID);
+	}
+}
+
+void MessageManager::CreateEat(ReadMemoryStream & Reader)
+{
+	int Size = Reader.Read<int>();
+
+	if (Size == -1)
+		return;
+
+	for (size_t i = 0; i < Size; i++)
 	{
 		//생성한다
 		Vector3 Pos = Reader.Read<Vector3>();

@@ -13,9 +13,10 @@ public:
 	//클라가 서버로 보내는 함수
 	void Client_ClientDie();
 	void Client_SendPlayerPos(const Vector3& Pos, const Vector3& CameraPos);
-	void Client_SendPlayerScale(float Scale);
-	void Client_UpdateOTPos(ReadMemoryStream& Reader, size_t ID);
-	void Client_UpdateOTScale(ReadMemoryStream& Reader, size_t ID);
+	void Client_SendDieEatting(int DeleteEatID);
+
+	void Client_UpdateOTPos(ReadMemoryStream& Reader, int ID);
+	void Client_UpdateOTScale(ReadMemoryStream& Reader, int ID);
 	void OtherPlayerDie(size_t DeleteID);
 
 	//클라용함수
@@ -33,11 +34,11 @@ private:
 	void ClearRecvBuffer();
 
 	//클라이언트 실질적으로 메세지에따라 실행하는 함수.
-	bool CreateMainPlayer(size_t ClientID, ReadMemoryStream& Reader);
-	bool CreateOneOtherPlayer(size_t ClientID, ReadMemoryStream& Reader);
+	bool CreateMainPlayer(int ClientID, ReadMemoryStream& Reader);
+	bool CreateOneOtherPlayer(int ClientID, ReadMemoryStream& Reader);
 	bool CreateOtherPlayer(int ClientID, ReadMemoryStream& Reader);
-	void CreateEat(size_t ClientID, ReadMemoryStream& Reader);
-	void UpdateEat(size_t ClientID, ReadMemoryStream& Reader);
+	void CreateEat(int ClientID, ReadMemoryStream& Reader);
+	void CreateEat(ReadMemoryStream& Reader);
 
 	SEVER_DATA_TYPE ReadHeader(char* Buffer);
 
