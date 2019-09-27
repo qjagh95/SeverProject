@@ -70,6 +70,7 @@ Player_Com * Player_Com::Clone()
 
 void Player_Com::ScalePlus(float Scale)
 {
+	m_Scale += Scale;
 	m_Transform->AddScale(Scale);
 	m_CirCleColl->AddInfo(Scale * 0.5f);
 }

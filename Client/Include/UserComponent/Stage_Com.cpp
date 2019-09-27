@@ -190,7 +190,7 @@ void Stage_Com::CreateEatting(const Vector3& Pos, const Vector4& RGB, size_t ID)
 	}
 }
 
-void Stage_Com::DeleteEatObject(size_t ID)
+void Stage_Com::DeleteEatObject(int ID)
 {
 	int Index = 0;
 	for (auto CurEat : m_UpdateEatting)

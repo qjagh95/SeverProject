@@ -134,13 +134,15 @@ void MessageManager::ClientMessageProcess()
 			m_State = Reader.Read<SEVER_DATA_TYPE>();
 			int ClientID = Reader.Read<int>();
 
+			cout << m_State << endl;
+
 			switch (m_State)
 			{
 			case SST_PLAYER_POS:
 				Client_UpdateOTPos(Reader, ClientID);
 				break;
 			case SST_PLAYER_SCALE:
-				Client_UpdateOTScale(Reader, ClientID);
+				DeleteEatOfScale(ClientID, Reader);
 				break;
 			case SST_OTHER_PLAYER_DELETE:
 				OtherPlayerDie(ClientID);
@@ -153,8 +155,6 @@ void MessageManager::ClientMessageProcess()
 				break;
 			case SST_CONNECT_CLIENT_CREATE_OTHER_PLAYER:
 				CreateOneOtherPlayer(ClientID, Reader);
-				break;
-			case SST_DELETE_EAT_OBJECT:
 				break;
 			case SST_UPDATE_EAT_LIST: //이미 로직을 처리해놔서 같은함수여도 상관없을듯 하다.
 				CreateEat(ClientID, Reader);
@@ -305,4 +305,15 @@ void MessageManager::CreateEat(ReadMemoryStream & Reader)
 
 		m_CurStage->CreateEatting(Pos, Color, ID);
 	}
+}
+
+void MessageManager::DeleteEatOfScale(int ID, ReadMemoryStream & Reader)
+{
+	int OTID = ID;
+
+	int DeleteID = Reader.Read<int>();
+	float Scale = Reader.Read<float>();
+
+	m_CurStage->DeleteEatObject(DeleteID);
+	OTManager::Get()->FindOT(OTID)->GetTransform()->SetWorldScale(Scale, Scale, 1.0f);
 }

@@ -22,6 +22,8 @@ public:
 
 	vector<EatInfo*>* GetEatVec() { return &m_vecEat; }
 
+	void DeleteEat(int ID);
+
 	void CloseAll();
 	void Init();
 

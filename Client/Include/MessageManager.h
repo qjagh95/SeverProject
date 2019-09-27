@@ -39,6 +39,7 @@ private:
 	bool CreateOtherPlayer(int ClientID, ReadMemoryStream& Reader);
 	void CreateEat(int ClientID, ReadMemoryStream& Reader);
 	void CreateEat(ReadMemoryStream& Reader);
+	void DeleteEatOfScale(int ID, ReadMemoryStream& Reader);
 
 	SEVER_DATA_TYPE ReadHeader(char* Buffer);
 

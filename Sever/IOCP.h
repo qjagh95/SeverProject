@@ -37,6 +37,9 @@ private:
 	//Scale갱신
 	void Sever_UpdateScale(SocketInfo * Socket, ReadMemoryStream& Reader);
 
+	//EatObject삭제
+	void Sever_DeleteEatObject(SocketInfo * Socket, ReadMemoryStream& Reader);
+
 	//플레이어 데이터 보내기
 	void Sever_SendPlayerPos(SocketInfo * Socket, const Vector3& CameraPos, int UpdateVecSize);
 	void Sever_SendPlayerScale(SocketInfo * Socket, float Scale);

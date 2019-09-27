@@ -200,7 +200,7 @@ void IOCP::Sever_SendNewPlayerMsg(SocketInfo * Socket)
 	}
 
 	//데이터를 보낸다
-	for (auto Cur : *getPlayerVec)
+	for (auto& Cur : *getPlayerVec)
 	{
 		if (Socket->m_CliendID == Cur->m_ClientID)
 			continue;
@@ -237,7 +237,7 @@ void IOCP::Sever_SendConnectClientNewOtherPlayer(SocketInfo * NewSocket)
 	IoData->WriteBuffer<Vector3>(&getInfo->m_Pos);
 	IoData->WriteBuffer<Vector3>(&getInfo->m_Scale);
 
-	for (auto Cur : *DataManager::Get()->GetClientVec())
+	for (auto& Cur : *DataManager::Get()->GetClientVec())
 	{
 		if (Cur->m_Socket == NewSocket->m_Socket)
 			continue;
@@ -262,6 +262,9 @@ void IOCP::SeverMesageProcess(SocketInfo * Socket, char * Data, size_t BufferSiz
 		break;
 	case SST_PLAYER_SCALE:
 		Sever_UpdateScale(Socket, Reader);
+		break;
+	case SST_DELETE_EAT_OBJECT:
+		Sever_DeleteEatObject(Socket, Reader);
 		break;
 	}
 
@@ -296,7 +299,7 @@ void IOCP::Sever_SendDeleteOT(SocketInfo * Socket)
 	mutex Mutex;
 	lock_guard<mutex> LockMutex(Mutex);
 
-	for (auto CurClient : *getVec)
+	for (auto& CurClient : *getVec)
 	{
 		if (CurClient->m_Socket == Socket->m_Socket)
 			continue;
@@ -337,6 +340,42 @@ void IOCP::Sever_UpdateScale(SocketInfo * Socket, ReadMemoryStream & Reader)
 	Sever_SendPlayerScale(Socket, Scale);
 }
 
+void IOCP::Sever_DeleteEatObject(SocketInfo * Socket, ReadMemoryStream & Reader)
+{
+	int ID = Reader.Read<int>();
+	auto getInfo = DataManager::Get()->FindPlayerInfoKey(ID);
+
+	if (getInfo == NULLPTR)
+	{
+		cout << "Error! 플레이어 데이터가 없습니다" << endl;
+		TrueAssert(true);
+		return;
+	}
+
+	int DeleteID = Reader.Read<int>();
+	DataManager::Get()->DeleteEat(DeleteID);
+
+	//갱신
+	float Scale = Reader.Read<float>();
+	getInfo->m_Scale = Scale;
+
+	auto getVec = DataManager::Get()->GetClientVec();
+
+	IO_Data* newData = new IO_Data();
+	newData->WriteHeader<PlayerScaleMessage>();
+	newData->WriteBuffer<int>(&ID);
+	newData->WriteBuffer<int>(&DeleteID);
+	newData->WriteBuffer<float>(&Scale);
+
+	for (auto& CurClient : *getVec)
+	{
+		if (CurClient->m_Socket == Socket->m_Socket)
+			continue;
+
+		IOCPSeverSend(CurClient, newData);
+	}
+}
+
 void IOCP::Sever_SendPlayerPos(SocketInfo * Socket, const Vector3& CameraPos, int UpdateVecSize)
 {
 	auto getVec = DataManager::Get()->GetClientVec();
@@ -358,7 +397,7 @@ void IOCP::Sever_SendPlayerPos(SocketInfo * Socket, const Vector3& CameraPos, in
 		auto getInfo = DataManager::Get()->FindPlayerInfoKey(Socket->m_CliendID);
 		IoData->WriteBuffer<Vector3>(&getInfo->m_Pos);
 
-		for (auto CurClient : *getVec)
+		for (auto& CurClient : *getVec)
 		{
 			if (CurClient->m_Socket == Socket->m_Socket)
 			{
@@ -370,7 +409,7 @@ void IOCP::Sever_SendPlayerPos(SocketInfo * Socket, const Vector3& CameraPos, in
 				TempVec.reserve(50);
 
 				auto getVec = DataManager::Get()->GetEatVec();
-				for (auto CurEat : *getVec)
+				for (auto& CurEat : *getVec)
 				{
 					Vector3 EatPos = CurEat->Pos;
 
@@ -391,7 +430,7 @@ void IOCP::Sever_SendPlayerPos(SocketInfo * Socket, const Vector3& CameraPos, in
 					vecSize = static_cast<int>(TempVec.size());
 					newData->WriteBuffer<int>(&vecSize);
 
-					for (auto CurEat : TempVec)
+					for (auto& CurEat : TempVec)
 					{
 						newData->WriteBuffer<Vector3>(&CurEat->Pos);
 						newData->WriteBuffer<Vector4>(&CurEat->Color);
@@ -420,7 +459,7 @@ void IOCP::Sever_SendPlayerScale(SocketInfo * Socket, float Scale)
 	IoData->WriteBuffer<int>(&Socket->m_CliendID);
 	IoData->WriteBuffer<float>(&Scale);
 
-	for (auto CurClient : *getVec)
+	for (auto& CurClient : *getVec)
 	{
 		if (CurClient->m_Socket == Socket->m_Socket)
 			continue;
@@ -493,7 +532,7 @@ void IOCP::Sever_SendFirstSeeList(SocketInfo * Socket)
 	vector<EatInfo*> SendList;
 	SendList.reserve(50);
 
-	for (auto CurEat : *getEatVec)
+	for (auto& CurEat : *getEatVec)
 	{
 		//시야판단
 		Vector3 Origin = Vector3(0.0f, 0.0f, 0);
@@ -509,7 +548,7 @@ void IOCP::Sever_SendFirstSeeList(SocketInfo * Socket)
 	newData->WriteHeader<CreateEatObjectMessage>();
 	newData->WriteBuffer<int>(&ListSize);
 
-	for (auto CurEat : SendList)
+	for (auto& CurEat : SendList)
 	{
 		newData->WriteBuffer<Vector3>(&CurEat->Pos);
 		newData->WriteBuffer<Vector4>(&CurEat->Color);

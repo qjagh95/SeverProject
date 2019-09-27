@@ -94,6 +94,21 @@ void DataManager::PushPlayerInfo(const Vector4& Color, const Vector3& Pos, size_
 	m_PlayerCount++;
 }
 
+void DataManager::DeleteEat(int ID)
+{
+	int Index = 0;
+	for (auto& CurEat : m_vecEat)
+	{
+		if (CurEat->ID == ID)
+		{
+			m_vecEat.erase(m_vecEat.begin() + Index);
+			break;
+		}
+
+		Index++;
+	}
+}
+
 void DataManager::CloseAll()
 {
 	for (auto CurClient : m_vecClient)
