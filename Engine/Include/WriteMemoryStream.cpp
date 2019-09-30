@@ -10,6 +10,16 @@ WriteMemoryStream::WriteMemoryStream()
 
 	m_Buffer = new char[BUFFERSIZE];
 	memset(m_Buffer, 0, BUFFERSIZE);
+	
+}
+
+WriteMemoryStream::WriteMemoryStream(size_t Capacity)
+{
+	m_Capacity = Capacity;
+	m_Size = 0;
+
+	m_Buffer = new char[Capacity];
+	ZeroMemory(m_Buffer, Capacity);
 }
 
 WriteMemoryStream::~WriteMemoryStream()

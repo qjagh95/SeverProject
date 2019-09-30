@@ -13,5 +13,4 @@ int main()
 
 	SAFE_DELETE(newIocp);
 	Core::Delete();
-	DataManager::Delete();
 }

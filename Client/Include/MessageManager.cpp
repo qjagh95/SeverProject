@@ -126,15 +126,22 @@ void MessageManager::ClientMessageProcess()
 		if (NetWorkEvent.lNetworkEvents & FD_READ)
 		{
 			char Buffer[BUFFERSIZE] = { };
+			char RecvByteBuffer[4] = {};
+
+			int ConvertByte = 0;
+			recv(getSocket, RecvByteBuffer, BUFFERSIZE, 0);
+			memcpy(&ConvertByte, RecvByteBuffer, 4);
 
 			int RecvSize = 0;
-			RecvSize = recv(getSocket, Buffer, BUFFERSIZE, 0);
+
+			while (ConvertByte >= RecvSize)
+			{
+				RecvSize = recv(getSocket, Buffer, BUFFERSIZE, 0);
+			}
 
 			ReadMemoryStream Reader = ReadMemoryStream(Buffer, BUFFERSIZE);
 			m_State = Reader.Read<SEVER_DATA_TYPE>();
 			int ClientID = Reader.Read<int>();
-
-			cout << m_State << endl;
 
 			switch (m_State)
 			{
@@ -156,7 +163,7 @@ void MessageManager::ClientMessageProcess()
 			case SST_CONNECT_CLIENT_CREATE_OTHER_PLAYER:
 				CreateOneOtherPlayer(ClientID, Reader);
 				break;
-			case SST_UPDATE_EAT_LIST: //이미 로직을 처리해놔서 같은함수여도 상관없을듯 하다.
+			case SST_UPDATE_EAT_LIST:
 				CreateEat(ClientID, Reader);
 				break;
 			}

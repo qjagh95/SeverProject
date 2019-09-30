@@ -24,6 +24,14 @@ struct IO_Data
 		m_Mode = -1;
 	}
 
+	IO_Data(size_t Capacity)
+	{
+		m_Stream = WriteMemoryStream(Capacity);
+		ZeroMemory(&m_Overlapped, sizeof(OVERLAPPED));
+		m_WsaBuf.len = 0;
+		m_Mode = -1;
+	}
+
 	void WriteBuffer(const void* Buffer, size_t size)
 	{
 		m_Stream.Write(Buffer, size);

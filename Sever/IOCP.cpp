@@ -164,7 +164,14 @@ void IOCP::IOCPSeverSend(SocketInfo * Socket, IO_Data * Data)
 	DWORD Flags = 0;
 	Data->m_Mode = WRITE;
 
+	size_t DataSize = Data->GetSize();
+
+	IO_Data* TempData = new IO_Data(4);
+	TempData->m_Mode = WRITE;
+	TempData->WriteBuffer<int>(&DataSize);
+
 	int getResult = WSASend(Socket->m_Socket, &Data->m_WsaBuf, 1, NULLPTR, Flags, (LPOVERLAPPED)Data, NULLPTR);
+	getResult = WSASend(Socket->m_Socket, &Data->m_WsaBuf, 1, NULLPTR, Flags, (LPOVERLAPPED)Data, NULLPTR);
 
 	if (getResult != 0)
 		cout << "Error : " << WSAGetLastError() << endl;
@@ -295,6 +302,8 @@ void IOCP::Sever_SendDeleteOT(SocketInfo * Socket)
 	IO_Data* IoData = new IO_Data();
 	IoData->WriteHeader<OtherPlayerDelete>();
 	IoData->WriteBuffer<int>(&DeleteID);
+
+	cout << "OT 삭제 메세지 전송" << endl;
 
 	mutex Mutex;
 	lock_guard<mutex> LockMutex(Mutex);
@@ -437,11 +446,13 @@ void IOCP::Sever_SendPlayerPos(SocketInfo * Socket, const Vector3& CameraPos, in
 						newData->WriteBuffer<int>(&CurEat->ID);
 					}
 
+					cout << "먹이 리스트 갱신 메세지 전송" << endl;
 					IOCPSeverSend(CurClient, newData);
 				}
 				continue;
 			}
-			
+
+			cout << "OT 위치 갱신 메세지 전송" << endl;
 			IOCPSeverSend(CurClient, IoData);
 		}
 	}
@@ -464,6 +475,7 @@ void IOCP::Sever_SendPlayerScale(SocketInfo * Socket, float Scale)
 		if (CurClient->m_Socket == Socket->m_Socket)
 			continue;
 
+		cout << "OT 크기 갱신 메세지 전송" << endl;
 		IOCPSeverSend(CurClient, IoData);
 	}
 }
@@ -555,5 +567,6 @@ void IOCP::Sever_SendFirstSeeList(SocketInfo * Socket)
 		newData->WriteBuffer<int>(&CurEat->ID);
 	}
 
+	cout << "먹이 리스트 초기화 메세지 전송" << endl;
 	IOCPSeverSend(Socket, newData);
 }

@@ -24,6 +24,7 @@ public:
 
 public:
 	WriteMemoryStream();
+	WriteMemoryStream(size_t Capacity);
 	~WriteMemoryStream();
 };
 
