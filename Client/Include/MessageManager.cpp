@@ -126,18 +126,9 @@ void MessageManager::ClientMessageProcess()
 		if (NetWorkEvent.lNetworkEvents & FD_READ)
 		{
 			char Buffer[BUFFERSIZE] = { };
-			char RecvByteBuffer[4] = {};
-
-			int ConvertByte = 0;
-			recv(getSocket, RecvByteBuffer, BUFFERSIZE, 0);
-			memcpy(&ConvertByte, RecvByteBuffer, 4);
 
 			int RecvSize = 0;
-
-			while (ConvertByte >= RecvSize)
-			{
-				RecvSize = recv(getSocket, Buffer, BUFFERSIZE, 0);
-			}
+			RecvSize = recv(getSocket, Buffer , BUFFERSIZE, 0);
 
 			ReadMemoryStream Reader = ReadMemoryStream(Buffer, BUFFERSIZE);
 			m_State = Reader.Read<SEVER_DATA_TYPE>();
@@ -181,6 +172,8 @@ void MessageManager::ClientSend(IO_Data * Data)
 	Data->CopyBuffer();
 	
 	int SendByte = send(getSocket->m_Socket, Data->GetBuffer(), static_cast<int>(Data->GetSize()), 0);
+
+	cout << SendByte << endl;
 
 	if (SendByte == 0)
 		cout << "Error : " << GetLastError() << endl;

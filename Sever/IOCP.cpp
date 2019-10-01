@@ -145,14 +145,15 @@ void IOCP::ThreadFunc()
 			continue;
 		}
 
-		lock_guard<mutex> myMutex(m_Mutex);
-
 		int RWMode = IOData->m_Mode;
 		IOData->CopyBuffer();
 		memcpy(Buffer, IOData->GetBuffer(), IOData->GetSize());
 		size_t Size = IOData->GetSize();
 
-		SAFE_DELETE(IOData);
+		lock_guard<mutex> myMutex(m_Mutex);
+
+		if(IOData->GetSize() < 100000)
+			SAFE_DELETE(IOData);
 
 		if (RWMode == READ)
 			SeverMesageProcess(m_SocketInfo, Buffer, Size);
@@ -162,16 +163,12 @@ void IOCP::ThreadFunc()
 void IOCP::IOCPSeverSend(SocketInfo * Socket, IO_Data * Data)
 {
 	DWORD Flags = 0;
+	DWORD Flagss = 0;
 	Data->m_Mode = WRITE;
 
 	size_t DataSize = Data->GetSize();
 
-	IO_Data* TempData = new IO_Data(4);
-	TempData->m_Mode = WRITE;
-	TempData->WriteBuffer<int>(&DataSize);
-
 	int getResult = WSASend(Socket->m_Socket, &Data->m_WsaBuf, 1, NULLPTR, Flags, (LPOVERLAPPED)Data, NULLPTR);
-	getResult = WSASend(Socket->m_Socket, &Data->m_WsaBuf, 1, NULLPTR, Flags, (LPOVERLAPPED)Data, NULLPTR);
 
 	if (getResult != 0)
 		cout << "Error : " << WSAGetLastError() << endl;
@@ -203,6 +200,7 @@ void IOCP::Sever_SendNewPlayerMsg(SocketInfo * Socket)
 	if (ClientCount == 1)
 	{
 		IOCPSeverSend(Socket, IoData);
+		RecvInitIOData(Socket);
 		return;
 	}
 
@@ -221,6 +219,7 @@ void IOCP::Sever_SendNewPlayerMsg(SocketInfo * Socket)
 	cout << Socket->m_CliendID << "번 클라이언트에 기존 접속한 클라이언트 갯수 : " << ClientCount - 1 << " 개 만큼 OtherPlayer 생성메세지 전송" << endl;
 
 	IOCPSeverSend(Socket, IoData);
+	RecvInitIOData(Socket);
 }
 
 void IOCP::Sever_SendConnectClientNewOtherPlayer(SocketInfo * NewSocket)
@@ -250,6 +249,7 @@ void IOCP::Sever_SendConnectClientNewOtherPlayer(SocketInfo * NewSocket)
 			continue;
 
 		IOCPSeverSend(Cur, IoData);
+		RecvInitIOData(Cur);
 	}
 }
 
@@ -303,10 +303,13 @@ void IOCP::Sever_SendDeleteOT(SocketInfo * Socket)
 	IoData->WriteHeader<OtherPlayerDelete>();
 	IoData->WriteBuffer<int>(&DeleteID);
 
-	cout << "OT 삭제 메세지 전송" << endl;
-
 	mutex Mutex;
 	lock_guard<mutex> LockMutex(Mutex);
+
+	if (getVec->size() == 0)
+		return;
+
+	cout << "OT 삭제 메세지 전송" << endl;
 
 	for (auto& CurClient : *getVec)
 	{
@@ -395,7 +398,7 @@ void IOCP::Sever_SendPlayerPos(SocketInfo * Socket, const Vector3& CameraPos, in
 	static int TempFrame = 0;
 	TempFrame++;
 
-	if (TempFrame >= 8)
+	if (TempFrame >= 10)
 	{
 		TempFrame = 0;
 
@@ -417,8 +420,8 @@ void IOCP::Sever_SendPlayerPos(SocketInfo * Socket, const Vector3& CameraPos, in
 				vector<EatInfo*> TempVec;
 				TempVec.reserve(50);
 
-				auto getVec = DataManager::Get()->GetEatVec();
-				for (auto& CurEat : *getVec)
+				auto getEatVec = DataManager::Get()->GetEatVec();
+				for (auto& CurEat : *getEatVec)
 				{
 					Vector3 EatPos = CurEat->Pos;
 
@@ -433,6 +436,7 @@ void IOCP::Sever_SendPlayerPos(SocketInfo * Socket, const Vector3& CameraPos, in
 					vecSize = -1;
 					newData->WriteBuffer<int>(&vecSize);
 					IOCPSeverSend(CurClient, newData);
+					RecvInitIOData(CurClient);
 				}
 				else
 				{
@@ -448,6 +452,7 @@ void IOCP::Sever_SendPlayerPos(SocketInfo * Socket, const Vector3& CameraPos, in
 
 					cout << "먹이 리스트 갱신 메세지 전송" << endl;
 					IOCPSeverSend(CurClient, newData);
+					RecvInitIOData(CurClient);
 				}
 				continue;
 			}
@@ -477,6 +482,7 @@ void IOCP::Sever_SendPlayerScale(SocketInfo * Socket, float Scale)
 
 		cout << "OT 크기 갱신 메세지 전송" << endl;
 		IOCPSeverSend(CurClient, IoData);
+		RecvInitIOData(CurClient);
 	}
 }
 

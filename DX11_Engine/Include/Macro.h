@@ -48,7 +48,7 @@
 #define ALPHA_BLEND "AlphaBlend"
 #define DEPTH_DISABLE "DepthDisable"
 
-#define BUFFERSIZE 2048
+#define BUFFERSIZE 512
 #define PORT 15000
 
 template<typename T>

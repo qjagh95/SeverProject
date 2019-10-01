@@ -14,11 +14,11 @@ WriteMemoryStream::WriteMemoryStream()
 
 WriteMemoryStream::WriteMemoryStream(size_t Capacity)
 {
-	m_Capacity = Capacity;
+	m_Capacity = Capacity + 48;
 	m_Size = 0;
 
-	m_Buffer = new char[Capacity];
-	ZeroMemory(m_Buffer, Capacity);
+	m_Buffer = new char[Capacity + 48];
+	ZeroMemory(m_Buffer, Capacity + 48);
 }
 
 WriteMemoryStream::~WriteMemoryStream()

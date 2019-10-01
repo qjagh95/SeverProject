@@ -1,8 +1,11 @@
 #pragma once
+
+JEONG_USING
+
 class DBConnector
 {
 public:
-	DBConnector();
-	~DBConnector();
+	CLASS_IN_SINGLE(DBConnector)
+
 };
 
