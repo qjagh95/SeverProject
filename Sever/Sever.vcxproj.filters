@@ -11,6 +11,9 @@
     <Filter Include="소스 파일\DataManage">
       <UniqueIdentifier>{d1016e55-f861-4d09-b30e-6acf95f519ef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\DBConnector">
+      <UniqueIdentifier>{8eccadc9-6761-489b-b1b4-d8b539c331ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -25,6 +28,9 @@
     <ClCompile Include="DataManager.cpp">
       <Filter>소스 파일\DataManage</Filter>
     </ClCompile>
+    <ClCompile Include="DBConnector.cpp">
+      <Filter>소스 파일\DBConnector</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -35,6 +41,9 @@
     </ClInclude>
     <ClInclude Include="DataManager.h">
       <Filter>소스 파일\DataManage</Filter>
+    </ClInclude>
+    <ClInclude Include="DBConnector.h">
+      <Filter>소스 파일\DBConnector</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

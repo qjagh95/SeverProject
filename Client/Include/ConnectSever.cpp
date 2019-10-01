@@ -26,7 +26,7 @@ bool ConnectSever::Init()
 
 		m_Info.m_Socket = socket(AF_INET, SOCK_STREAM, 0);
 
-		string IPAddress = "192.168.1.172";
+		string IPAddress = "192.168.219.102";
 
 		m_Info.m_ClientInfo.sin_family = AF_INET;
 		m_Info.m_ClientInfo.sin_port = htons(static_cast<uint16_t>(PORT));

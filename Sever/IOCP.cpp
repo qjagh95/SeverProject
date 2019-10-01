@@ -48,7 +48,7 @@ bool IOCP::Init()
 	for (size_t i = 0; i < Info.dwNumberOfProcessors * 2; i++)
 		m_vecThread.push_back(new thread(&IOCP::ThreadFunc, this));
 
-	string Address = "192.168.1.172";
+	string Address = "192.168.219.102";
 
 	m_SeverSocket.m_Socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 

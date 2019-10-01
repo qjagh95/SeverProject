@@ -55,7 +55,7 @@ void MessageManager::Client_SendPlayerPos(const Vector3& Pos, const Vector3& Cam
 
 void MessageManager::Client_SendDieEatting(int DeleteEatID)
 {
-	int ID = ConnectSever::Get()->GetClientID();
+	int ID = static_cast<int>(ConnectSever::Get()->GetClientID());
 	auto getPlayer = m_CurStage->GetMainPlayer();
 
 	if (getPlayer == NULLPTR)
