@@ -23,6 +23,8 @@
 #include <Vector4.h>
 #include <Vector3.h>
 
+#include <sqlext.h>
+
 using namespace std;
 
 struct EatInfo
