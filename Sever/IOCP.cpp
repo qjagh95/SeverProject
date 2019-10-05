@@ -12,12 +12,16 @@ JEONG_USING
 
 IOCP::IOCP()
 {
+	m_isCheck = true;
+
 	m_State = SST_NONE;
 	m_SeverSocket.m_CliendID = DataManager::m_ClientCount;
 	TimeManager::Get()->Init();
 
 	m_TimeVar = 0.0f;
 	m_OneSecond = 1.0f;
+
+	m_KeyThread = thread(&IOCP::KeyFunc, this);
 }
 
 IOCP::~IOCP()
@@ -116,15 +120,12 @@ void IOCP::Run()
 
 		wstring SQL;
 		wchar_t IDBuffer[10] = {};
-		wchar_t ScaleBuffer[10] = {};
 		wstring Temp;
 
-		_itow(static_cast<int>(newInfo->m_CliendID), IDBuffer, 10);
-		_itow(10, ScaleBuffer, 10);
+		_itow_s(static_cast<int>(newInfo->m_CliendID), IDBuffer, 10);
 
 		Temp += IDBuffer;
-		Temp += L". ";
-		Temp += ScaleBuffer;
+		Temp += L",10";
 		Temp += L");";
 
 		SQL = L"INSERT INTO Players(UserID, Scale) Values(" + Temp;
@@ -151,14 +152,18 @@ void IOCP::ThreadFunc()
 		//입출력이 완료된 소켓의 정보 얻음
 		GetQueuedCompletionStatus(m_CompletionPort, (LPDWORD)&ByteTransferred, (PULONG_PTR)&m_SocketInfo, (LPOVERLAPPED*)&IOData, INFINITE);
 
+		m_Mutex.lock();
+
+		if (m_Mutex.try_lock() == true)
+			continue;
+
 		// 전송된 바이트가 0일때(소켓이 닫혔다는 의미)
 		if (ByteTransferred == 0)
 		{
-			mutex Mutex;
-			lock_guard<mutex> LockMutex(Mutex);
-
 			Sever_DieClient(m_SocketInfo);
+
 			SAFE_DELETE(IOData);
+			m_Mutex.unlock();
 			continue;
 		}
 
@@ -167,13 +172,13 @@ void IOCP::ThreadFunc()
 		memcpy(Buffer, IOData->GetBuffer(), IOData->GetSize());
 		size_t Size = IOData->GetSize();
 
-		lock_guard<mutex> myMutex(m_Mutex);
-
 		if(IOData->GetSize() < 100000)
 			SAFE_DELETE(IOData);
 
 		if (RWMode == READ)
 			SeverMesageProcess(m_SocketInfo, Buffer, Size);
+
+		m_Mutex.unlock();
 	}
 }
 
@@ -284,9 +289,6 @@ void IOCP::SeverMesageProcess(SocketInfo * Socket, char * Data, size_t BufferSiz
 	case SST_PLAYER_POS:
 		Sever_UpdatePos(Socket, Reader);
 		break;
-	case SST_PLAYER_SCALE:
-		Sever_UpdateScale(Socket, Reader);
-		break;
 	case SST_DELETE_EAT_OBJECT:
 		Sever_DeleteEatObject(Socket, Reader);
 		break;
@@ -297,10 +299,18 @@ void IOCP::SeverMesageProcess(SocketInfo * Socket, char * Data, size_t BufferSiz
 
 void IOCP::Sever_DieClient(SocketInfo * Socket)
 {
-	mutex Mutex;
-	int DeleteID = static_cast<int>(Socket->m_CliendID);
+	if (Socket == NULLPTR)
+		return;
 
+	if (m_isCheck == false)
+		return;
+
+	mutex Mutex;
 	Mutex.lock();
+
+	m_isCheck = false;
+
+	int DeleteID = static_cast<int>(Socket->m_CliendID);
 	cout << DeleteID << "번 클라이언트 종료" << endl;
 
 	Sever_SendDeleteOT(Socket);
@@ -325,8 +335,6 @@ void IOCP::Sever_SendDeleteOT(SocketInfo * Socket)
 
 	if (getVec->size() == 0)
 		return;
-
-	cout << "OT 삭제 메세지 전송" << endl;
 
 	for (auto& CurClient : *getVec)
 	{
@@ -403,6 +411,22 @@ void IOCP::Sever_DeleteEatObject(SocketInfo * Socket, ReadMemoryStream & Reader)
 
 		IOCPSeverSend(CurClient, newData);
 	}
+	
+	wstring SQL = L"Update Players Set Scale = ";
+	wstring Temp;
+	wchar_t ScaleBuffer[8] = {};
+	wchar_t IDBuffer[8] = {};
+
+	_itow_s(ID, IDBuffer, 10);
+	_itow_s(static_cast<int>(Scale), ScaleBuffer, 10);
+
+	Temp += ScaleBuffer;
+	Temp += L" Where UserID = ";
+	Temp += IDBuffer;
+	Temp += L";";
+
+	SQL += Temp;
+	DBConnector::Get()->ExecuteStatementDriect((SQLWCHAR*)SQL.c_str());
 }
 
 void IOCP::Sever_SendPlayerPos(SocketInfo * Socket, const Vector3& CameraPos, int UpdateVecSize)
@@ -467,14 +491,12 @@ void IOCP::Sever_SendPlayerPos(SocketInfo * Socket, const Vector3& CameraPos, in
 						newData->WriteBuffer<int>(&CurEat->ID);
 					}
 
-					cout << "먹이 리스트 갱신 메세지 전송" << endl;
 					IOCPSeverSend(CurClient, newData);
 					RecvInitIOData(CurClient);
 				}
 				continue;
 			}
 
-			cout << "OT 위치 갱신 메세지 전송" << endl;
 			IOCPSeverSend(CurClient, IoData);
 		}
 	}
@@ -497,7 +519,6 @@ void IOCP::Sever_SendPlayerScale(SocketInfo * Socket, float Scale)
 		if (CurClient->m_Socket == Socket->m_Socket)
 			continue;
 
-		cout << "OT 크기 갱신 메세지 전송" << endl;
 		IOCPSeverSend(CurClient, IoData);
 		RecvInitIOData(CurClient);
 	}
@@ -590,6 +611,24 @@ void IOCP::Sever_SendFirstSeeList(SocketInfo * Socket)
 		newData->WriteBuffer<int>(&CurEat->ID);
 	}
 
-	cout << "먹이 리스트 초기화 메세지 전송" << endl;
 	IOCPSeverSend(Socket, newData);
+}
+
+void IOCP::KeyFunc()
+{
+	while (true)
+	{
+		string Temp;
+		cin >> Temp;
+
+		if (Temp.size() > 1)
+			continue;
+
+		if (Temp == "R" || Temp == "r")
+		{
+			wstring SQL = L"SELECT * FROM Players Order By Scale DESC";
+			DBConnector::Get()->ExecuteStatementDriect((SQLWCHAR*)SQL.c_str());
+			DBConnector::Get()->RetrieveResult();
+		}
+	}
 }

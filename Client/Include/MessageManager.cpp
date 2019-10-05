@@ -173,8 +173,6 @@ void MessageManager::ClientSend(IO_Data * Data)
 	
 	int SendByte = send(getSocket->m_Socket, Data->GetBuffer(), static_cast<int>(Data->GetSize()), 0);
 
-	cout << SendByte << endl;
-
 	if (SendByte == 0)
 		cout << "Error : " << GetLastError() << endl;
 }
@@ -315,5 +313,10 @@ void MessageManager::DeleteEatOfScale(int ID, ReadMemoryStream & Reader)
 	float Scale = Reader.Read<float>();
 
 	m_CurStage->DeleteEatObject(DeleteID);
-	OTManager::Get()->FindOT(OTID)->GetTransform()->SetWorldScale(Scale, Scale, 1.0f);
+
+	auto getOT = OTManager::Get()->FindOT(OTID);
+	if (getOT == NULLPTR)
+		return;
+
+	getOT->GetTransform()->SetWorldScale(Scale, Scale, 1.0f);
 }

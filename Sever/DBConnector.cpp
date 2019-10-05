@@ -124,6 +124,9 @@ void DBConnector::DisconnectDataSource()
 
 void DBConnector::ErrorMessage(SQLSMALLINT HandleType, SQLHANDLE Handle)
 {
+	if (m_ErrorMessage == SQL_NO_DATA)
+		return;
+
 	if (m_ErrorMessage != SQL_SUCCESS && m_ErrorMessage != SQL_SUCCESS_WITH_INFO)
 	{
 		wstring Temp;

@@ -42,6 +42,8 @@ private:
 
 	void Sever_SendFirstSeeList(SocketInfo * Socket);
 
+	void KeyFunc();
+
 private:
 	HANDLE m_CompletionPort;
 	SocketInfo m_SeverSocket;
@@ -51,6 +53,8 @@ private:
 	SEVER_DATA_TYPE m_State;
 	float m_TimeVar;
 	float m_OneSecond;
+	thread m_KeyThread;
+	bool m_isCheck;
 
 public:
 	IOCP();
