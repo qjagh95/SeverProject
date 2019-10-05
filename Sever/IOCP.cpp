@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "IOCP.h"
-
 #include "DataManager.h"
+#include "DBConnector.h"
+
 #include <WriteMemoryStream.h>
 #include <ReadMemoryStream.h>
 #include <Core.h>
@@ -112,6 +113,22 @@ void IOCP::Run()
 
 		//새로 접속한 클라에 메인플레이어 생성
 		Sever_SendNewPlayerMsg(newInfo);
+
+		wstring SQL;
+		wchar_t IDBuffer[10] = {};
+		wchar_t ScaleBuffer[10] = {};
+		wstring Temp;
+
+		_itow(static_cast<int>(newInfo->m_CliendID), IDBuffer, 10);
+		_itow(10, ScaleBuffer, 10);
+
+		Temp += IDBuffer;
+		Temp += L". ";
+		Temp += ScaleBuffer;
+		Temp += L");";
+
+		SQL = L"INSERT INTO Players(UserID, Scale) Values(" + Temp;
+		DBConnector::Get()->ExecuteStatementDriect((SQLWCHAR*)SQL.c_str());
 
 		//기존 접속한 클라에 OT생성
 		Sever_SendConnectClientNewOtherPlayer(newInfo);

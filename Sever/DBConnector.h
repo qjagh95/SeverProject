@@ -21,6 +21,9 @@ public:
 	void DisconnectDataSource();
 
 private:
+	void ErrorMessage(SQLSMALLINT HandleType, SQLHANDLE Handle);
+
+private:
 	SQLHENV m_Henv;
 	SQLHDBC m_Hdbc;
 	SQLHSTMT m_Stmt;

@@ -9,73 +9,45 @@ DBConnector::DBConnector()
 
 DBConnector::~DBConnector()
 {
+	DisconnectDataSource();
 }
 
 void DBConnector::AllocateHandle()
 {
 	// 환경 핸들러 할당
 	m_ErrorMessage = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &m_Henv);
+	ErrorMessage(SQL_HANDLE_ENV, m_Henv);
 
 	if (m_ErrorMessage == SQL_SUCCESS || m_ErrorMessage == SQL_SUCCESS_WITH_INFO)
 	{
 		// ODBC 드라이버 버전 명시
 		m_ErrorMessage = SQLSetEnvAttr(m_Henv, SQL_ATTR_ODBC_VERSION, (SQLPOINTER)SQL_OV_ODBC3, 0);
 
+		// 연결 핸들러 할당
 		if (m_ErrorMessage == SQL_SUCCESS || m_ErrorMessage == SQL_SUCCESS_WITH_INFO)
-		{
-			// 연결 핸들러 할당
 			m_ErrorMessage = SQLAllocHandle(SQL_HANDLE_DBC, m_Henv, &m_Hdbc);
 
-			if (m_ErrorMessage == SQL_SUCCESS || m_ErrorMessage == SQL_SUCCESS_WITH_INFO)
-				printf("Allocate Success\n");
-
-			else 
-			{
-				SQLGetDiagRec(SQL_HANDLE_DBC, m_Hdbc, ++m_Rec, m_State, &m_Native, m_Message, sizeof(m_Message), &m_Length);
-				printf("%s : %ld : %ld : %s\n", m_State, m_Rec, m_Native, m_Message);
-			}
-		}
-		else 
-		{
-			SQLGetDiagRec(SQL_HANDLE_ENV, m_Henv, ++m_Rec, m_State, &m_Native, m_Message, sizeof(m_Message), &m_Length);
-			printf("%s : %ld : %ld : %s\n", m_State, m_Rec, m_Native, m_Message);
-		}
-	}
-	else
-	{
-		SQLGetDiagRec(SQL_HANDLE_ENV, m_Henv, m_Rec, m_State, &m_Native, m_Message, sizeof(m_Message), &m_Length);
-		printf("%s : %ld : %ld : %s\n", m_Henv, m_Rec, m_Native, m_Message);
+		ErrorMessage(SQL_HANDLE_DBC, m_Hdbc);
 	}
 }
 
 void DBConnector::ConnectDataSource()
 {
-	m_ErrorMessage = SQLConnect(m_Hdbc, (SQLWCHAR*)L"DSN", SQL_NTS, (SQLWCHAR*)L"사용자_이름", SQL_NTS, (SQLWCHAR*)L"비밀번호", SQL_NTS);
+	m_ErrorMessage = SQLConnect(m_Hdbc, (SQLWCHAR*)L"PlayerDB", SQL_NTS, (SQLWCHAR*)L"qjagh95", SQL_NTS, (SQLWCHAR*)L"9568", SQL_NTS);
 }
 
 void DBConnector::ExecuteStatementDriect(SQLWCHAR * SQL)
 {
+	SQLCloseCursor(m_Stmt);
+
 	if (m_ErrorMessage == SQL_SUCCESS || m_ErrorMessage == SQL_SUCCESS_WITH_INFO)
 	{
 		m_ErrorMessage = SQLAllocHandle(SQL_HANDLE_STMT, m_Hdbc, &m_Stmt);
-		printf("Connect Success\n");
-	}
-	else 
-	{
-		SQLGetDiagRec(SQL_HANDLE_DBC, m_Hdbc, ++m_Rec, m_State, &m_Native, m_Message, sizeof(m_Message), &m_Length);
-		printf("%s : %ld : %ld : %s\n", m_State, m_Rec, m_Native, m_Message);
+		ErrorMessage(SQL_HANDLE_STMT, m_Stmt);
 	}
 
 	m_ErrorMessage = SQLExecDirect(m_Stmt, SQL, SQL_NTS);
-
-	if (m_Rec == SQL_SUCCESS)
-		printf("Query Seuccess\n");
-
-	else
-	{
-		SQLGetDiagRec(SQL_HANDLE_STMT, m_Stmt, ++m_Rec, m_State, &m_Native, m_Message, sizeof(m_Message), &m_Length);
-		printf("%s : %ld : %ld : %s\n", m_State, m_Rec, m_Native, m_Message);
-	}
+	ErrorMessage(SQL_HANDLE_STMT, m_Stmt);
 
 }
 
@@ -84,61 +56,44 @@ void DBConnector::PrepareStatement(SQLWCHAR * SQL)
 	if (m_ErrorMessage == SQL_SUCCESS || m_ErrorMessage == SQL_SUCCESS_WITH_INFO)
 	{
 		m_ErrorMessage = SQLAllocHandle(SQL_HANDLE_STMT, m_Hdbc, &m_Stmt);
-		printf("Connect Success\n");
-	}
-	else
-	{
-		SQLGetDiagRec(SQL_HANDLE_DBC, m_Hdbc, ++m_Rec, m_State, &m_Native, m_Message, sizeof(m_Message), &m_Length);
-		printf("%s : %ld : %ld : %s\n", m_State, m_Rec, m_Native, m_Message);
+		ErrorMessage(SQL_HANDLE_STMT, m_Stmt);
 	}
 
 	m_ErrorMessage = SQLPrepare(m_Stmt, SQL, SQL_NTS);
 
-	if (m_ErrorMessage == SQL_SUCCESS)
-		printf("\nQuery Prepare Success\n");
-
-	else 
-	{
-		SQLGetDiagRec(SQL_HANDLE_STMT, m_Stmt, ++m_Rec, m_State, &m_Native, m_Message, sizeof(m_Message), &m_Length);
-		printf("\n%s : %ld : %ld : %s\n", m_State, m_Rec, m_Native, m_Message);
-	}
-
+	ErrorMessage(SQL_HANDLE_STMT, m_Stmt);
 }
 
+//실행준비된 쿼리문을 실행하라
 void DBConnector::ExcuteStatement()
 {
 	m_ErrorMessage = SQLExecute(m_Stmt);
-
-	if (m_ErrorMessage == SQL_SUCCESS) 
-		printf("Query Execute Success\n");
-
-	else
-	{
-		SQLGetDiagRec(SQL_HANDLE_STMT, m_Stmt, ++m_Rec, m_State, &m_Native, m_Message, sizeof(m_Message), &m_Length);
-		printf("\n%s : %ld : %ld : %s\n", m_State, m_Rec, m_Native, m_Message);
-
-	}
+	ErrorMessage(SQL_HANDLE_STMT, m_Stmt);
 }
 
+//가변인자 템플릿으로 만들면 편할듯
 void DBConnector::RetrieveResult()
 {
-	short choco_id;
-	char choco_name[16];
-	float choco_cal;
-	SQLLEN cid, cna, cal;
+	long PlayerID = 0;
+	float PlayerScale = 0.0f;
+	SQLLEN cid = 0;
+	SQLLEN cal = 0;
 
-	SQLBindCol(m_Stmt, 1, SQL_C_SHORT, &choco_id, sizeof(choco_id), &cid);
-	SQLBindCol(m_Stmt, 2, SQL_C_CHAR, &choco_name, sizeof(choco_name), &cna);
-	SQLBindCol(m_Stmt, 3, SQL_C_FLOAT, &choco_cal, sizeof(choco_cal), &cal);
+	m_ErrorMessage = SQLBindCol(m_Stmt, 1, SQL_C_LONG, &PlayerID, sizeof(PlayerID), &cid);
+	m_ErrorMessage = SQLBindCol(m_Stmt, 2, SQL_C_FLOAT, &PlayerScale, sizeof(PlayerScale), &cal);
 
-	printf("id\tname\t\tcal\t\tstars");
+	int Index = 1;
 
-	do 
+	while (true)
 	{
 		m_ErrorMessage = SQLFetch(m_Stmt);
-		printf("\n%d\t%s\t%f", choco_id, choco_name, choco_cal);
 
-	} while (m_ErrorMessage != SQL_NO_DATA);
+		if (m_ErrorMessage == SQL_NO_DATA)
+			break;
+
+		printf("Ranking : %d // ID : %d Scale : %f \n", Index, PlayerID, PlayerScale);
+		Index++;
+	};
 
 	SQLFreeStmt(m_Stmt, SQL_UNBIND);
 }
@@ -165,4 +120,16 @@ void DBConnector::DisconnectDataSource()
 		m_Henv = NULLPTR;
 	}
 
+}
+
+void DBConnector::ErrorMessage(SQLSMALLINT HandleType, SQLHANDLE Handle)
+{
+	if (m_ErrorMessage != SQL_SUCCESS && m_ErrorMessage != SQL_SUCCESS_WITH_INFO)
+	{
+		wstring Temp;
+		SQLGetDiagRec(HandleType, Handle, ++m_Rec, m_State, &m_Native, m_Message, sizeof(m_Message), &m_Length);
+		Temp = m_Message;
+
+		wcout << Temp.c_str() << endl;
+	}
 }
