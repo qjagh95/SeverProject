@@ -7,9 +7,9 @@
 
 int main()
 {
-	DBConnector::Get()->AllocateHandle();
+	DBConnector::Get()->InitHandle();
 	DBConnector::Get()->ConnectDataSource();
-	DBConnector::Get()->ExecuteStatementDriect((SQLWCHAR*)L"DELETE FROM Players");
+	DBConnector::Get()->SQLProcess((SQLWCHAR*)L"DELETE FROM Players");
 
 	IOCP* newIocp = new IOCP();
 

@@ -129,7 +129,7 @@ void IOCP::Run()
 		Temp += L");";
 
 		SQL = L"INSERT INTO Players(UserID, Scale) Values(" + Temp;
-		DBConnector::Get()->ExecuteStatementDriect((SQLWCHAR*)SQL.c_str());
+		DBConnector::Get()->SQLProcess((SQLWCHAR*)SQL.c_str());
 
 		//기존 접속한 클라에 OT생성
 		Sever_SendConnectClientNewOtherPlayer(newInfo);
@@ -426,7 +426,7 @@ void IOCP::Sever_DeleteEatObject(SocketInfo * Socket, ReadMemoryStream & Reader)
 	Temp += L";";
 
 	SQL += Temp;
-	DBConnector::Get()->ExecuteStatementDriect((SQLWCHAR*)SQL.c_str());
+	DBConnector::Get()->SQLProcess((SQLWCHAR*)SQL.c_str());
 }
 
 void IOCP::Sever_SendPlayerPos(SocketInfo * Socket, const Vector3& CameraPos, int UpdateVecSize)
@@ -627,7 +627,7 @@ void IOCP::KeyFunc()
 		if (Temp == "R" || Temp == "r")
 		{
 			wstring SQL = L"SELECT * FROM Players Order By Scale DESC";
-			DBConnector::Get()->ExecuteStatementDriect((SQLWCHAR*)SQL.c_str());
+			DBConnector::Get()->SQLProcess((SQLWCHAR*)SQL.c_str());
 			DBConnector::Get()->RetrieveResult();
 		}
 	}

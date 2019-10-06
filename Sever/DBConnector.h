@@ -6,11 +6,11 @@ class DBConnector
 {
 public:
 	//ODCB 핸들변수 초기화
-	void AllocateHandle();
+	void InitHandle();
 	//연결할 DBMS접속함수
 	void ConnectDataSource();
 	//쿼리문을 인자로받아 쿼리문 준비과정 없이 실행
-	void ExecuteStatementDriect(SQLWCHAR* SQL);
+	void SQLProcess(SQLWCHAR* SQL);
 	//쿼리문을 실행시키기 위해 준비과정을 거치는 함수 위와 차이점은 여러번 실행히 이 함수를 사용하거라
 	void PrepareStatement(SQLWCHAR* SQL);
 	//실행준비된 쿼리문을 실행하라

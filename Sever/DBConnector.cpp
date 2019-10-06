@@ -12,7 +12,7 @@ DBConnector::~DBConnector()
 	DisconnectDataSource();
 }
 
-void DBConnector::AllocateHandle()
+void DBConnector::InitHandle()
 {
 	// 환경 핸들러 할당
 	m_ErrorMessage = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &m_Henv);
@@ -36,7 +36,7 @@ void DBConnector::ConnectDataSource()
 	m_ErrorMessage = SQLConnect(m_Hdbc, (SQLWCHAR*)L"PlayerDB", SQL_NTS, (SQLWCHAR*)L"qjagh95", SQL_NTS, (SQLWCHAR*)L"9568", SQL_NTS);
 }
 
-void DBConnector::ExecuteStatementDriect(SQLWCHAR * SQL)
+void DBConnector::SQLProcess(SQLWCHAR * SQL)
 {
 	SQLCloseCursor(m_Stmt);
 
